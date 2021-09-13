@@ -8,22 +8,136 @@
   },
   "scripts": {
     "prepare": "husky install",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "storybook": "start-storybook -p 6006",
+    "start": "start-storybook -p 6006",
+    "lint": "eslint ./src --max-warnings 0",
     "build-storybook": "build-storybook"
   },
   "keywords": [],
   "author": "Intoto AS",
+  "dependencies": {
+    "@harelpls/storybook-addon-materialui": "^2.0.0",
+    "@material-ui/core": "^4.12.3",
+    "@material-ui/icons": "^4.11.2",
+    "@storybook/react": "^6.3.8",
+    "@types/jest": "^26.0.15",
+    "@types/node": "^12.0.0",
+    "@types/react": "^17.0.0",
+    "@types/react-dom": "^17.0.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-scripts": "4.0.3",
+    "typescript": "^4.1.2"
+  },
   "devDependencies": {
-    "@babel/core": "^7.15.5",
     "@commitlint/config-conventional": "^13.1.0",
     "@storybook/addon-actions": "^6.3.8",
     "@storybook/addon-essentials": "^6.3.8",
     "@storybook/addon-links": "^6.3.8",
-    "@storybook/react": "^6.3.8",
-    "babel-loader": "^8.2.2",
+    "@storybook/preset-create-react-app": "^3.2.0",
     "commitlint": "^13.1.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-import-resolver-typescript": "^2.3.0",
+    "eslint-plugin-import": "^2.23.4",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-react": "^7.24.0",
+    "eslint-plugin-react-hooks": "^4.2.0",
     "husky": "^7.0.2"
   },
-  "dependencies": {}
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest",
+      "airbnb"
+    ],
+    "rules": {
+      "max-len": [
+        "error",
+        {
+          "code": 100
+        }
+      ],
+      "prefer-promise-reject-errors": [
+        "off"
+      ],
+      "react/jsx-filename-extension": [
+        "off"
+      ],
+      "react/prop-types": [
+        "off"
+      ],
+      "no-return-assign": [
+        "off"
+      ],
+      "import/extensions": [
+        "error",
+        "ignorePackages",
+        {
+          "ts": "never",
+          "tsx": "never",
+          "js": "never",
+          "jsx": "never"
+        }
+      ]
+    },
+    "overrides": [
+      {
+        "extends": [
+          "plugin:@typescript-eslint/eslint-recommended",
+          "plugin:@typescript-eslint/recommended"
+        ],
+        "files": [
+          "**/*.ts?(x)"
+        ],
+        "rules": {
+          "no-shadow": "off",
+          "@typescript-eslint/no-shadow": "error",
+          "no-debugger": "warn",
+          "react/react-in-jsx-scope": "off",
+          "react/prop-types": "off",
+          "react/jsx-filename-extension": [
+            "error",
+            {
+              "extensions": [
+                ".tsx"
+              ]
+            }
+          ],
+          "import/prefer-default-export": "off"
+        }
+      },
+      {
+        "files": [
+          "**/*.stories.ts?(x)"
+        ],
+        "rules": {
+          "react/jsx-props-no-spreading": "off"
+        }
+      }
+    ],
+    "settings": {
+      "import/parsers": {
+        "@typescript-eslint/parser": [
+          ".ts",
+          ".tsx"
+        ]
+      },
+      "import/resolver": {
+        "typescript": {
+          "alwaysTryTypes": true
+        }
+      }
+    }
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
 }
