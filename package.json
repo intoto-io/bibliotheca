@@ -1,0 +1,16 @@
+{
+  "name": "intoto-bibliotheca",
+  "version": "1.0.0",
+  "description": "Component library for water data visualisation. By Intoto",
+  "scripts": {
+    "prepare": "husky install",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Intoto AS",
+  "devDependencies": {
+    "@commitlint/config-conventional": "^13.1.0",
+    "commitlint": "^13.1.0",
+    "husky": "^7.0.2"
+  }
+}
