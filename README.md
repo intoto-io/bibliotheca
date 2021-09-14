@@ -6,7 +6,7 @@ Fully written in TypeScript for typing convenience, usable in non-TypeScript pro
 
 ## Using components
 
-- [`bibliotheca-info`](./src/bibliotheca-info)
+- [`bibliotheca-info`](packages/bibliotheca-info)
 
 ## Development
 
