@@ -6,7 +6,7 @@ Fully written in TypeScript for typing convenience, usable in non-TypeScript pro
 
 ## List of available components
 
-- [`<InfoTooltip />`](./src/info-tooltip)
+- [`<InfoTooltip />`](./packages/info-tooltip)
 
 ## Development
 
