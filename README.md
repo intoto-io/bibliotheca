@@ -4,9 +4,9 @@ A collection of React components created to visualise river data.
 
 Fully written in TypeScript for typing convenience, usable in non-TypeScript projects.
 
-## Using components
+## List of available components
 
-- [`bibliotheca-info`](./src/bibliotheca-info)
+- [`<InfoTooltip />`](./src/info-tooltip)
 
 ## Development
 

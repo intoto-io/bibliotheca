@@ -1,3 +1,3 @@
-# `bibliotheca-info`
+# `<InfoTooltip />`
 
 Explain how to install etc
