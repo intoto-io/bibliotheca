@@ -9,7 +9,7 @@
   "scripts": {
     "prepare": "husky install",
     "start": "start-storybook -p 6006",
-    "lint": "eslint ./src --max-warnings 0",
+    "lint": "eslint packages --max-warnings 0",
     "build-storybook": "build-storybook"
   },
   "keywords": [],
@@ -25,7 +25,6 @@
     "@types/react-dom": "^17.0.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-scripts": "4.0.3",
     "typescript": "^4.1.2"
   },
   "devDependencies": {
@@ -33,9 +32,10 @@
     "@storybook/addon-actions": "^6.3.8",
     "@storybook/addon-essentials": "^6.3.8",
     "@storybook/addon-links": "^6.3.8",
-    "@storybook/preset-create-react-app": "^3.2.0",
+    "@typescript-eslint/eslint-plugin": "^4.31.1",
     "commitlint": "^13.1.0",
     "eslint-config-airbnb": "^18.2.1",
+    "eslint-config-react-app": "^6.0.0",
     "eslint-import-resolver-typescript": "^2.3.0",
     "eslint-plugin-import": "^2.23.4",
     "eslint-plugin-jsx-a11y": "^6.4.1",
