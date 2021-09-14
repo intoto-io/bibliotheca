@@ -1,0 +1,25 @@
+{
+  "name": "@intoto-dev/bibliotheca-info-tooltip",
+  "version": "0.0.1",
+  "description": "Explain how to install etc",
+  "main": "lib/index.js",
+  "module": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib",
+    "README.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/intoto-io/bibliotheca.git"
+  },
+  "author": "Intoto AS",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/intoto-io/bibliotheca/issues"
+  },
+  "homepage": "https://github.com/intoto-io/bibliotheca#readme",
+  "publishConfig": {
+    "access": "public"
+  }
+}

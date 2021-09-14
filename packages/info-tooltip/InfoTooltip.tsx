@@ -13,11 +13,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export interface InfoProps {
+export interface InfoTooltipProps {
   text: string;
 }
 
-const Info: FunctionComponent<InfoProps> = ({ text }) => {
+const InfoTooltip: FunctionComponent<InfoTooltipProps> = ({ text }) => {
   const styles = useStyles();
 
   return (
@@ -34,4 +34,4 @@ const Info: FunctionComponent<InfoProps> = ({ text }) => {
   );
 };
 
-export default Info;
+export default InfoTooltip;
