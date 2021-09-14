@@ -10,7 +10,8 @@
     "prepare": "husky install",
     "start": "start-storybook -p 6006",
     "lint": "eslint packages --max-warnings 0",
-    "build-storybook": "build-storybook"
+    "build-storybook": "build-storybook",
+    "build-packages": "rollup --config"
   },
   "keywords": [],
   "author": "Intoto AS",

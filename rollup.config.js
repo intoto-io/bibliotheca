@@ -1,15 +1,35 @@
 import typescript from '@rollup/plugin-typescript';
 
-export default {
-  input: {
-    info: 'packages/bibliotheca-info/index.ts',
-  },
-  output: {
-    dir: 'packages',
-    format: 'es',
-    entryFileNames: 'lib/[name].js',
-    preserveModules: true,
-    preserveModulesRoot: 'packages',
-  },
-  plugins: [typescript()]
-};
+const packages = [
+  'bibliotheca-info',
+];
+
+export default packages.reduce((acc, name) => {
+  return [
+    ...acc,
+    {
+      input: `packages/${name}/index.ts`,
+      output: {
+        dir: `packages/${name}/`,
+        format: 'es',
+        entryFileNames: 'lib/[name].js',
+      },
+      plugins: [
+        typescript(),
+      ],
+    },
+    {
+      input: `packages/${name}/index.ts`,
+      output: {
+        dir: `packages/${name}/`,
+        entryFileNames: 'lib/[name].d.ts',
+      },
+      plugins: [
+        typescript({
+          declaration: true,
+          declarationDir: `packages/${name}/lib`,
+        }),
+      ],
+    },
+  ]
+}, []);
