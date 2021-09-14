@@ -1,0 +1,17 @@
+{
+  "name": "@intoto-dev/bibliotheca-info-tooltip",
+  "version": "0.0.0",
+  "description": "Explain how to install etc",
+  "main": "lib/main.js",
+  "module": "esm/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/intoto-io/bibliotheca.git"
+  },
+  "author": "Intoto AS",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/intoto-io/bibliotheca/issues"
+  },
+  "homepage": "https://github.com/intoto-io/bibliotheca#readme"
+}
