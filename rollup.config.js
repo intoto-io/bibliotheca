@@ -1,7 +1,7 @@
 import typescript from '@rollup/plugin-typescript';
 
 const packages = [
-  'bibliotheca-info',
+  'info-tooltip',
 ];
 
 export default packages.reduce((acc, name) => {
