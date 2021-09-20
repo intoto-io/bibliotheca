@@ -1,0 +1,51 @@
+{
+  "name": "@intoto-dev/bibliotheca-graph",
+  "version": "0.0.1-alpha.1",
+  "description": "Explain how to install etc",
+  "main": "lib/index.js",
+  "module": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib",
+    "README.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/intoto-io/bibliotheca.git"
+  },
+  "author": "Intoto AS",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/intoto-io/bibliotheca/issues"
+  },
+  "homepage": "https://github.com/intoto-io/bibliotheca#readme",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@intoto-dev/utils-is-unique-date": "0.0.1-alpha.1",
+    "@material-ui/core": "^4.12.3",
+    "@visx/axis": "^2.1.1",
+    "@visx/brush": "^2.1.1",
+    "@visx/clip-path": "^2.1.0",
+    "@visx/curve": "^2.1.0",
+    "@visx/event": "^2.1.0",
+    "@visx/grid": "^2.1.1",
+    "@visx/group": "^2.1.0",
+    "@visx/scale": "^2.1.0",
+    "@visx/shape": "^2.1.1",
+    "@visx/threshold": "^2.1.1",
+    "@visx/tooltip": "^2.1.0",
+    "classnames": "^2.3.1",
+    "d3-array": "^2.12.0",
+    "d3-scale": "^4.0.1",
+    "d3-time-format": "^4.0.0",
+    "date-fns": "^2.24.0",
+    "react": "^17.0.2",
+    "react-i18next": "^11.12.0"
+  },
+  "devDependencies": {
+    "@types/d3-array": "^3.0.1",
+    "@types/d3-time-format": "^4.0.0"
+  }
+}

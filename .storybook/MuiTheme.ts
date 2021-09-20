@@ -1,10 +1,10 @@
-import { createMuiTheme } from '@material-ui/core/styles';
+import { createTheme } from '@material-ui/core/styles';
 import amber from '@material-ui/core/colors/amber';
 
 const font = `-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
   'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif`;
 
-const MuiTheme = createMuiTheme({
+const MuiTheme = createTheme({
   palette: {
     primary: { main: '#06f' },
     secondary: amber,
