@@ -1,8 +1,7 @@
+import fs from 'fs';
 import typescript from '@rollup/plugin-typescript';
 
-const packages = [
-  'info-tooltip',
-];
+const packages = fs.readdirSync(`${__dirname}/packages`);
 
 export default packages.reduce((acc, name) => {
   return [
