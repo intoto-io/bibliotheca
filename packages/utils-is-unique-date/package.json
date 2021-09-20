@@ -1,6 +1,6 @@
 {
   "name": "@intoto-dev/utils-is-unique-date",
-  "version": "0.0.1-alpha.1",
+  "version": "1.0.0",
   "description": "A set of utils used in Bibliotheca and other Intoto software",
   "main": "lib/index.js",
   "module": "lib/index.js",
