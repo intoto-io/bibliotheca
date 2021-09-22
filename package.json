@@ -8,13 +8,16 @@
   },
   "private": true,
   "scripts": {
-    "clean": "rimraf packages/**/lib",
+    "clean": "rimraf packages/**/lib && rimraf packages/**/node_modules && lerna bootstrap",
+    "test": "CI=true jest --env=jsdom",
     "prepare": "husky install",
     "start": "start-storybook -p 6006",
     "lint": "eslint packages --max-warnings 0",
     "build-storybook": "build-storybook",
+    "prebuild-packages": "npm run clean",
     "build-packages": "rollup --config",
-    "prepublish": "npm run clean && npm run build-packages",
+    "postbuild-packages": "node scripts/rearrange-declarations.js",
+    "prepublish-all": "npm run build-packages",
     "publish-all": "sh ./scripts/publish.sh"
   },
   "keywords": [],
@@ -22,23 +25,28 @@
   "dependencies": {
     "@harelpls/storybook-addon-materialui": "^2.0.0",
     "@material-ui/core": "^4.12.3",
-    "@material-ui/icons": "^4.11.2",
     "@storybook/react": "^6.3.8",
     "@types/jest": "^26.0.15",
     "@types/node": "^12.0.0",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
+    "ncp": "^2.0.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "typescript": "^4.1.2"
   },
   "devDependencies": {
+    "@babel/core": "^7.15.5",
+    "@babel/preset-env": "^7.15.6",
+    "@babel/preset-typescript": "^7.15.0",
     "@commitlint/config-conventional": "^13.1.0",
+    "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-typescript": "^8.2.5",
     "@storybook/addon-actions": "^6.3.8",
     "@storybook/addon-essentials": "^6.3.8",
     "@storybook/addon-links": "^6.3.8",
     "@typescript-eslint/eslint-plugin": "^4.31.1",
+    "babel-jest": "^27.2.0",
     "commitlint": "^13.1.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-react-app": "^6.0.0",
@@ -48,8 +56,10 @@
     "eslint-plugin-react": "^7.24.0",
     "eslint-plugin-react-hooks": "^4.2.0",
     "husky": "^7.0.2",
+    "jest": "^27.2.0",
     "lerna": "^4.0.0",
     "rimraf": "^3.0.2",
-    "rollup": "^2.56.3"
+    "rollup": "^2.56.3",
+    "tslib": "^2.3.1"
   }
 }

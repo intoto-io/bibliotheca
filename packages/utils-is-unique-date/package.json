@@ -1,7 +1,7 @@
 {
-  "name": "@intoto-dev/bibliotheca-info-tooltip",
+  "name": "@intoto-dev/utils-is-unique-date",
   "version": "1.0.0",
-  "description": "Explain how to install etc",
+  "description": "A set of utils used in Bibliotheca and other Intoto software",
   "main": "lib/index.js",
   "module": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -23,7 +23,6 @@
     "access": "public"
   },
   "dependencies": {
-    "@material-ui/core": "^4.12.3",
-    "@material-ui/icons": "^4.11.2"
+    "date-fns": "^2.24.0"
   }
 }
