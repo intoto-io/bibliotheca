@@ -22,8 +22,6 @@ export function createYScale(
   const min = Math.min(...values, ...minValues, ...maxValues);
   const domainPadding = (max - min) * 0.2;
 
-  console.log(domainPadding);
-
   return scaleLinear({
     domain: plot.domain || [
       max + domainPadding,
