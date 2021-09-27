@@ -7,6 +7,7 @@ import { generateDays, generateMinutes, randomLineData } from './helpers/createD
 import singleLineData from './mocks/singleLine.json';
 import lineWithGapsData from './mocks/lineWithGaps.json';
 import sixtyDayHourly from './mocks/sixtyDayHourly.json';
+import extremeJumps from './mocks/extremeJumps.json';
 import { DataPoint, GraphSeries, SeriesType } from './types';
 
 const barType: SeriesType = 'bar';
@@ -347,4 +348,19 @@ NavigationGraph.args = {
   series: sixtyDaysHourlyGraph,
   tooltip: true,
   navigation: true,
+};
+
+const extremeJumpsGraph: GraphSeries[] = [{
+  key: 'barExtreme',
+  name: 'Water level',
+  color: '#00F',
+  data: parseJSONData(extremeJumps),
+  type: 'line',
+}];
+
+export const ExtremeCurvesGraph = Template.bind({});
+
+ExtremeCurvesGraph.args = {
+  series: extremeJumpsGraph,
+  tooltip: true,
 };
