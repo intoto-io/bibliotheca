@@ -4,9 +4,19 @@ A collection of React components created to visualise river data.
 
 Fully written in TypeScript for typing convenience, usable in non-TypeScript projects.
 
+## Storybook
+
+Check out the components in action at [https://intoto-bibliotheca.netlify.app/](https://intoto-bibliotheca.netlify.app/)
+
 ## List of available components
 
+- [`<Graph />`](https://github.com/intoto-io/bibliotheca/tree/master/packages/graph)
 - [`<InfoTooltip />`](https://github.com/intoto-io/bibliotheca/tree/master/packages/info-tooltip)
+
+## List of utilities
+
+- [`isUniqueDate`](https://github.com/intoto-io/bibliotheca/tree/master/packages/utils-is-unique-date)
+- [Observation Helpers](https://github.com/intoto-io/bibliotheca/tree/master/packages/utils-observation-helpers)
 
 ## Development
 

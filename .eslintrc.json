@@ -4,6 +4,7 @@
     "react-app/jest",
     "airbnb"
   ],
+  "ignorePatterns": ["**/lib/*"],
   "rules": {
     "max-len": [
       "error",
@@ -12,6 +13,9 @@
       }
     ],
     "prefer-promise-reject-errors": [
+      "off"
+    ],
+    "react/require-default-props": [
       "off"
     ],
     "react/jsx-filename-extension": [

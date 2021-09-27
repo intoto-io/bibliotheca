@@ -18,7 +18,7 @@ export default {
 const Template: Story<GraphProps> = (args) => (
   <Graph
     {...args}
-    t={(key: string) => key === 'missing' ? 'Missing data' : 'Prediction'}
+    t={(key: string) => (key === 'missing' ? 'Missing data' : 'Prediction')}
   />
 );
 
