@@ -8,6 +8,7 @@ import { Threshold } from '@visx/threshold';
 import { ClipPath } from '@visx/clip-path';
 
 import { isMissing, isPredicted } from '../helpers/dataPoint';
+import { DataPoint } from '../types';
 
 interface SplitLineProps {
   keyRef: string;

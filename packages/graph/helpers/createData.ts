@@ -7,6 +7,8 @@ import {
   isAfter,
 } from 'date-fns';
 
+import { DataPoint } from '../types';
+
 import { createDataPoint, createMissingDataPoint, createPredictedDataPoint } from './dataPoint';
 
 function randNumber(min = 0, max = 20, decimals = 0): number {

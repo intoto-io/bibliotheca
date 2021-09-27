@@ -14,6 +14,7 @@ import { Bounds } from '@visx/brush/lib/types';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 
 import { createXScale, createYScale } from '../helpers/createScales';
+import { GraphSeries } from '../types';
 
 const useStyles = makeStyles<Theme, { paddingLeft: number }>({
   navigationContainer: {

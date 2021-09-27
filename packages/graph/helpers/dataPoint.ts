@@ -1,3 +1,10 @@
+import {
+  BaseDataPoint,
+  DataPoint,
+  MissingDataPoint,
+  PredictedDataPoint,
+} from '../types';
+
 export function createDataPoint(point: BaseDataPoint): BaseDataPoint {
   return point;
 }

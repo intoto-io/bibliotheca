@@ -1,3 +1,5 @@
+import { ThresholdDirection } from '../types';
+
 import { valueInThreshold } from './hasValueInThreshold';
 
 function colorByThreshold(

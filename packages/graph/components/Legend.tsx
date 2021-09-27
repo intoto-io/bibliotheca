@@ -6,6 +6,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { isMissing, isPredicted } from '../helpers/dataPoint';
 import hasValueInThreshold from '../helpers/hasValueInThreshold';
 import colorByIndex from '../helpers/colorByIndex';
+import { GraphSeries } from '../types';
 
 const useStyles = makeStyles(({
   legend: {

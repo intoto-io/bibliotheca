@@ -2,6 +2,8 @@ import { compareDesc, differenceInDays, startOfDay } from 'date-fns';
 
 import { isUniqueDate } from '@intoto-dev/utils-is-unique-date';
 
+import { GraphSeries } from '../types';
+
 interface UseSeriesFacts {
   dates: Date[];
   numberOfDays: number;
