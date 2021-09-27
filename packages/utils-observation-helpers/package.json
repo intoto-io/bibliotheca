@@ -1,6 +1,6 @@
 {
   "name": "@intoto-dev/utils-observation-helpers",
-  "version": "0.0.2",
+  "version": "0.0.1",
   "description": "A set of utils used in Bibliotheca and other Intoto software",
   "main": "lib/index.js",
   "module": "lib/index.js",
@@ -21,5 +21,9 @@
   "homepage": "https://github.com/intoto-io/bibliotheca#readme",
   "publishConfig": {
     "access": "public"
+  },
+  "dependencies": {
+    "@intoto-dev/bibliotheca-graph": "^0.0.3",
+    "date-fns": "^2.24.0"
   }
 }

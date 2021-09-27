@@ -1,4 +1,5 @@
 import { setHours } from 'date-fns';
+import { isMissing } from '@intoto-dev/bibliotheca-graph/helpers';
 
 export function observationDataToLineData(data: ObservationRecord[]): DataPoint[] {
   const now = new Date();
