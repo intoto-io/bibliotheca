@@ -8,6 +8,7 @@ import { Group } from '@visx/group';
 import { isMissing, isPredicted } from '../helpers/dataPoint';
 import colorByIndex from '../helpers/colorByIndex';
 import colorByThreshold from '../helpers/colorByThreshold';
+import { GraphSeries } from '../types';
 
 interface BarProps {
   plot: GraphSeries;

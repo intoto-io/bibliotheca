@@ -5,9 +5,10 @@ import { RectClipPath } from '@visx/clip-path';
 
 import colorByIndex from '../helpers/colorByIndex';
 import { separateSeriesDataOnMissing } from '../helpers/separateSeriesData';
+import hasValueInThreshold from '../helpers/hasValueInThreshold';
+import { GraphSeries } from '../types';
 
 import SplitLine from './SplitLine';
-import hasValueInThreshold from '../helpers/hasValueInThreshold';
 
 interface LineProps {
   keyRef: string;

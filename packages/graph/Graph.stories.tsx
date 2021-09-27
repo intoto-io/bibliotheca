@@ -7,6 +7,7 @@ import { generateDays, generateMinutes, randomLineData } from './helpers/createD
 import singleLineData from './mocks/singleLine.json';
 import lineWithGapsData from './mocks/lineWithGaps.json';
 import sixtyDayHourly from './mocks/sixtyDayHourly.json';
+import { DataPoint, GraphSeries, SeriesType } from './types';
 
 const barType: SeriesType = 'bar';
 

@@ -1,3 +1,5 @@
+import { DataPoint } from '../types';
+
 import { isMissing, isPredicted } from './dataPoint';
 
 function separateSeriesData(

@@ -1,3 +1,5 @@
+import { DataPoint } from '../types';
+
 import { separateSeriesDataOnMissing, separateSeriesDataOnPredicted } from './separateSeriesData';
 
 describe('separateSeriesData', () => {

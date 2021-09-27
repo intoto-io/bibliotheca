@@ -3,6 +3,8 @@ import { extent } from 'd3-array';
 
 import { scaleLinear, scaleTime } from '@visx/scale';
 
+import { GraphSeries } from '../types';
+
 import { isPredicted } from './dataPoint';
 
 export function createYScale(

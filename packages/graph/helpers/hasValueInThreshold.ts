@@ -1,3 +1,5 @@
+import { DataPoint } from '../types';
+
 export function valueInThreshold(
   value: number,
   threshold: number,

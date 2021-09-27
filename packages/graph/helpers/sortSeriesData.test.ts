@@ -1,3 +1,5 @@
+import { DataPoint } from '../types';
+
 import { sortSeriesDataByDateAsc, sortSeriesDataByDateDesc } from './sortSeriesData';
 
 describe('sortSeriesData', () => {

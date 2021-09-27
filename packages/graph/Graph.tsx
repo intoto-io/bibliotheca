@@ -33,6 +33,8 @@ import colorByIndex from './helpers/colorByIndex';
 import locales from './helpers/locales';
 import { valueInThreshold } from './helpers/hasValueInThreshold';
 import { isMissing } from './helpers/dataPoint';
+import { createXScale, createYScale } from './helpers/createScales';
+import { DataPoint, GraphSeries } from './types';
 
 import AxisLeft from './components/AxisLeft';
 import Line from './components/Line';
@@ -41,7 +43,6 @@ import Legend from './components/Legend';
 import useSeriesFacts from './hooks/useSeriesFacts';
 import useDimensions from './hooks/useDimensions';
 import Navigation from './components/Navigation';
-import { createXScale, createYScale } from './helpers/createScales';
 
 const useStyles = makeStyles(({
   container: {

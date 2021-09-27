@@ -1,3 +1,5 @@
+import { DataPoint } from '../types';
+
 import hasValueInThreshold, { valueInThreshold } from './hasValueInThreshold';
 
 describe('valueInThreshold', () => {
