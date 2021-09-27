@@ -1,5 +1,4 @@
 node_modules
 packages/*/lib
-packages/*/package-lock.json
 .env
 storybook-static/
