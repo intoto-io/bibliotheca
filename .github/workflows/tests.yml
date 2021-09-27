@@ -12,6 +12,6 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v1
       - name: Install NPM dependencies
-        run: npm ci
+        run: npm i
       - name: Unit tests
         run: npm run test
