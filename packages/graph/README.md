@@ -1,7 +1,7 @@
 # `<Graph />`
 
 ```
-npm i @intoto-dev/bibliotheca-info-graph
+npm i @intoto-dev/bibliotheca-graph
 ```
 
 ## Usage
