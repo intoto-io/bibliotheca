@@ -18,7 +18,8 @@
     "build-packages": "rollup --config",
     "postbuild-packages": "node scripts/rearrange-declarations.js",
     "prepublish-all": "npm run build-packages",
-    "publish-all": "sh ./scripts/publish.sh"
+    "publish-all": "sh ./scripts/publish.sh",
+    "postinstall": "lerna bootstrap"
   },
   "keywords": [],
   "author": "Intoto AS",
