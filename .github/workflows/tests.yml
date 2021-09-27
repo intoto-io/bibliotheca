@@ -1,0 +1,17 @@
+name: Tests
+
+on: [pull_request]
+
+jobs:
+  check:
+    name: Test source
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v1
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+      - name: Install NPM dependencies
+        run: npm ci
+      - name: Unit tests
+        run: npm run test

@@ -1,0 +1,19 @@
+name: Checks
+
+on: [pull_request]
+
+jobs:
+  check:
+    name: Check source
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v1
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+      - name: Install NPM dependencies
+        run: npm ci
+      - name: Lint
+        run: npm run lint
+      - name: Build
+        run: npm run build-packages
