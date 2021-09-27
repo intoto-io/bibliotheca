@@ -25,6 +25,7 @@
   "dependencies": {
     "@intoto-dev/utils-is-unique-date": "^0.0.2",
     "@material-ui/core": "^4.12.3",
+    "@storybook/react": "^6.3.8",
     "@visx/axis": "^2.1.1",
     "@visx/brush": "^2.1.1",
     "@visx/clip-path": "^2.1.0",
@@ -39,6 +40,7 @@
     "classnames": "^2.3.1",
     "d3-array": "^2.12.0",
     "d3-scale": "^4.0.1",
+    "d3-shape": "^3.0.1",
     "d3-time-format": "^4.0.0",
     "date-fns": "^2.24.0",
     "react": "^17.0.2",

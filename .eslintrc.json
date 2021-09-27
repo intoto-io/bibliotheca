@@ -15,6 +15,9 @@
     "prefer-promise-reject-errors": [
       "off"
     ],
+    "react/require-default-props": [
+      "off"
+    ],
     "react/jsx-filename-extension": [
       "off"
     ],

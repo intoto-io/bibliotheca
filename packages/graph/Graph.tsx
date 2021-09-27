@@ -8,14 +8,17 @@ import {
   useEffect,
 } from 'react';
 import classNames from 'classnames';
+/* eslint-disable import/no-duplicates */ // needed to prevent eslint bug
 import {
   format,
   compareDesc,
   startOfDay,
 } from 'date-fns';
+import { enUS } from 'date-fns/locale';
+/* eslint-enable */
 import { bisector } from 'd3-array';
 import { timeFormatDefaultLocale } from 'd3-time-format';
-import { enUS } from 'date-fns/locale';
+import { UseTranslationResponse } from 'react-i18next';
 
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -39,7 +42,6 @@ import useSeriesFacts from './hooks/useSeriesFacts';
 import useDimensions from './hooks/useDimensions';
 import Navigation from './components/Navigation';
 import { createXScale, createYScale } from './helpers/createScales';
-import { UseTranslationResponse } from 'react-i18next';
 
 const useStyles = makeStyles(({
   container: {
