@@ -4,6 +4,7 @@
     "react-app/jest",
     "airbnb"
   ],
+  "ignorePatterns": ["**/lib/*"],
   "rules": {
     "max-len": [
       "error",
