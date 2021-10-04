@@ -23,7 +23,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@intoto-dev/bibliotheca-graph": "^0.0.9",
+    "@intoto-dev/bibliotheca-graph": "^0.0.10",
     "date-fns": "^2.24.0"
   }
 }
