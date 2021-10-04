@@ -1,4 +1,4 @@
-import { GraphSeries } from '@intoto-dev/bibliotheca-graph/lib/types';
+import { GraphSeries } from '@intoto-dev/bibliotheca-graph/lib/types.d';
 
 import formatObservationValue from './formatValue';
 import { AppLang, ObservationType } from './types';
