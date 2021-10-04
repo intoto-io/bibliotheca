@@ -10,7 +10,7 @@ export default packages.reduce((acc, name) => [
     input: `packages/${name}/index.ts`,
     output: {
       dir: `packages/${name}/`,
-      format: 'es',
+      format: 'cjs',
       entryFileNames: 'lib/[name].js',
     },
     plugins: [
