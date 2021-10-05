@@ -20,3 +20,10 @@ export const Default = Template.bind({});
 Default.args = {
   profile: amotbrua,
 };
+
+export const WithWaterLevel = Template.bind({});
+
+WithWaterLevel.args = {
+  profile: amotbrua,
+  currentWaterLevel: 7,
+};
