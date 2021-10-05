@@ -27,3 +27,11 @@ WithWaterLevel.args = {
   profile: amotbrua,
   currentWaterLevel: 7,
 };
+
+export const WithWaterLevelAndBridge = Template.bind({});
+
+WithWaterLevelAndBridge.args = {
+  profile: amotbrua,
+  currentWaterLevel: 7,
+  bridgeLevel: 12,
+};

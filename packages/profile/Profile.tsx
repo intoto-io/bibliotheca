@@ -5,6 +5,7 @@ import { ProfilePoint, RiverProfile } from './types';
 
 export interface ProfileProps {
   profile: RiverProfile;
+  bridgeLevel?: number;
   currentWaterLevel?: number;
   strokeWidth?: number;
   strokeColor?: string;
@@ -26,12 +27,18 @@ const findHightestPoint = (items: RiverProfile): ProfilePoint => items.reduce((a
 const Profile: FunctionComponent<ProfileProps> = ({
   profile,
   currentWaterLevel,
+  bridgeLevel,
   strokeColor = 'black',
   strokeWidth = 1.5,
   groundFill = '#b4967d',
   waterFill = '#99ccff',
 }) => {
-  const maxMSL = Math.max(...profile.map((p) => p.msl));
+  const bridgeSize = 0.5;
+
+  const maxMSLRiver = Math.max(...profile.map((p) => p.msl));
+  const maxMSL = typeof bridgeLevel !== 'undefined'
+    ? Math.max(maxMSLRiver, bridgeLevel + bridgeSize)
+    : maxMSLRiver;
   const minMSL = Math.min(...profile.map((p) => p.msl));
 
   const maxWaterXL = useMemo(() => {
@@ -100,6 +107,32 @@ const Profile: FunctionComponent<ProfileProps> = ({
       ]
       : [],
   );
+  const bridgePath = baseLine(
+    typeof bridgeLevel !== 'undefined'
+      ? [
+        // bottom left bridge
+        [points[0][0], mslToY(bridgeLevel)],
+        // start left pilar/
+        [points[0][0], mslToY(minMSL)],
+        [points[0][0] + xToX(bridgeSize * 2), mslToY(minMSL)],
+        [points[0][0] + xToX(bridgeSize * 2), mslToY(bridgeLevel)],
+        // end left pilar
+        // start right pilar
+        [points[points.length - 1][0] - xToX(bridgeSize * 2), mslToY(bridgeLevel)],
+        [points[points.length - 1][0] - xToX(bridgeSize * 2), mslToY(minMSL)],
+        [points[points.length - 1][0], mslToY(minMSL)],
+        // end right pilar
+        // bottom right bridge
+        [points[points.length - 1][0], mslToY(bridgeLevel)],
+        // start top deck
+        [points[points.length - 1][0], mslToY(bridgeLevel + bridgeSize)],
+        [points[0][0], mslToY(bridgeLevel + bridgeSize)],
+        // end top deck
+        // back to start
+        [points[0][0], mslToY(bridgeLevel)],
+      ]
+      : [],
+  );
 
   return (
     <svg
@@ -112,7 +145,19 @@ const Profile: FunctionComponent<ProfileProps> = ({
           <stop stopColor={waterFill} stopOpacity={0.6} offset="0%" />
           <stop stopColor={waterFill} stopOpacity={1} offset="38%" />
         </linearGradient>
+        <linearGradient id="bridgeFill" x1="0" x2="0" y1="0" y2="1">
+          <stop stopColor="#000" stopOpacity={0.6} offset="0%" />
+          <stop stopColor="#000" stopOpacity={0.7} offset="20%" />
+        </linearGradient>
       </defs>
+      {typeof bridgeLevel !== 'undefined' && (
+        <path
+          d={[bridgePath].join(' ')}
+          stroke={strokeColor}
+          strokeWidth={strokeWidth}
+          fill="url(#bridgeFill)"
+        />
+      )}
       {typeof currentWaterLevel !== 'undefined' && (
         <path
           d={[waterLevelPath].join(' ')}
