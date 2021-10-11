@@ -1,5 +1,5 @@
 const fs = require('fs');
-const ncp = require('ncp').ncp;
+const { ncp } = require('ncp');
 const rimraf = require('rimraf');
 
 const root = `${__dirname}/../packages`;
@@ -14,18 +14,20 @@ packages.forEach((name) => {
     `${root}/${to}`,
     (err) => {
       if (err) {
-        return console.error(err);
+        console.error(err);
+        return;
       }
 
       console.info(`Copied ${from} to ${to}`);
 
       rimraf(`${root}/${name}/lib/declarations`, () => {
         if (err) {
-          return console.error(err);
+          console.error(err);
+          return;
         }
 
         console.info(`Cleaned up ${to}`);
       });
-    }
+    },
   );
 });
