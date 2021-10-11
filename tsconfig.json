@@ -23,8 +23,5 @@
       "./node_modules/@types",
       "./types"
     ]
-  },
-  "include": [
-    "packages"
-  ]
+  }
 }

@@ -1,6 +1,6 @@
 import { setHours } from 'date-fns';
 import { isMissing } from '@intoto-dev/bibliotheca-graph';
-import { DataPoint } from '@intoto-dev/bibliotheca-graph/lib/types.d';
+import { DataPoint } from '@intoto-dev/bibliotheca-graph/types';
 
 import { ObservationRecord } from './types';
 
