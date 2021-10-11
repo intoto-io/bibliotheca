@@ -1,5 +1,5 @@
 import { FunctionComponent, useCallback, useMemo } from 'react';
-import { line, curveBasis } from 'd3-shape';
+import { line, curveBasis, curveLinearClosed } from 'd3-shape';
 
 import { ProfilePoint, RiverProfile } from './types';
 
@@ -14,6 +14,7 @@ export interface ProfileProps {
 }
 
 const baseLine = line<[number, number]>(([x]) => x, ([_, y]) => y);
+const baseLineClosed = line<[number, number]>(([x]) => x, ([_, y]) => y).curve(curveLinearClosed);
 const bankLine = line<[number, number]>(([x]) => x, ([_, y]) => y).curve(curveBasis);
 
 const findHightestPoint = (items: RiverProfile): ProfilePoint => items.reduce((a, b) => {
@@ -97,7 +98,7 @@ const Profile: FunctionComponent<ProfileProps> = ({
 
   const path = bankLine(points);
   const closePath = baseLine(closePoints);
-  const waterLevelPath = baseLine(
+  const waterLevelPath = baseLineClosed(
     typeof currentWaterLevel !== 'undefined'
       ? [
         [xToX(maxWaterXL), mslToY(currentWaterLevel)],
@@ -107,29 +108,17 @@ const Profile: FunctionComponent<ProfileProps> = ({
       ]
       : [],
   );
-  const bridgePath = baseLine(
+  const bridgePath = baseLineClosed(
     typeof bridgeLevel !== 'undefined'
       ? [
         // bottom left bridge
         [points[0][0], mslToY(bridgeLevel)],
-        // start left pilar/
-        [points[0][0], mslToY(minMSL)],
-        [points[0][0] + xToX(bridgeSize * 2), mslToY(minMSL)],
-        [points[0][0] + xToX(bridgeSize * 2), mslToY(bridgeLevel)],
-        // end left pilar
-        // start right pilar
-        [points[points.length - 1][0] - xToX(bridgeSize * 2), mslToY(bridgeLevel)],
-        [points[points.length - 1][0] - xToX(bridgeSize * 2), mslToY(minMSL)],
-        [points[points.length - 1][0], mslToY(minMSL)],
-        // end right pilar
         // bottom right bridge
         [points[points.length - 1][0], mslToY(bridgeLevel)],
         // start top deck
         [points[points.length - 1][0], mslToY(bridgeLevel + bridgeSize)],
-        [points[0][0], mslToY(bridgeLevel + bridgeSize)],
         // end top deck
-        // back to start
-        [points[0][0], mslToY(bridgeLevel)],
+        [points[0][0], mslToY(bridgeLevel + bridgeSize)],
       ]
       : [],
   );
