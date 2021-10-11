@@ -8,7 +8,7 @@
   },
   "private": true,
   "scripts": {
-    "clean": "rimraf packages/**/lib && rimraf packages/**/node_modules && lerna exec -- npm i",
+    "clean": "rimraf packages/**/lib && rimraf packages/**/node_modules && lerna bootstrap",
     "test": "CI=true jest --env=jsdom",
     "prepare": "husky install",
     "start": "start-storybook -p 6006",
