@@ -1,5 +1,5 @@
 import { FunctionComponent, useCallback, useMemo } from 'react';
-import { line, curveBasis } from 'd3-shape';
+import { line, curveBasis, curveLinearClosed } from 'd3-shape';
 
 import { ProfilePoint, RiverProfile } from './types';
 
@@ -14,6 +14,7 @@ export interface ProfileProps {
 }
 
 const baseLine = line<[number, number]>(([x]) => x, ([_, y]) => y);
+const baseLineClosed = line<[number, number]>(([x]) => x, ([_, y]) => y).curve(curveLinearClosed);
 const bankLine = line<[number, number]>(([x]) => x, ([_, y]) => y).curve(curveBasis);
 
 const findHightestPoint = (items: RiverProfile): ProfilePoint => items.reduce((a, b) => {
@@ -41,17 +42,11 @@ const Profile: FunctionComponent<ProfileProps> = ({
     : maxMSLRiver;
   const minMSL = Math.min(...profile.map((p) => p.msl));
 
-  const maxWaterXL = useMemo(() => {
-    const highest = findHightestPoint(profile
-      .slice(0, Math.round(profile.length / 2)));
-    return highest.x;
-  }, [profile]);
+  const maxWaterXL = useMemo(() => findHightestPoint(profile
+    .slice(0, Math.round(profile.length / 2))), [profile]);
 
-  const maxWaterXR = useMemo(() => {
-    const highest = findHightestPoint(profile
-      .slice(Math.round(profile.length / 2) * -1));
-    return highest.x;
-  }, [profile]);
+  const maxWaterXR = useMemo(() => findHightestPoint(profile
+    .slice(Math.round(profile.length / 2) * -1)), [profile]);
 
   const width = Math.max(...profile.map((p) => p.x));
   const height = maxMSL - minMSL;
@@ -97,39 +92,33 @@ const Profile: FunctionComponent<ProfileProps> = ({
 
   const path = bankLine(points);
   const closePath = baseLine(closePoints);
-  const waterLevelPath = baseLine(
+
+  const waterLeft = typeof currentWaterLevel !== 'undefined' && currentWaterLevel > maxWaterXL.msl
+    ? xToX(profile[0].x) : xToX(maxWaterXL.x);
+  const waterRight = typeof currentWaterLevel !== 'undefined' && currentWaterLevel > maxWaterXR.msl
+    ? xToX(profile[profile.length - 1].x) : xToX(maxWaterXR.x);
+
+  const waterLevelPath = baseLineClosed(
     typeof currentWaterLevel !== 'undefined'
       ? [
-        [xToX(maxWaterXL), mslToY(currentWaterLevel)],
-        [xToX(maxWaterXR), mslToY(currentWaterLevel)],
-        [xToX(maxWaterXR), mslToY(minMSL)],
-        [xToX(maxWaterXL), mslToY(minMSL)],
+        [waterLeft, mslToY(currentWaterLevel)],
+        [waterRight, mslToY(currentWaterLevel)],
+        [waterRight, mslToY(minMSL)],
+        [waterLeft, mslToY(minMSL)],
       ]
       : [],
   );
-  const bridgePath = baseLine(
+  const bridgePath = baseLineClosed(
     typeof bridgeLevel !== 'undefined'
       ? [
         // bottom left bridge
         [points[0][0], mslToY(bridgeLevel)],
-        // start left pilar/
-        [points[0][0], mslToY(minMSL)],
-        [points[0][0] + xToX(bridgeSize * 2), mslToY(minMSL)],
-        [points[0][0] + xToX(bridgeSize * 2), mslToY(bridgeLevel)],
-        // end left pilar
-        // start right pilar
-        [points[points.length - 1][0] - xToX(bridgeSize * 2), mslToY(bridgeLevel)],
-        [points[points.length - 1][0] - xToX(bridgeSize * 2), mslToY(minMSL)],
-        [points[points.length - 1][0], mslToY(minMSL)],
-        // end right pilar
         // bottom right bridge
         [points[points.length - 1][0], mslToY(bridgeLevel)],
         // start top deck
         [points[points.length - 1][0], mslToY(bridgeLevel + bridgeSize)],
-        [points[0][0], mslToY(bridgeLevel + bridgeSize)],
         // end top deck
-        // back to start
-        [points[0][0], mslToY(bridgeLevel)],
+        [points[0][0], mslToY(bridgeLevel + bridgeSize)],
       ]
       : [],
   );
