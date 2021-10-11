@@ -14,7 +14,6 @@ export default {
       tsconfig: './tsconfig.json',
       declaration: true,
       declarationDir: 'lib',
-      rootDir: './',
     }),
     json(),
   ],
