@@ -1,6 +1,6 @@
 {
   "name": "@intoto-dev/utils-observation-helpers",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "A set of utils used in Bibliotheca and other Intoto software",
   "main": "lib/index.js",
   "module": "lib/index.js",
