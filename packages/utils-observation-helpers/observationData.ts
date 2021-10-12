@@ -3,11 +3,17 @@ import { isMissing, DataPoint } from '@intoto-dev/bibliotheca-graph';
 
 import { ObservationRecord } from './types';
 
-export function observationDataToLineData(data: ObservationRecord[]): DataPoint[] {
-  const now = new Date();
-
+export function observationDataToLineData(
+  data: ObservationRecord[],
+  now = new Date(),
+): DataPoint[] {
   return data.reduce((acc: DataPoint[], day) => {
-    const { date, values } = day;
+    const {
+      date,
+      values,
+      min,
+      max,
+    } = day;
 
     return values
       .reduceRight((points, value, index) => {
@@ -18,11 +24,32 @@ export function observationDataToLineData(data: ObservationRecord[]): DataPoint[
           return points;
         }
 
+        const baseValue = {
+          date: newDate,
+          value: value || 0,
+        };
+
+        if (
+          (min && typeof min[index] !== 'undefined' && min[index] !== null)
+          || (max && typeof max[index] !== 'undefined' && max[index] !== null)
+        ) {
+          return [
+            ...points,
+            {
+              ...baseValue,
+              predicted: true,
+              minValue: min && typeof min[index] !== 'undefined' && min[index] !== null
+                ? min[index] : undefined,
+              maxValue: max && typeof max[index] !== 'undefined' && max[index] !== null
+                ? max[index] : undefined,
+            },
+          ];
+        }
+
         return [
           ...points,
           {
-            date: newDate,
-            value: value || 0,
+            ...baseValue,
             missing: value === null,
           },
         ];
