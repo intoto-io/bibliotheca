@@ -24,8 +24,7 @@
   "author": "Intoto AS",
   "jest": {
     "transformIgnorePatterns": [
-      "node_modules/(?!@intoto-dev|d3-time-format)",
-      "/(?!bibliotheca)"
+      "node_modules/(?!@intoto-dev|d3-time-format)"
     ]
   },
   "dependencies": {
