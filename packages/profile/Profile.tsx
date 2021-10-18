@@ -1,5 +1,8 @@
 import {
-  FunctionComponent, useEffect, useMemo, useRef,
+  FunctionComponent,
+  useEffect,
+  useMemo,
+  useRef,
 } from 'react';
 import { line, curveBasis, curveLinearClosed } from 'd3-shape';
 import { scaleLinear } from 'd3-scale';
@@ -11,19 +14,19 @@ import { ProfilePoint, RiverProfile } from './types';
 export interface ProfileProps {
   profile: RiverProfile;
   axis?: boolean;
-  width?: number;
   bridgeLevel?: number;
   currentWaterLevel?: number;
-  strokeWidth?: number;
-  strokeColor?: string;
   groundFill?: string;
+  strokeColor?: string;
+  strokeWidth?: number;
   waterFill?: string;
+  width?: number;
 }
 
 const baseLine = line();
 const closedLine = line().curve(curveLinearClosed);
 
-const findHightestPoint = (items: RiverProfile): ProfilePoint => items.reduce((a, b) => {
+const findHighestPoint = (items: RiverProfile): ProfilePoint => items.reduce((a, b) => {
   if (b.msl > a.msl) {
     return b;
   }
@@ -53,10 +56,9 @@ const Profile: FunctionComponent<ProfileProps> = ({
     : maxMSLRiver;
   const minMSL = Math.min(...profile.map((p) => p.msl));
 
-  const maxWaterXL = useMemo(() => findHightestPoint(profile
+  const maxWaterXL = useMemo(() => findHighestPoint(profile
     .slice(0, Math.round(profile.length / 2))), [profile]);
-
-  const maxWaterXR = useMemo(() => findHightestPoint(profile
+  const maxWaterXR = useMemo(() => findHighestPoint(profile
     .slice(Math.round(profile.length / 2) * -1)), [profile]);
 
   const riverWidth = Math.max(...profile.map((p) => p.x));
@@ -72,9 +74,9 @@ const Profile: FunctionComponent<ProfileProps> = ({
   const renderHeight = ((riverAndBridgeHeight / riverWidth) * renderWidth);
   const totalHeight = renderHeight + bankPadding + (padding * 2) + offsetBottom;
 
-  const xScale = scaleLinear()
+  const xScale = useMemo(() => scaleLinear()
     .domain([0, riverWidth])
-    .range([0, renderWidth]);
+    .range([0, renderWidth]), [renderWidth, riverWidth]);
 
   const yScale = useMemo(() => scaleLinear()
     .domain([minMSL, maxMSL])
@@ -98,7 +100,10 @@ const Profile: FunctionComponent<ProfileProps> = ({
   const profilePointX = (d: ProfilePoint): number => xScaleProfile(d.x);
   const profilePointY = (d: ProfilePoint): number => yScaleProfile(d.msl);
 
-  const bankLine = line<ProfilePoint>().x(profilePointX).y(profilePointY).curve(curveBasis);
+  const bankLine = line<ProfilePoint>()
+    .x(profilePointX)
+    .y(profilePointY)
+    .curve(curveBasis);
 
   const firstPoint = profile[0];
   const lastPoint = profile[profile.length - 1];
