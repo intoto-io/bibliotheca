@@ -1,23 +1,32 @@
-import { FunctionComponent, useCallback, useMemo } from 'react';
+import {
+  FunctionComponent,
+  useEffect,
+  useMemo,
+  useRef,
+} from 'react';
 import { line, curveBasis, curveLinearClosed } from 'd3-shape';
+import { scaleLinear } from 'd3-scale';
+import { axisLeft, axisBottom } from 'd3-axis';
+import { select } from 'd3-selection';
 
 import { ProfilePoint, RiverProfile } from './types';
 
 export interface ProfileProps {
   profile: RiverProfile;
+  axis?: boolean;
   bridgeLevel?: number;
   currentWaterLevel?: number;
-  strokeWidth?: number;
-  strokeColor?: string;
   groundFill?: string;
+  strokeColor?: string;
+  strokeWidth?: number;
   waterFill?: string;
+  width?: number;
 }
 
-const baseLine = line<[number, number]>(([x]) => x, ([_, y]) => y);
-const baseLineClosed = line<[number, number]>(([x]) => x, ([_, y]) => y).curve(curveLinearClosed);
-const bankLine = line<[number, number]>(([x]) => x, ([_, y]) => y).curve(curveBasis);
+const baseLine = line();
+const closedLine = line().curve(curveLinearClosed);
 
-const findHightestPoint = (items: RiverProfile): ProfilePoint => items.reduce((a, b) => {
+const findHighestPoint = (items: RiverProfile): ProfilePoint => items.reduce((a, b) => {
   if (b.msl > a.msl) {
     return b;
   }
@@ -29,11 +38,16 @@ const Profile: FunctionComponent<ProfileProps> = ({
   profile,
   currentWaterLevel,
   bridgeLevel,
+  width = 600,
+  axis = false,
   strokeColor = 'black',
   strokeWidth = 1.5,
   groundFill = '#b4967d',
   waterFill = '#99ccff',
 }) => {
+  const axisLeftRef = useRef<SVGGElement>(null);
+  const axisBottomRef = useRef<SVGGElement>(null);
+
   const bridgeSize = 0.5;
 
   const maxMSLRiver = Math.max(...profile.map((p) => p.msl));
@@ -42,83 +56,97 @@ const Profile: FunctionComponent<ProfileProps> = ({
     : maxMSLRiver;
   const minMSL = Math.min(...profile.map((p) => p.msl));
 
-  const maxWaterXL = useMemo(() => findHightestPoint(profile
+  const maxWaterXL = useMemo(() => findHighestPoint(profile
     .slice(0, Math.round(profile.length / 2))), [profile]);
-
-  const maxWaterXR = useMemo(() => findHightestPoint(profile
+  const maxWaterXR = useMemo(() => findHighestPoint(profile
     .slice(Math.round(profile.length / 2) * -1)), [profile]);
 
-  const width = Math.max(...profile.map((p) => p.x));
-  const height = maxMSL - minMSL;
+  const riverWidth = Math.max(...profile.map((p) => p.x));
+  const riverAndBridgeHeight = maxMSL - minMSL;
 
   const padding = 5;
+  const offsetLeft = axis ? 55 : 0;
+  const offsetBottom = axis ? 45 : 0;
   const bankPadding = 15;
 
-  const totalWidth = 600;
-  const renderWidth = totalWidth - (padding * 2);
-  const renderHeight = ((height / width) * renderWidth);
-  const totalHeight = renderHeight + bankPadding + (padding * 2);
+  const totalWidth = width;
+  const renderWidth = totalWidth - (padding * 2) - offsetLeft;
+  const renderHeight = ((riverAndBridgeHeight / riverWidth) * renderWidth);
+  const totalHeight = renderHeight + bankPadding + (padding * 2) + offsetBottom;
 
-  const ratio = renderWidth / width;
+  const xScale = useMemo(() => scaleLinear()
+    .domain([0, riverWidth])
+    .range([0, renderWidth]), [renderWidth, riverWidth]);
 
-  const xToX = useCallback(
-    (x: number) => padding + (x * ratio),
-    [ratio],
-  );
-  const mslToY = useCallback(
-    (msl: number) => padding + ((height - (msl - minMSL)) * ratio),
-    [height, minMSL, ratio],
-  );
+  const yScale = useMemo(() => scaleLinear()
+    .domain([minMSL, maxMSL])
+    .range([renderHeight, 0]), [maxMSL, minMSL, renderHeight]);
 
-  const points = useMemo(() => profile
-    .map((p): [number, number] => {
-      const { msl } = p;
-      const x = xToX(p.x);
-      const y = mslToY(msl);
+  useEffect(() => {
+    if (axisLeftRef.current !== null && axisBottomRef.current !== null) {
+      const leftAxis = axisLeft(yScale);
+      const bottomAxis = axisBottom(xScale);
 
-      return [x, y];
-    }), [mslToY, profile, xToX]);
+      select(axisLeftRef.current)
+        .call(leftAxis);
 
-  const closePoints: [number, number][] = useMemo(() => [
+      select(axisBottomRef.current)
+        .call(bottomAxis);
+    }
+  }, [xScale, yScale]);
+
+  const xScaleProfile = (x: number): number => xScale(x) + padding + offsetLeft;
+  const yScaleProfile = (msl: number): number => yScale(msl) + padding;
+  const profilePointX = (d: ProfilePoint): number => xScaleProfile(d.x);
+  const profilePointY = (d: ProfilePoint): number => yScaleProfile(d.msl);
+
+  const bankLine = line<ProfilePoint>()
+    .x(profilePointX)
+    .y(profilePointY)
+    .curve(curveBasis);
+
+  const firstPoint = profile[0];
+  const lastPoint = profile[profile.length - 1];
+
+  const path = bankLine(profile);
+  const closePath = baseLine([
     // right top
-    [points[points.length - 1][0], points[points.length - 1][1]],
-    // right bottom
-    [points[points.length - 1][0], renderHeight + padding + bankPadding],
-    // left bottom
-    [points[0][0], renderHeight + padding + bankPadding],
-    // left top
-    [points[0][0], points[0][1]],
-  ], [points, renderHeight]);
-
-  const path = bankLine(points);
-  const closePath = baseLine(closePoints);
+    [profilePointX(lastPoint), profilePointY(lastPoint)],
+    // bottom right
+    [profilePointX(lastPoint), yScaleProfile(minMSL) + bankPadding],
+    // bottom left
+    [profilePointX(firstPoint), yScaleProfile(minMSL) + bankPadding],
+    // top left
+    [profilePointX(firstPoint), profilePointY(firstPoint)],
+  ]);
 
   const waterLeft = typeof currentWaterLevel !== 'undefined' && currentWaterLevel > maxWaterXL.msl
-    ? xToX(profile[0].x) : xToX(maxWaterXL.x);
+    ? xScaleProfile(profile[0].x) : xScaleProfile(maxWaterXL.x);
   const waterRight = typeof currentWaterLevel !== 'undefined' && currentWaterLevel > maxWaterXR.msl
-    ? xToX(profile[profile.length - 1].x) : xToX(maxWaterXR.x);
+    ? xScaleProfile(profile[profile.length - 1].x) : xScaleProfile(maxWaterXR.x);
 
-  const waterLevelPath = baseLineClosed(
+  const waterLevelPath = closedLine(
     typeof currentWaterLevel !== 'undefined'
       ? [
-        [waterLeft, mslToY(currentWaterLevel)],
-        [waterRight, mslToY(currentWaterLevel)],
-        [waterRight, mslToY(minMSL)],
-        [waterLeft, mslToY(minMSL)],
+        [waterLeft, yScaleProfile(currentWaterLevel)],
+        [waterRight, yScaleProfile(currentWaterLevel)],
+        [waterRight, yScaleProfile(minMSL)],
+        [waterLeft, yScaleProfile(minMSL)],
       ]
       : [],
   );
-  const bridgePath = baseLineClosed(
+
+  const bridgePath = closedLine(
     typeof bridgeLevel !== 'undefined'
       ? [
         // bottom left bridge
-        [points[0][0], mslToY(bridgeLevel)],
+        [profilePointX(firstPoint), yScaleProfile(bridgeLevel)],
         // bottom right bridge
-        [points[points.length - 1][0], mslToY(bridgeLevel)],
+        [profilePointX(lastPoint), yScaleProfile(bridgeLevel)],
         // start top deck
-        [points[points.length - 1][0], mslToY(bridgeLevel + bridgeSize)],
+        [profilePointX(lastPoint), yScaleProfile(bridgeLevel + bridgeSize)],
         // end top deck
-        [points[0][0], mslToY(bridgeLevel + bridgeSize)],
+        [profilePointX(firstPoint), yScaleProfile(bridgeLevel + bridgeSize)],
       ]
       : [],
   );
@@ -161,6 +189,35 @@ const Profile: FunctionComponent<ProfileProps> = ({
         strokeWidth={strokeWidth}
         fill={groundFill}
       />
+      {axis && (
+        <>
+          <g
+            ref={axisLeftRef}
+            transform={`translate(${offsetLeft - 3}, ${padding})`}
+          />
+          <text
+            style={{ textAnchor: 'middle', transform: 'rotate(-90deg)', fontSize: '12px' }}
+            y={10 + padding}
+            x={(yScale(minMSL) / 2) * -1}
+          >
+            MSL
+          </text>
+          <g
+            ref={axisBottomRef}
+            transform={`translate(
+              ${offsetLeft + padding}, 
+              ${yScaleProfile(minMSL) + bankPadding + padding}
+            )`}
+          />
+          <text
+            style={{ textAnchor: 'middle', fontSize: '12px' }}
+            y={yScaleProfile(minMSL) + bankPadding + padding + 35}
+            x={offsetLeft + padding + (xScale(riverWidth) / 2)}
+          >
+            Width (M)
+          </text>
+        </>
+      )}
     </svg>
   );
 };
