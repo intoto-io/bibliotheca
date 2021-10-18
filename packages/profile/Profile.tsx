@@ -1,11 +1,17 @@
-import { FunctionComponent, useMemo } from 'react';
+import {
+  FunctionComponent, useEffect, useMemo, useRef,
+} from 'react';
 import { line, curveBasis, curveLinearClosed } from 'd3-shape';
 import { scaleLinear } from 'd3-scale';
+import { axisLeft } from 'd3-axis';
+import { select } from 'd3-selection';
 
 import { ProfilePoint, RiverProfile } from './types';
 
 export interface ProfileProps {
   profile: RiverProfile;
+  axis?: boolean;
+  width?: number;
   bridgeLevel?: number;
   currentWaterLevel?: number;
   strokeWidth?: number;
@@ -29,11 +35,15 @@ const Profile: FunctionComponent<ProfileProps> = ({
   profile,
   currentWaterLevel,
   bridgeLevel,
+  width = 600,
+  axis = false,
   strokeColor = 'black',
   strokeWidth = 1.5,
   groundFill = '#b4967d',
   waterFill = '#99ccff',
 }) => {
+  const axisLeftRef = useRef<SVGGElement>(null);
+
   const bridgeSize = 0.5;
 
   const maxMSLRiver = Math.max(...profile.map((p) => p.msl));
@@ -48,26 +58,36 @@ const Profile: FunctionComponent<ProfileProps> = ({
   const maxWaterXR = useMemo(() => findHightestPoint(profile
     .slice(Math.round(profile.length / 2) * -1)), [profile]);
 
-  const width = Math.max(...profile.map((p) => p.x));
-  const height = maxMSL - minMSL;
+  const riverWidth = Math.max(...profile.map((p) => p.x));
+  const riverAndBridgeHeight = maxMSL - minMSL;
 
   const padding = 5;
+  const offsetLeft = axis ? 55 : 0;
   const bankPadding = 15;
 
-  const totalWidth = 600;
-  const renderWidth = totalWidth - (padding * 2);
-  const renderHeight = ((height / width) * renderWidth);
+  const totalWidth = width;
+  const renderWidth = totalWidth - (padding * 2) - offsetLeft;
+  const renderHeight = ((riverAndBridgeHeight / riverWidth) * renderWidth);
   const totalHeight = renderHeight + bankPadding + (padding * 2);
 
   const xScale = scaleLinear()
-    .domain([0, width])
+    .domain([0, riverWidth])
     .range([0, renderWidth]);
 
-  const yScale = scaleLinear()
+  const yScale = useMemo(() => scaleLinear()
     .domain([minMSL, maxMSL])
-    .range([renderHeight, 0]);
+    .range([renderHeight, 0]), [maxMSL, minMSL, renderHeight]);
 
-  const xScaleProfile = (x: number): number => xScale(x) + padding;
+  useEffect(() => {
+    if (axisLeftRef.current !== null) {
+      const leftAxis = axisLeft(yScale);
+
+      select(axisLeftRef.current)
+        .call(leftAxis);
+    }
+  }, [yScale]);
+
+  const xScaleProfile = (x: number): number => xScale(x) + padding + offsetLeft;
   const yScaleProfile = (msl: number): number => yScale(msl) + padding;
   const profilePointX = (d: ProfilePoint): number => xScaleProfile(d.x);
   const profilePointY = (d: ProfilePoint): number => yScaleProfile(d.msl);
@@ -158,6 +178,21 @@ const Profile: FunctionComponent<ProfileProps> = ({
         strokeWidth={strokeWidth}
         fill={groundFill}
       />
+      {axis && (
+        <>
+          <g
+            ref={axisLeftRef}
+            transform={`translate(${offsetLeft - 3}, ${padding})`}
+          />
+          <text
+            style={{ textAnchor: 'middle', transform: 'rotate(-90deg)', fontSize: '12px' }}
+            y={10 + padding}
+            x={(yScale(minMSL) / 2) * -1}
+          >
+            MSL
+          </text>
+        </>
+      )}
     </svg>
   );
 };
