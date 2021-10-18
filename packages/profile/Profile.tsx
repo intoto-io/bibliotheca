@@ -1,5 +1,6 @@
-import { FunctionComponent, useCallback, useMemo } from 'react';
+import { FunctionComponent, useMemo } from 'react';
 import { line, curveBasis, curveLinearClosed } from 'd3-shape';
+import { scaleLinear } from 'd3-scale';
 
 import { ProfilePoint, RiverProfile } from './types';
 
@@ -13,9 +14,8 @@ export interface ProfileProps {
   waterFill?: string;
 }
 
-const baseLine = line<[number, number]>(([x]) => x, ([_, y]) => y);
-const baseLineClosed = line<[number, number]>(([x]) => x, ([_, y]) => y).curve(curveLinearClosed);
-const bankLine = line<[number, number]>(([x]) => x, ([_, y]) => y).curve(curveBasis);
+const baseLine = line();
+const closedLine = line().curve(curveLinearClosed);
 
 const findHightestPoint = (items: RiverProfile): ProfilePoint => items.reduce((a, b) => {
   if (b.msl > a.msl) {
@@ -59,66 +59,63 @@ const Profile: FunctionComponent<ProfileProps> = ({
   const renderHeight = ((height / width) * renderWidth);
   const totalHeight = renderHeight + bankPadding + (padding * 2);
 
-  const ratio = renderWidth / width;
+  const xScale = scaleLinear()
+    .domain([0, width])
+    .range([0, renderWidth]);
 
-  const xToX = useCallback(
-    (x: number) => padding + (x * ratio),
-    [ratio],
-  );
-  const mslToY = useCallback(
-    (msl: number) => padding + ((height - (msl - minMSL)) * ratio),
-    [height, minMSL, ratio],
-  );
+  const yScale = scaleLinear()
+    .domain([minMSL, maxMSL])
+    .range([renderHeight, 0]);
 
-  const points = useMemo(() => profile
-    .map((p): [number, number] => {
-      const { msl } = p;
-      const x = xToX(p.x);
-      const y = mslToY(msl);
+  const xScaleProfile = (x: number): number => xScale(x) + padding;
+  const yScaleProfile = (msl: number): number => yScale(msl) + padding;
+  const profilePointX = (d: ProfilePoint): number => xScaleProfile(d.x);
+  const profilePointY = (d: ProfilePoint): number => yScaleProfile(d.msl);
 
-      return [x, y];
-    }), [mslToY, profile, xToX]);
+  const bankLine = line<ProfilePoint>().x(profilePointX).y(profilePointY).curve(curveBasis);
 
-  const closePoints: [number, number][] = useMemo(() => [
+  const firstPoint = profile[0];
+  const lastPoint = profile[profile.length - 1];
+
+  const path = bankLine(profile);
+  const closePath = baseLine([
     // right top
-    [points[points.length - 1][0], points[points.length - 1][1]],
-    // right bottom
-    [points[points.length - 1][0], renderHeight + padding + bankPadding],
-    // left bottom
-    [points[0][0], renderHeight + padding + bankPadding],
-    // left top
-    [points[0][0], points[0][1]],
-  ], [points, renderHeight]);
-
-  const path = bankLine(points);
-  const closePath = baseLine(closePoints);
+    [profilePointX(lastPoint), profilePointY(lastPoint)],
+    // bottom right
+    [profilePointX(lastPoint), yScaleProfile(minMSL) + bankPadding],
+    // bottom left
+    [profilePointX(firstPoint), yScaleProfile(minMSL) + bankPadding],
+    // top left
+    [profilePointX(firstPoint), profilePointY(firstPoint)],
+  ]);
 
   const waterLeft = typeof currentWaterLevel !== 'undefined' && currentWaterLevel > maxWaterXL.msl
-    ? xToX(profile[0].x) : xToX(maxWaterXL.x);
+    ? xScaleProfile(profile[0].x) : xScaleProfile(maxWaterXL.x);
   const waterRight = typeof currentWaterLevel !== 'undefined' && currentWaterLevel > maxWaterXR.msl
-    ? xToX(profile[profile.length - 1].x) : xToX(maxWaterXR.x);
+    ? xScaleProfile(profile[profile.length - 1].x) : xScaleProfile(maxWaterXR.x);
 
-  const waterLevelPath = baseLineClosed(
+  const waterLevelPath = closedLine(
     typeof currentWaterLevel !== 'undefined'
       ? [
-        [waterLeft, mslToY(currentWaterLevel)],
-        [waterRight, mslToY(currentWaterLevel)],
-        [waterRight, mslToY(minMSL)],
-        [waterLeft, mslToY(minMSL)],
+        [waterLeft, yScaleProfile(currentWaterLevel)],
+        [waterRight, yScaleProfile(currentWaterLevel)],
+        [waterRight, yScaleProfile(minMSL)],
+        [waterLeft, yScaleProfile(minMSL)],
       ]
       : [],
   );
-  const bridgePath = baseLineClosed(
+
+  const bridgePath = closedLine(
     typeof bridgeLevel !== 'undefined'
       ? [
         // bottom left bridge
-        [points[0][0], mslToY(bridgeLevel)],
+        [profilePointX(firstPoint), yScaleProfile(bridgeLevel)],
         // bottom right bridge
-        [points[points.length - 1][0], mslToY(bridgeLevel)],
+        [profilePointX(lastPoint), yScaleProfile(bridgeLevel)],
         // start top deck
-        [points[points.length - 1][0], mslToY(bridgeLevel + bridgeSize)],
+        [profilePointX(lastPoint), yScaleProfile(bridgeLevel + bridgeSize)],
         // end top deck
-        [points[0][0], mslToY(bridgeLevel + bridgeSize)],
+        [profilePointX(firstPoint), yScaleProfile(bridgeLevel + bridgeSize)],
       ]
       : [],
   );
