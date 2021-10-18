@@ -3,7 +3,7 @@ import {
 } from 'react';
 import { line, curveBasis, curveLinearClosed } from 'd3-shape';
 import { scaleLinear } from 'd3-scale';
-import { axisLeft } from 'd3-axis';
+import { axisLeft, axisBottom } from 'd3-axis';
 import { select } from 'd3-selection';
 
 import { ProfilePoint, RiverProfile } from './types';
@@ -43,6 +43,7 @@ const Profile: FunctionComponent<ProfileProps> = ({
   waterFill = '#99ccff',
 }) => {
   const axisLeftRef = useRef<SVGGElement>(null);
+  const axisBottomRef = useRef<SVGGElement>(null);
 
   const bridgeSize = 0.5;
 
@@ -63,12 +64,13 @@ const Profile: FunctionComponent<ProfileProps> = ({
 
   const padding = 5;
   const offsetLeft = axis ? 55 : 0;
+  const offsetBottom = axis ? 45 : 0;
   const bankPadding = 15;
 
   const totalWidth = width;
   const renderWidth = totalWidth - (padding * 2) - offsetLeft;
   const renderHeight = ((riverAndBridgeHeight / riverWidth) * renderWidth);
-  const totalHeight = renderHeight + bankPadding + (padding * 2);
+  const totalHeight = renderHeight + bankPadding + (padding * 2) + offsetBottom;
 
   const xScale = scaleLinear()
     .domain([0, riverWidth])
@@ -79,13 +81,17 @@ const Profile: FunctionComponent<ProfileProps> = ({
     .range([renderHeight, 0]), [maxMSL, minMSL, renderHeight]);
 
   useEffect(() => {
-    if (axisLeftRef.current !== null) {
+    if (axisLeftRef.current !== null && axisBottomRef.current !== null) {
       const leftAxis = axisLeft(yScale);
+      const bottomAxis = axisBottom(xScale);
 
       select(axisLeftRef.current)
         .call(leftAxis);
+
+      select(axisBottomRef.current)
+        .call(bottomAxis);
     }
-  }, [yScale]);
+  }, [xScale, yScale]);
 
   const xScaleProfile = (x: number): number => xScale(x) + padding + offsetLeft;
   const yScaleProfile = (msl: number): number => yScale(msl) + padding;
@@ -190,6 +196,20 @@ const Profile: FunctionComponent<ProfileProps> = ({
             x={(yScale(minMSL) / 2) * -1}
           >
             MSL
+          </text>
+          <g
+            ref={axisBottomRef}
+            transform={`translate(
+              ${offsetLeft + padding}, 
+              ${yScaleProfile(minMSL) + bankPadding + padding}
+            )`}
+          />
+          <text
+            style={{ textAnchor: 'middle', fontSize: '12px' }}
+            y={yScaleProfile(minMSL) + bankPadding + padding + 35}
+            x={offsetLeft + padding + (xScale(riverWidth) / 2)}
+          >
+            Width (M)
           </text>
         </>
       )}
