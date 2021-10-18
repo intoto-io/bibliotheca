@@ -6,6 +6,8 @@ import {
 } from './helpers';
 import Graph from './Graph';
 import { DataPoint, GraphSeries } from './types';
+import useDimensions from './hooks/useDimensions';
+import useSeriesFacts from './hooks/useSeriesFacts';
 
 export {
   // main
@@ -16,6 +18,10 @@ export {
   isPredicted,
   createYScale,
   createXScale,
+
+  // hooks
+  useDimensions,
+  useSeriesFacts,
 };
 
 export type {
