@@ -151,13 +151,13 @@ const Graph: FunctionComponent<GraphProps> = ({
   const tooltipRef = useRef<HTMLDivElement>(null);
   const [tooltipValues, setTooltipValues] = useState<TooltipValues | undefined>();
 
-  const clearTooltip = () => {
+  const clearTooltip = useCallback(() => {
     if (onTooltipValueChange) {
       onTooltipValueChange(null);
     }
 
     setTooltipValues(undefined);
-  };
+  }, [onTooltipValueChange]);
 
   const seriesReversed = useMemo(() => [...series].reverse(), [series]);
 
@@ -240,7 +240,7 @@ const Graph: FunctionComponent<GraphProps> = ({
         ty: event.clientY + window.scrollY,
       });
     }
-  }, [onTooltipValueChange, series, tooltip, xScale]);
+  }, [clearTooltip, onTooltipValueChange, series, tooltip, xScale]);
 
   return (
     <div>
