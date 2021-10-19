@@ -105,7 +105,6 @@ type Specificity = 'daily' | 'hourly' | 'minutely';
 export interface GraphProps {
   series: GraphSeries[];
   t: UseTranslationResponse<'graph'>['t'];
-  tooltip?: boolean;
   dateWidth?: number;
   height?: number;
   stacked?: boolean;
@@ -113,6 +112,8 @@ export interface GraphProps {
   navigation?: boolean;
   lang?: 'nb' | 'en';
   locale?: Locale;
+  tooltip?: boolean;
+  onTooltipValueChange?: (value: number | null) => void;
 }
 
 interface TooltipValues {
@@ -136,6 +137,7 @@ const Graph: FunctionComponent<GraphProps> = ({
   specificity = 'daily',
   lang = 'en',
   locale = enUS,
+  onTooltipValueChange,
 }) => {
   const styles = useStyles();
   const [ref, dimensions] = useDimensions();
@@ -149,7 +151,13 @@ const Graph: FunctionComponent<GraphProps> = ({
   const tooltipRef = useRef<HTMLDivElement>(null);
   const [tooltipValues, setTooltipValues] = useState<TooltipValues | undefined>();
 
-  const clearTooltip = () => setTooltipValues(undefined);
+  const clearTooltip = useCallback(() => {
+    if (onTooltipValueChange) {
+      onTooltipValueChange(null);
+    }
+
+    setTooltipValues(undefined);
+  }, [onTooltipValueChange]);
 
   const seriesReversed = useMemo(() => [...series].reverse(), [series]);
 
@@ -221,6 +229,10 @@ const Graph: FunctionComponent<GraphProps> = ({
         }
       }
 
+      if (onTooltipValueChange && values[0]) {
+        onTooltipValueChange(values[0].value);
+      }
+
       setTooltipValues({
         ...coords,
         values,
@@ -228,7 +240,7 @@ const Graph: FunctionComponent<GraphProps> = ({
         ty: event.clientY + window.scrollY,
       });
     }
-  }, [series, tooltip, xScale]);
+  }, [clearTooltip, onTooltipValueChange, series, tooltip, xScale]);
 
   return (
     <div>
