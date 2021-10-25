@@ -1,7 +1,8 @@
 {
+  "plugins": ["jest", "react"],
   "extends": [
-    "react-app",
-    "react-app/jest",
+    "plugin:react/recommended",
+    "plugin:jest/recommended",
     "airbnb"
   ],
   "ignorePatterns": ["**/lib/*"],
