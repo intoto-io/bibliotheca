@@ -15,6 +15,8 @@ import { scaleLinear } from 'd3-scale';
 import { axisLeft, axisBottom, axisTop } from 'd3-axis';
 import { select } from 'd3-selection';
 
+import findIntersections from './helpers/findIntersections';
+
 import { ProfilePoint, RiverProfile } from './types';
 
 export interface ProfileProps {
@@ -37,7 +39,7 @@ const findHighestPoint = (items: RiverProfile): ProfilePoint => items.reduce((a,
   }
 
   return a;
-});
+}, { x: 0, msl: 0 });
 
 const Profile: FunctionComponent<ProfileProps> = ({
   profile,
@@ -61,16 +63,13 @@ const Profile: FunctionComponent<ProfileProps> = ({
     ? Math.max(maxMSLRiver, bridgeLevel + bridgeSize)
     : maxMSLRiver;
   const minMSL = Math.min(...profile.map((p) => p.msl));
-  const profileBelowWaterlevel = profile.filter((d) => d.msl < (currentWaterLevel || minMSL));
 
   const maxWaterXL = useMemo(() => findHighestPoint(profile
     .slice(0, Math.round(profile.length / 2))), [profile]);
   const maxWaterXR = useMemo(() => findHighestPoint(profile
     .slice(Math.round(profile.length / 2) * -1)), [profile]);
-  const waterXL = useMemo(() => findHighestPoint(profileBelowWaterlevel
-    .slice(0, Math.round(profileBelowWaterlevel.length / 2))), [profileBelowWaterlevel]);
-  const waterXR = useMemo(() => findHighestPoint(profileBelowWaterlevel
-    .slice(Math.round(profileBelowWaterlevel.length / 2) * -1)), [profileBelowWaterlevel]);
+
+  const intersections = findIntersections(profile, currentWaterLevel);
 
   const riverWidth = Math.max(...profile.map((p) => p.x));
   const riverAndBridgeHeight = maxMSL - minMSL;
@@ -102,11 +101,14 @@ const Profile: FunctionComponent<ProfileProps> = ({
   const profilePointX = (d: ProfilePoint): number => xScaleProfile(d.x);
   const profilePointY = (d: ProfilePoint): number => yScaleProfile(d.msl);
 
-  const xScaleWater = useMemo(() => scaleLinear()
-    .domain([0, waterXR.x - waterXL.x])
-    .range([0, xScaleProfile(waterXR.x) - xScaleProfile(waterXL.x)])
-    .nice(),
-  [waterXL.x, waterXR.x, xScaleProfile]);
+  const xScaleWater = useMemo(() => {
+    const leftX = intersections ? intersections[0].x : 0;
+    const rightX = intersections ? intersections[1].x : 0;
+
+    return scaleLinear()
+      .domain([0, rightX - leftX])
+      .range([0, xScaleProfile(rightX) - xScaleProfile(leftX)]);
+  }, [intersections, xScaleProfile]);
 
   useEffect(() => {
     if (axisLeftRef.current !== null && axisBottomRef.current !== null) {
@@ -120,13 +122,22 @@ const Profile: FunctionComponent<ProfileProps> = ({
         .call(bottomAxis);
     }
 
-    if (rulerWaterRef.current !== null) {
-      const waterAxis = axisTop(xScaleWater);
+    if (rulerWaterRef.current !== null && intersections) {
+      const maxTick = intersections[1].x - intersections[0].x;
+
+      const waterAxis = axisTop(xScaleWater)
+        .tickValues([
+          0,
+          maxTick / 4,
+          maxTick / 2,
+          maxTick / (4 / 3),
+          maxTick,
+        ]);
 
       select(rulerWaterRef.current)
         .call(waterAxis);
     }
-  }, [xScale, xScaleWater, yScale]);
+  }, [intersections, xScale, xScaleWater, yScale]);
 
   const bankLine = area<ProfilePoint>()
     .x(profilePointX)
@@ -241,21 +252,21 @@ const Profile: FunctionComponent<ProfileProps> = ({
             ref={axisBottomRef}
             transform={`translate(
               ${offsetLeft + padding}, 
-              ${yScaleProfile(minMSL) + bankPadding + padding}
+              ${yScaleProfile(minMSL) + bankPadding + padding + 3}
             )`}
           />
           <text
             style={{ textAnchor: 'middle', fontSize: '12px' }}
-            y={yScaleProfile(minMSL) + bankPadding + padding + 35}
+            y={yScaleProfile(minMSL) + bankPadding + padding + 38}
             x={offsetLeft + padding + (xScale(riverWidth) / 2)}
           >
             Width (M)
           </text>
-          {typeof currentWaterLevel !== 'undefined' && (
+          {typeof currentWaterLevel !== 'undefined' && intersections && (
             <g
               ref={rulerWaterRef}
               transform={`translate(
-                ${xScaleProfile(waterXL.x)}, 
+                ${xScaleProfile(intersections[0].x)}, 
                 ${yScaleProfile(currentWaterLevel || minMSL) - 10}
               )`}
             />
