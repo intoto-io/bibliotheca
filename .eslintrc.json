@@ -1,7 +1,8 @@
 {
-  "plugins": ["jest", "react"],
+  "plugins": ["jest", "react", "react-hooks"],
   "extends": [
     "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
     "plugin:jest/recommended",
     "airbnb"
   ],
