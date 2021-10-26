@@ -1,13 +1,21 @@
 import {
   FunctionComponent,
+  useCallback,
   useEffect,
   useMemo,
   useRef,
 } from 'react';
-import { line, curveBasis, curveLinearClosed } from 'd3-shape';
+import {
+  line,
+  area,
+  curveBasis,
+  curveLinearClosed,
+} from 'd3-shape';
 import { scaleLinear } from 'd3-scale';
-import { axisLeft, axisBottom } from 'd3-axis';
+import { axisLeft, axisBottom, axisTop } from 'd3-axis';
 import { select } from 'd3-selection';
+
+import findIntersections from './helpers/findIntersections';
 
 import { ProfilePoint, RiverProfile } from './types';
 
@@ -23,7 +31,6 @@ export interface ProfileProps {
   width?: number;
 }
 
-const baseLine = line();
 const closedLine = line().curve(curveLinearClosed);
 
 const findHighestPoint = (items: RiverProfile): ProfilePoint => items.reduce((a, b) => {
@@ -32,7 +39,7 @@ const findHighestPoint = (items: RiverProfile): ProfilePoint => items.reduce((a,
   }
 
   return a;
-});
+}, { x: 0, msl: 0 });
 
 const Profile: FunctionComponent<ProfileProps> = ({
   profile,
@@ -47,6 +54,7 @@ const Profile: FunctionComponent<ProfileProps> = ({
 }) => {
   const axisLeftRef = useRef<SVGGElement>(null);
   const axisBottomRef = useRef<SVGGElement>(null);
+  const rulerWaterRef = useRef<SVGGElement>(null);
 
   const bridgeSize = 0.5;
 
@@ -60,6 +68,8 @@ const Profile: FunctionComponent<ProfileProps> = ({
     .slice(0, Math.round(profile.length / 2))), [profile]);
   const maxWaterXR = useMemo(() => findHighestPoint(profile
     .slice(Math.round(profile.length / 2) * -1)), [profile]);
+
+  const intersections = findIntersections(profile, currentWaterLevel);
 
   const riverWidth = Math.max(...profile.map((p) => p.x));
   const riverAndBridgeHeight = maxMSL - minMSL;
@@ -80,7 +90,25 @@ const Profile: FunctionComponent<ProfileProps> = ({
 
   const yScale = useMemo(() => scaleLinear()
     .domain([minMSL, maxMSL])
-    .range([renderHeight, 0]), [maxMSL, minMSL, renderHeight]);
+    .range([renderHeight, 0]), [maxMSL, minMSL, renderHeight])
+    .nice();
+
+  const xScaleProfile = useCallback(
+    (x: number): number => xScale(x) + padding + offsetLeft,
+    [offsetLeft, xScale],
+  );
+  const yScaleProfile = (msl: number): number => yScale(msl) + padding;
+  const profilePointX = (d: ProfilePoint): number => xScaleProfile(d.x);
+  const profilePointY = (d: ProfilePoint): number => yScaleProfile(d.msl);
+
+  const xScaleWater = useMemo(() => {
+    const leftX = intersections ? intersections[0].x : 0;
+    const rightX = intersections ? intersections[1].x : 0;
+
+    return scaleLinear()
+      .domain([0, rightX - leftX])
+      .range([0, xScaleProfile(rightX) - xScaleProfile(leftX)]);
+  }, [intersections, xScaleProfile]);
 
   useEffect(() => {
     if (axisLeftRef.current !== null && axisBottomRef.current !== null) {
@@ -93,48 +121,39 @@ const Profile: FunctionComponent<ProfileProps> = ({
       select(axisBottomRef.current)
         .call(bottomAxis);
     }
-  }, [xScale, yScale]);
 
-  const xScaleProfile = (x: number): number => xScale(x) + padding + offsetLeft;
-  const yScaleProfile = (msl: number): number => yScale(msl) + padding;
-  const profilePointX = (d: ProfilePoint): number => xScaleProfile(d.x);
-  const profilePointY = (d: ProfilePoint): number => yScaleProfile(d.msl);
+    if (rulerWaterRef.current !== null && intersections) {
+      const maxTick = intersections[1].x - intersections[0].x;
 
-  const bankLine = line<ProfilePoint>()
+      const waterAxis = axisTop(xScaleWater)
+        .tickValues([
+          0,
+          maxTick / 4,
+          maxTick / 2,
+          maxTick / (4 / 3),
+          maxTick,
+        ]);
+
+      select(rulerWaterRef.current)
+        .call(waterAxis);
+    }
+  }, [intersections, xScale, xScaleWater, yScale]);
+
+  const bankLine = area<ProfilePoint>()
     .x(profilePointX)
     .y(profilePointY)
+    .y1(() => yScaleProfile(minMSL) + bankPadding)
     .curve(curveBasis);
 
   const firstPoint = profile[0];
   const lastPoint = profile[profile.length - 1];
 
-  const path = bankLine(profile);
-  const closePath = baseLine([
-    // right top
-    [profilePointX(lastPoint), profilePointY(lastPoint)],
-    // bottom right
-    [profilePointX(lastPoint), yScaleProfile(minMSL) + bankPadding],
-    // bottom left
-    [profilePointX(firstPoint), yScaleProfile(minMSL) + bankPadding],
-    // top left
-    [profilePointX(firstPoint), profilePointY(firstPoint)],
-  ]);
+  const bankPath = bankLine(profile);
 
   const waterLeft = typeof currentWaterLevel !== 'undefined' && currentWaterLevel > maxWaterXL.msl
     ? xScaleProfile(profile[0].x) : xScaleProfile(maxWaterXL.x);
   const waterRight = typeof currentWaterLevel !== 'undefined' && currentWaterLevel > maxWaterXR.msl
     ? xScaleProfile(profile[profile.length - 1].x) : xScaleProfile(maxWaterXR.x);
-
-  const waterLevelPath = closedLine(
-    typeof currentWaterLevel !== 'undefined'
-      ? [
-        [waterLeft, yScaleProfile(currentWaterLevel)],
-        [waterRight, yScaleProfile(currentWaterLevel)],
-        [waterRight, yScaleProfile(minMSL)],
-        [waterLeft, yScaleProfile(minMSL)],
-      ]
-      : [],
-  );
 
   const bridgePath = closedLine(
     typeof bridgeLevel !== 'undefined'
@@ -150,6 +169,30 @@ const Profile: FunctionComponent<ProfileProps> = ({
       ]
       : [],
   );
+
+  const maxWaterPoint = yScaleProfile(currentWaterLevel || minMSL);
+  const waterArea = area<ProfilePoint>()
+    .x((d) => {
+      const linePoint = profilePointX(d);
+
+      if (linePoint < waterLeft) {
+        return waterLeft;
+      }
+
+      if (linePoint > waterRight) {
+        return waterRight;
+      }
+
+      return linePoint;
+    })
+    .y1((d) => {
+      const linePoint = profilePointY(d);
+
+      return maxWaterPoint < linePoint ? linePoint : maxWaterPoint;
+    })
+    .y0(() => maxWaterPoint)
+    .curve(curveBasis);
+  const waterAreaPath = waterArea(profile);
 
   return (
     <svg
@@ -169,6 +212,7 @@ const Profile: FunctionComponent<ProfileProps> = ({
       </defs>
       {typeof bridgeLevel !== 'undefined' && (
         <path
+          id="bridge"
           d={[bridgePath].join(' ')}
           stroke={strokeColor}
           strokeWidth={strokeWidth}
@@ -177,14 +221,16 @@ const Profile: FunctionComponent<ProfileProps> = ({
       )}
       {typeof currentWaterLevel !== 'undefined' && (
         <path
-          d={[waterLevelPath].join(' ')}
+          id="water"
+          d={[waterAreaPath].join(' ')}
           stroke={strokeColor}
           strokeWidth={strokeWidth}
           fill="url(#waterFill)"
         />
       )}
       <path
-        d={[path, closePath].join(' ')}
+        id="ground"
+        d={[bankPath].join(' ')}
         stroke={strokeColor}
         strokeWidth={strokeWidth}
         fill={groundFill}
@@ -206,16 +252,25 @@ const Profile: FunctionComponent<ProfileProps> = ({
             ref={axisBottomRef}
             transform={`translate(
               ${offsetLeft + padding}, 
-              ${yScaleProfile(minMSL) + bankPadding + padding}
+              ${yScaleProfile(minMSL) + bankPadding + padding + 3}
             )`}
           />
           <text
             style={{ textAnchor: 'middle', fontSize: '12px' }}
-            y={yScaleProfile(minMSL) + bankPadding + padding + 35}
+            y={yScaleProfile(minMSL) + bankPadding + padding + 38}
             x={offsetLeft + padding + (xScale(riverWidth) / 2)}
           >
             Width (M)
           </text>
+          {typeof currentWaterLevel !== 'undefined' && intersections && (
+            <g
+              ref={rulerWaterRef}
+              transform={`translate(
+                ${xScaleProfile(intersections[0].x)}, 
+                ${yScaleProfile(currentWaterLevel || minMSL) - 10}
+              )`}
+            />
+          )}
         </>
       )}
     </svg>
