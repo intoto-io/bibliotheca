@@ -241,7 +241,7 @@ const Graph: FunctionComponent<GraphProps> = ({
         ty: event.clientY + window.scrollY,
       });
     }
-  }, [clearTooltip, onTooltipValueChange, series, tooltip, xScale]);
+  }, [clearTooltip, dateWidth, onTooltipValueChange, series, tooltip, xScale]);
 
   return (
     <div>
