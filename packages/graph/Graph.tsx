@@ -204,7 +204,8 @@ const Graph: FunctionComponent<GraphProps> = ({
     const coords = localPoint(event.target as Element, event);
 
     if (coords) {
-      const date = xScale.invert(coords.x);
+      const tooltipDataPositionOffset = dateWidth / 8;
+      const date = xScale.invert(coords.x + tooltipDataPositionOffset);
       const values = series.map((plot) => plot.data[bisectDate(plot.data, date)]);
 
       let xOffset = 10;
@@ -240,7 +241,7 @@ const Graph: FunctionComponent<GraphProps> = ({
         ty: event.clientY + window.scrollY,
       });
     }
-  }, [clearTooltip, onTooltipValueChange, series, tooltip, xScale]);
+  }, [clearTooltip, dateWidth, onTooltipValueChange, series, tooltip, xScale]);
 
   return (
     <div>
