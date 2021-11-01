@@ -1,4 +1,4 @@
-import { setHours } from 'date-fns';
+import { setHours, getHours } from 'date-fns';
 import { isMissing, DataPoint } from '@intoto-dev/bibliotheca-graph';
 
 import { ObservationRecord } from './types';
@@ -15,9 +15,11 @@ export function observationDataToLineData(
       max,
     } = day;
 
+    const startOffset = getHours(date);
+
     return values
       .reduceRight((points, value, index) => {
-        const hours = index * (24 / values.length);
+        const hours = (index * (24 / values.length)) + startOffset;
         const newDate = setHours(date, hours);
 
         if (value === null && now < newDate) {
