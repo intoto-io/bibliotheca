@@ -146,5 +146,73 @@ describe('observationData', () => {
         },
       ]);
     });
+
+    it('should convert an observation with offset to line data', () => {
+      const data = [
+        { date: new Date(2021, 9, 11, 3), values: [12, 12, 11, null] },
+        { date: new Date(2021, 9, 10, 2), values: [12, 12.5, 11.5, 12] },
+        { date: new Date(2021, 9, 9, 7), values: [11, null, 9, 8] },
+      ];
+
+      const output = observationDataToLineData(data, new Date(2021, 9, 11, 14, 0, 0));
+
+      expect(output).toEqual([
+        {
+          date: new Date(2021, 9, 11, 15, 0, 0),
+          value: 11,
+          missing: false,
+        },
+        {
+          date: new Date(2021, 9, 11, 9, 0, 0),
+          value: 12,
+          missing: false,
+        },
+        {
+          date: new Date(2021, 9, 11, 3, 0, 0),
+          value: 12,
+          missing: false,
+        },
+        {
+          date: new Date(2021, 9, 10, 20, 0, 0),
+          value: 12,
+          missing: false,
+        },
+        {
+          date: new Date(2021, 9, 10, 14, 0, 0),
+          value: 11.5,
+          missing: false,
+        },
+        {
+          date: new Date(2021, 9, 10, 8, 0, 0),
+          value: 12.5,
+          missing: false,
+        },
+        {
+          date: new Date(2021, 9, 10, 2, 0, 0),
+          value: 12,
+          missing: false,
+        },
+        {
+          date: new Date(2021, 9, 10, 1, 0, 0),
+          value: 8,
+          missing: false,
+        },
+        {
+          date: new Date(2021, 9, 9, 19, 0, 0),
+          value: 9,
+          missing: false,
+        },
+        {
+          date: new Date(2021, 9, 9, 13, 0, 0),
+          value: 11,
+          missing: true,
+        },
+        {
+          date: new Date(2021, 9, 9, 7, 0, 0),
+          value: 11,
+          missing: false,
+        },
+      ]);
+    });
   });
 });
