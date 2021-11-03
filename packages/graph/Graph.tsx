@@ -181,7 +181,19 @@ const Graph: FunctionComponent<GraphProps> = ({
   const labelWidth = series[0].labelWidth || defaultLabelWidth;
 
   const dateWidth = entryWidth * dataPointsPerDay;
-  const width = navigation ? dimensions.width : numberOfDays * entryWidth * dataPointsPerDay;
+
+  const width = useMemo(() => {
+    if (navigation) {
+      return dimensions.width;
+    }
+
+    if (numberOfDays > 1) {
+      return numberOfDays * entryWidth * dataPointsPerDay;
+    }
+
+    return entryWidth * dataPointsPerDay;
+  }, [dataPointsPerDay, dimensions.width, entryWidth, navigation, numberOfDays]);
+
   const totalWidth = navigation ? width - labelWidth - padding : width + padding;
   const chartTotalHeight = heightWithPadding(height);
 
@@ -205,7 +217,7 @@ const Graph: FunctionComponent<GraphProps> = ({
     const coords = localPoint(event.target as Element, event);
 
     if (coords) {
-      const tooltipDataPositionOffset = dateWidth / (dataPointsPerDay * 2);
+      const tooltipDataPositionOffset = entryWidth / 2;
       const date = xScale.invert(coords.x + tooltipDataPositionOffset);
       const values = series.map((plot) => plot.data[bisectDate(plot.data, date)]);
 
@@ -242,7 +254,7 @@ const Graph: FunctionComponent<GraphProps> = ({
         ty: event.clientY + window.scrollY,
       });
     }
-  }, [clearTooltip, dataPointsPerDay, dateWidth, onTooltipValueChange, series, tooltip, xScale]);
+  }, [clearTooltip, entryWidth, onTooltipValueChange, series, tooltip, xScale]);
 
   return (
     <div>
@@ -329,6 +341,7 @@ const Graph: FunctionComponent<GraphProps> = ({
             ref={graphContainerRef}
             onMouseMove={handleMouseOver}
             onMouseLeave={clearTooltip}
+            onScroll={clearTooltip}
           >
             {series.map((plot, index) => {
               if (!stacked && index > 0) return null;
@@ -393,7 +406,7 @@ const Graph: FunctionComponent<GraphProps> = ({
                           key={`${innerPlot.key}_${plot.key}`}
                           plot={innerPlot}
                           barWidth={typeof innerPlot.barWidth !== 'undefined'
-                            ? innerPlot.barWidth : dateWidth / dataPointsPerDay}
+                            ? innerPlot.barWidth : entryWidth}
                           barPadding={typeof innerPlot.barPadding !== 'undefined'
                             ? innerPlot.barPadding : 4}
                           xScale={xScale}
