@@ -55,7 +55,7 @@ export const SingleLineCustomDateWidth = Template.bind({});
 
 SingleLineCustomDateWidth.args = {
   series: singleLine,
-  dateWidth: 120,
+  entryWidth: 30,
 };
 
 const singleLineWithGaps = [{

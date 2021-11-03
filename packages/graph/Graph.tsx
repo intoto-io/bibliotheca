@@ -105,7 +105,7 @@ type Specificity = 'daily' | 'hourly' | 'minutely';
 export interface GraphProps {
   series: GraphSeries[];
   t: UseTranslationResponse<'graph'>['t'];
-  dateWidth?: number;
+  entryWidth?: number;
   height?: number;
   stacked?: boolean;
   specificity?: Specificity;
@@ -130,7 +130,7 @@ const Graph: FunctionComponent<GraphProps> = ({
   series,
   t,
   height = 200,
-  dateWidth = 100,
+  entryWidth = 25,
   tooltip = false,
   stacked = false,
   navigation = false,
@@ -180,7 +180,8 @@ const Graph: FunctionComponent<GraphProps> = ({
   const defaultLabelWidth = 44;
   const labelWidth = series[0].labelWidth || defaultLabelWidth;
 
-  const width = navigation ? dimensions.width : numberOfDays * dateWidth;
+  const dateWidth = entryWidth * dataPointsPerDay;
+  const width = navigation ? dimensions.width : numberOfDays * entryWidth * dataPointsPerDay;
   const totalWidth = navigation ? width - labelWidth - padding : width + padding;
   const chartTotalHeight = heightWithPadding(height);
 
@@ -204,7 +205,7 @@ const Graph: FunctionComponent<GraphProps> = ({
     const coords = localPoint(event.target as Element, event);
 
     if (coords) {
-      const tooltipDataPositionOffset = dateWidth / 8;
+      const tooltipDataPositionOffset = dateWidth / (dataPointsPerDay * 2);
       const date = xScale.invert(coords.x + tooltipDataPositionOffset);
       const values = series.map((plot) => plot.data[bisectDate(plot.data, date)]);
 
@@ -241,7 +242,7 @@ const Graph: FunctionComponent<GraphProps> = ({
         ty: event.clientY + window.scrollY,
       });
     }
-  }, [clearTooltip, dateWidth, onTooltipValueChange, series, tooltip, xScale]);
+  }, [clearTooltip, dataPointsPerDay, dateWidth, onTooltipValueChange, series, tooltip, xScale]);
 
   return (
     <div>
