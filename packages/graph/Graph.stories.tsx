@@ -5,10 +5,12 @@ import Graph, { GraphProps } from './Graph';
 import { generateDays, generateMinutes, randomLineData } from './helpers/createData';
 
 import singleLineData from './mocks/singleLine.json';
-import lineWithGapsData from './mocks/lineWithGaps.json';
 import sixtyDayHourly from './mocks/sixtyDayHourly.json';
 import extremeJumps from './mocks/extremeJumps.json';
 import { DataPoint, GraphSeries, SeriesType } from './types';
+
+const dates = generateDays(14);
+const lineWithGapsData = randomLineData(dates, true);
 
 const barType: SeriesType = 'bar';
 
@@ -23,8 +25,6 @@ const Template: Story<GraphProps> = (args) => (
     t={(key: string) => (key === 'missing' ? 'Missing data' : 'Prediction')}
   />
 );
-
-const dates = generateDays(14);
 
 function parseJSONData(data: { date: string }[]) {
   return data.map((d): DataPoint => ({
@@ -60,7 +60,7 @@ SingleLineCustomDateWidth.args = {
 
 const singleLineWithGaps = [{
   key: 'singleLineWithGaps',
-  data: parseJSONData(lineWithGapsData),
+  data: lineWithGapsData,
 }];
 
 export const SingleLineWithGaps = Template.bind({});
@@ -72,7 +72,7 @@ SingleLineWithGaps.args = {
 const twoLines: GraphSeries[] = [
   {
     key: 'lineOne',
-    data: parseJSONData(lineWithGapsData),
+    data: lineWithGapsData,
   },
   {
     key: 'lineTwo',
@@ -290,7 +290,6 @@ export const SingleLineHourly = Template.bind({});
 SingleLineHourly.args = {
   series: singleLineHourly,
   tooltip: true,
-  dateWidth: 400,
   specificity: 'hourly',
 };
 
