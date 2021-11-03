@@ -125,6 +125,23 @@ OneLineThresholdColors.args = {
   tooltip: true,
 };
 
+const oneLineStartOffset: GraphSeries[] = [
+  {
+    key: 'lineOneThreshold',
+    name: 'Temperature',
+    data: randomLineData(dates, true, -10, 10, 3),
+    unit: '°C',
+    labelWidth: 46,
+  },
+];
+
+export const OneLineStartOffset = Template.bind({});
+
+OneLineStartOffset.args = {
+  series: oneLineStartOffset,
+  tooltip: true,
+};
+
 const oneLineOneBarThresholdColors: GraphSeries[] = [
   {
     key: 'lineOne',
@@ -273,6 +290,7 @@ export const SingleLineHourly = Template.bind({});
 SingleLineHourly.args = {
   series: singleLineHourly,
   tooltip: true,
+  dateWidth: 400,
   specificity: 'hourly',
 };
 

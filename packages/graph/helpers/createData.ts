@@ -5,6 +5,7 @@ import {
   subHours,
   subMinutes,
   isAfter,
+  addHours,
 } from 'date-fns';
 
 import { DataPoint } from '../types';
@@ -72,11 +73,12 @@ export const randomLineData = (
   gaps = false,
   min = 0,
   max = 20,
+  startOffset = 0,
 ): DataPoint[] => Array.from(
   dates,
   (date): DataPoint => ({
     value: 0,
-    date,
+    date: addHours(date, startOffset),
   }),
 ).reduce((acc: DataPoint[], item, index) => {
   const predicted = isAfter(item.date, new Date());
