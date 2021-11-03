@@ -105,7 +105,7 @@ type Specificity = 'daily' | 'hourly' | 'minutely';
 export interface GraphProps {
   series: GraphSeries[];
   t: UseTranslationResponse<'graph'>['t'];
-  dateWidth?: number;
+  entryWidth?: number;
   height?: number;
   stacked?: boolean;
   specificity?: Specificity;
@@ -130,7 +130,7 @@ const Graph: FunctionComponent<GraphProps> = ({
   series,
   t,
   height = 200,
-  dateWidth = 100,
+  entryWidth = 25,
   tooltip = false,
   stacked = false,
   navigation = false,
@@ -180,7 +180,20 @@ const Graph: FunctionComponent<GraphProps> = ({
   const defaultLabelWidth = 44;
   const labelWidth = series[0].labelWidth || defaultLabelWidth;
 
-  const width = navigation ? dimensions.width : numberOfDays * dateWidth;
+  const dateWidth = entryWidth * dataPointsPerDay;
+
+  const width = useMemo(() => {
+    if (navigation) {
+      return dimensions.width;
+    }
+
+    if (numberOfDays > 1) {
+      return numberOfDays * entryWidth * dataPointsPerDay;
+    }
+
+    return entryWidth * dataPointsPerDay;
+  }, [dataPointsPerDay, dimensions.width, entryWidth, navigation, numberOfDays]);
+
   const totalWidth = navigation ? width - labelWidth - padding : width + padding;
   const chartTotalHeight = heightWithPadding(height);
 
@@ -204,7 +217,7 @@ const Graph: FunctionComponent<GraphProps> = ({
     const coords = localPoint(event.target as Element, event);
 
     if (coords) {
-      const tooltipDataPositionOffset = dateWidth / 8;
+      const tooltipDataPositionOffset = entryWidth / 2;
       const date = xScale.invert(coords.x + tooltipDataPositionOffset);
       const values = series.map((plot) => plot.data[bisectDate(plot.data, date)]);
 
@@ -241,7 +254,7 @@ const Graph: FunctionComponent<GraphProps> = ({
         ty: event.clientY + window.scrollY,
       });
     }
-  }, [clearTooltip, dateWidth, onTooltipValueChange, series, tooltip, xScale]);
+  }, [clearTooltip, entryWidth, onTooltipValueChange, series, tooltip, xScale]);
 
   return (
     <div>
@@ -328,6 +341,7 @@ const Graph: FunctionComponent<GraphProps> = ({
             ref={graphContainerRef}
             onMouseMove={handleMouseOver}
             onMouseLeave={clearTooltip}
+            onScroll={clearTooltip}
           >
             {series.map((plot, index) => {
               if (!stacked && index > 0) return null;
@@ -392,7 +406,7 @@ const Graph: FunctionComponent<GraphProps> = ({
                           key={`${innerPlot.key}_${plot.key}`}
                           plot={innerPlot}
                           barWidth={typeof innerPlot.barWidth !== 'undefined'
-                            ? innerPlot.barWidth : dateWidth / dataPointsPerDay}
+                            ? innerPlot.barWidth : entryWidth}
                           barPadding={typeof innerPlot.barPadding !== 'undefined'
                             ? innerPlot.barPadding : 4}
                           xScale={xScale}
