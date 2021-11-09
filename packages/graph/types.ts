@@ -3,6 +3,8 @@ import { CurveFactory } from 'd3-shape';
 export interface BaseDataPoint {
   value: number;
   date: Date;
+  minValue?: number;
+  maxValue?: number;
 }
 
 export interface MissingDataPoint extends BaseDataPoint {
