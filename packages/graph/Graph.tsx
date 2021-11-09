@@ -112,6 +112,7 @@ export interface GraphProps {
   navigation?: boolean;
   lang?: 'nb' | 'en';
   locale?: Locale;
+  now?: Date;
   tooltip?: boolean;
   onTooltipValueChange?: (value: number | null) => void;
 }
@@ -137,6 +138,7 @@ const Graph: FunctionComponent<GraphProps> = ({
   specificity = 'daily',
   lang = 'en',
   locale = enUS,
+  now,
   onTooltipValueChange,
 }) => {
   const styles = useStyles();
@@ -438,6 +440,17 @@ const Graph: FunctionComponent<GraphProps> = ({
                       strokeOpacity={0.8}
                       pointerEvents="none"
                       strokeDasharray="5,5"
+                    />
+                  )}
+                  {now && (
+                    <LineVisx
+                      from={{ x: xScale(now), y: padding }}
+                      to={{ x: xScale(now), y: columnsHeight + padding }}
+                      stroke="#000"
+                      strokeWidth={1}
+                      strokeOpacity={0.5}
+                      pointerEvents="none"
+                      strokeDasharray="8,8"
                     />
                   )}
                 </svg>
