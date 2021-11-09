@@ -35,6 +35,7 @@ function parseJSONData(data: { date: string }[]) {
 
 const singleLine: GraphSeries[] = [{
   key: 'singleLine',
+  name: 'Single Line',
   data: parseJSONData(singleLineData),
 }];
 
@@ -380,4 +381,12 @@ export const ExtremeCurvesGraph = Template.bind({});
 ExtremeCurvesGraph.args = {
   series: extremeJumpsGraph,
   tooltip: true,
+};
+
+export const SimpleLineWithNowLabel = Template.bind({});
+
+SimpleLineWithNowLabel.args = {
+  series: singleLine,
+  tooltip: true,
+  now: new Date('2021-04-21T12:00:00.000Z'),
 };
