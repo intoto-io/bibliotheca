@@ -34,10 +34,10 @@ const Bars: FunctionComponent<BarProps> = ({
   <Group>
     {plot.data.map((datum, i) => {
       // skip last date entry
-      if (compareAsc(datum.date, lastDate) === 0) return null;
+      if (compareAsc(new Date(datum.date), lastDate) === 0) return null;
 
       const barHeight = height - yScale(datum.value);
-      const barX = xScale(datum.date);
+      const barX = xScale(new Date(datum.date));
       const barY = height - barHeight;
 
       const color = colorByThreshold(

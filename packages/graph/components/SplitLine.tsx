@@ -47,11 +47,11 @@ const SplitLine: FunctionComponent<SplitLineProps> = ({
     missing = true,
   ) => {
     if (plot.some((p) => isMissing(p) === missing)) {
-      const from = xScale(plot[plot.length - 1].date);
+      const from = xScale(new Date(plot[plot.length - 1].date));
       const to = xScale(
         otherPlots[index - 1]
-          ? otherPlots[index - 1][otherPlots[index - 1].length - 1].date
-          : plot[0].date,
+          ? new Date(otherPlots[index - 1][otherPlots[index - 1].length - 1].date)
+          : new Date(plot[0].date),
       );
 
       return (
@@ -74,7 +74,7 @@ const SplitLine: FunctionComponent<SplitLineProps> = ({
         <Threshold
           id={keyRef}
           data={flatData}
-          x={(datum) => xScale(datum.date)}
+          x={(datum) => xScale(new Date(datum.date))}
           y0={(datum) => (isPredicted(datum) ? yScale(datum.minValue) : yScale(datum.value))}
           y1={(datum) => (isPredicted(datum) ? yScale(datum.maxValue) : yScale(datum.value))}
           curve={curve}
@@ -92,7 +92,7 @@ const SplitLine: FunctionComponent<SplitLineProps> = ({
           <LinePath
             curve={curve}
             data={flatData}
-            x={(datum) => xScale(datum.date)}
+            x={(datum) => xScale(new Date(datum.date))}
             y={(datum) => yScale(datum.value)}
             stroke={color}
             strokeWidth={1.8}
@@ -109,7 +109,7 @@ const SplitLine: FunctionComponent<SplitLineProps> = ({
         <LinePath
           curve={curve}
           data={flatData}
-          x={(datum) => xScale(datum.date)}
+          x={(datum) => xScale(new Date(datum.date))}
           y={(datum) => yScale(datum.value)}
           stroke={color}
           strokeWidth={1.8}

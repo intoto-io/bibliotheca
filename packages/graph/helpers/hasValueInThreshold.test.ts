@@ -18,10 +18,10 @@ describe('valueInThreshold', () => {
 
 describe('hasValueInThreshold', () => {
   const points: DataPoint[] = [
-    { value: 5, date: new Date(2021, 1, 1, 0, 0, 0) },
-    { value: 6, date: new Date(2021, 1, 1, 1, 0, 0) },
-    { value: 9, date: new Date(2021, 1, 1, 2, 0, 0) },
-    { value: 6, date: new Date(2021, 1, 1, 3, 0, 0) },
+    { value: 5, date: '2021-02-01T00:00:00.000Z' },
+    { value: 6, date: '2021-02-01T01:00:00.000Z' },
+    { value: 9, date: '2021-02-01T02:00:00.000Z' },
+    { value: 6, date: '2021-02-01T03:00:00.000Z' },
   ];
 
   it('should check data points for threshold', () => {

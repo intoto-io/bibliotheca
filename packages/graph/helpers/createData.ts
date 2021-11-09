@@ -78,10 +78,10 @@ export const randomLineData = (
   dates,
   (date): DataPoint => ({
     value: 0,
-    date: addHours(date, startOffset),
+    date: addHours(date, startOffset).toISOString(),
   }),
 ).reduce((acc: DataPoint[], item, index) => {
-  const predicted = isAfter(item.date, new Date());
+  const predicted = isAfter(new Date(item.date), new Date());
   const missing = index !== 0 && gaps ? Math.random() > 0.9 : false;
   const value = index === 0 ? randNumber(min, max) : rand(acc[index - 1].value, missing, min, max);
 

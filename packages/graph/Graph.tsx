@@ -125,7 +125,19 @@ interface TooltipValues {
   ty: number;
 }
 
-const bisectDate = bisector((d: DataPoint, x: Date) => compareDesc(d.date, x)).right;
+const bisectDate = bisector((d: DataPoint, x: Date) => {
+  const date = new Date(d.date);
+
+  if (date < x) {
+    return 1;
+  }
+
+  if (date > x) {
+    return -1;
+  }
+
+  return 0;
+}).right;
 
 const Graph: FunctionComponent<GraphProps> = ({
   series,
@@ -275,7 +287,7 @@ const Graph: FunctionComponent<GraphProps> = ({
               <tbody>
                 <tr key="date">
                   <td colSpan={2}>
-                    {format(tooltipValues.values[0].date, dateFormatWithTime, { locale })}
+                    {format(new Date(tooltipValues.values[0].date), dateFormatWithTime, { locale })}
                   </td>
                 </tr>
                 {series.map((plot, index) => {
