@@ -4,6 +4,7 @@ import Graph, { GraphProps } from './Graph';
 import { generateDays, generateMinutes, randomLineData } from './helpers/createData';
 
 import singleLineData from './mocks/singleLine.json';
+import singleLineTimezonedData from './mocks/singleLineTimezoned.json';
 import sixtyDayHourly from './mocks/sixtyDayHourly.json';
 import extremeJumps from './mocks/extremeJumps.json';
 import { GraphSeries, SeriesType } from './types';
@@ -381,4 +382,18 @@ SimpleLineWithNowLabel.args = {
   series: singleLine,
   tooltip: true,
   now: new Date('2021-04-21T12:00:00.000Z'),
+};
+
+const singleLineTimezoned: GraphSeries[] = [{
+  key: 'singleLineTimezoned',
+  name: 'Single Line +08:00',
+  data: singleLineTimezonedData,
+}];
+
+export const SimpleLineTimezoned = Template.bind({});
+
+SimpleLineTimezoned.args = {
+  series: singleLineTimezoned,
+  tooltip: true,
+  now: new Date('2021-04-21T02:00:00.000Z'),
 };

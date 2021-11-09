@@ -43,6 +43,7 @@ import Legend from './components/Legend';
 import useSeriesFacts from './hooks/useSeriesFacts';
 import useDimensions from './hooks/useDimensions';
 import Navigation from './components/Navigation';
+import {shiftSeriesDates} from "./helpers/dateShift";
 
 const useStyles = makeStyles(({
   container: {
@@ -140,7 +141,7 @@ const bisectDate = bisector((d: DataPoint, x: Date) => {
 }).right;
 
 const Graph: FunctionComponent<GraphProps> = ({
-  series,
+  series: rawSeries,
   t,
   height = 200,
   entryWidth = 25,
@@ -155,6 +156,7 @@ const Graph: FunctionComponent<GraphProps> = ({
 }) => {
   const styles = useStyles();
   const [ref, dimensions] = useDimensions();
+  const series = useMemo(() => shiftSeriesDates(rawSeries), [rawSeries]);
 
   useEffect(() => {
     // set the D3 locale
