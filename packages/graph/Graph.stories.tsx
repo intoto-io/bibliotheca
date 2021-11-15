@@ -1,13 +1,13 @@
 import { Story, Meta } from '@storybook/react/types-6-0';
-import { parseJSON } from 'date-fns';
 
 import Graph, { GraphProps } from './Graph';
 import { generateDays, generateMinutes, randomLineData } from './helpers/createData';
 
 import singleLineData from './mocks/singleLine.json';
+import singleLineTimezonedData from './mocks/singleLineTimezoned.json';
 import sixtyDayHourly from './mocks/sixtyDayHourly.json';
 import extremeJumps from './mocks/extremeJumps.json';
-import { DataPoint, GraphSeries, SeriesType } from './types';
+import { GraphSeries, SeriesType } from './types';
 
 const dates = generateDays(14);
 const lineWithGapsData = randomLineData(dates, true);
@@ -26,17 +26,10 @@ const Template: Story<GraphProps> = (args) => (
   />
 );
 
-function parseJSONData(data: { date: string }[]) {
-  return data.map((d): DataPoint => ({
-    ...d,
-    date: parseJSON(d.date),
-  } as DataPoint));
-}
-
 const singleLine: GraphSeries[] = [{
   key: 'singleLine',
   name: 'Single Line',
-  data: parseJSONData(singleLineData),
+  data: singleLineData,
 }];
 
 export const Default = Template.bind({});
@@ -356,7 +349,7 @@ const sixtyDaysHourlyGraph: GraphSeries[] = [{
   name: 'Temperature',
   unit: '°C',
   labelWidth: 46,
-  data: parseJSONData(sixtyDayHourly),
+  data: sixtyDayHourly,
   type: 'line',
 }];
 
@@ -372,7 +365,7 @@ const extremeJumpsGraph: GraphSeries[] = [{
   key: 'barExtreme',
   name: 'Water level',
   color: '#00F',
-  data: parseJSONData(extremeJumps),
+  data: extremeJumps,
   type: 'line',
 }];
 
@@ -389,4 +382,18 @@ SimpleLineWithNowLabel.args = {
   series: singleLine,
   tooltip: true,
   now: new Date('2021-04-21T12:00:00.000Z'),
+};
+
+const singleLineTimezoned: GraphSeries[] = [{
+  key: 'singleLineTimezoned',
+  name: 'Single Line +08:00',
+  data: singleLineTimezonedData,
+}];
+
+export const SimpleLineTimezoned = Template.bind({});
+
+SimpleLineTimezoned.args = {
+  series: singleLineTimezoned,
+  tooltip: true,
+  now: new Date('2021-04-21T02:00:00.000Z'),
 };

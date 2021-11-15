@@ -4,28 +4,35 @@ import { sortSeriesDataByDateAsc, sortSeriesDataByDateDesc } from './sortSeriesD
 
 describe('sortSeriesData', () => {
   const data: DataPoint[] = [
-    { value: 11, date: new Date(2021, 1, 1, 3, 0, 0) },
-    { value: 12, date: new Date(2021, 1, 1, 2, 0, 0), missing: true },
-    { value: 10, date: new Date(2021, 1, 1, 0, 0, 0) },
-    { value: 11, date: new Date(2021, 1, 1, 1, 0, 0) },
+    { value: 11, date: '2021-02-01T03:00:00.000Z' },
+    { value: 12, date: '2021-02-01T02:00:00.000Z', missing: true },
+    { value: 10, date: '2021-02-01T00:00:00.000Z' },
+    { value: 11, date: '2021-02-01T01:00:00.000Z' },
   ];
 
   describe('sortSeriesDataAsc', () => {
     it('should sort data from old to new', () => {
       expect(sortSeriesDataByDateAsc(data)).toEqual([
-        { value: 10, date: new Date(2021, 1, 1, 0, 0, 0) },
-        { value: 11, date: new Date(2021, 1, 1, 1, 0, 0) },
-        { value: 12, date: new Date(2021, 1, 1, 2, 0, 0), missing: true },
-        { value: 11, date: new Date(2021, 1, 1, 3, 0, 0) },
+        { value: 10, date: '2021-02-01T00:00:00.000Z' },
+        { value: 11, date: '2021-02-01T01:00:00.000Z' },
+        { value: 12, date: '2021-02-01T02:00:00.000Z', missing: true },
+        { value: 11, date: '2021-02-01T03:00:00.000Z' },
       ]);
     });
 
     it('should leave correct sorting intact', () => {
-      expect(sortSeriesDataByDateAsc(data)).toEqual([
-        { value: 10, date: new Date(2021, 1, 1, 0, 0, 0) },
-        { value: 11, date: new Date(2021, 1, 1, 1, 0, 0) },
-        { value: 12, date: new Date(2021, 1, 1, 2, 0, 0), missing: true },
-        { value: 11, date: new Date(2021, 1, 1, 3, 0, 0) },
+      const sortedData = [
+        { value: 10, date: '2021-02-01T00:00:00.000Z' },
+        { value: 11, date: '2021-02-01T01:00:00.000Z' },
+        { value: 12, date: '2021-02-01T02:00:00.000Z', missing: true },
+        { value: 11, date: '2021-02-01T03:00:00.000Z' },
+      ];
+
+      expect(sortSeriesDataByDateAsc(sortedData)).toEqual([
+        { value: 10, date: '2021-02-01T00:00:00.000Z' },
+        { value: 11, date: '2021-02-01T01:00:00.000Z' },
+        { value: 12, date: '2021-02-01T02:00:00.000Z', missing: true },
+        { value: 11, date: '2021-02-01T03:00:00.000Z' },
       ]);
     });
   });
@@ -33,19 +40,26 @@ describe('sortSeriesData', () => {
   describe('sortSeriesDataDesc', () => {
     it('should sort data from new to old', () => {
       expect(sortSeriesDataByDateDesc(data)).toEqual([
-        { value: 11, date: new Date(2021, 1, 1, 3, 0, 0) },
-        { value: 12, date: new Date(2021, 1, 1, 2, 0, 0), missing: true },
-        { value: 11, date: new Date(2021, 1, 1, 1, 0, 0) },
-        { value: 10, date: new Date(2021, 1, 1, 0, 0, 0) },
+        { value: 11, date: '2021-02-01T03:00:00.000Z' },
+        { value: 12, date: '2021-02-01T02:00:00.000Z', missing: true },
+        { value: 11, date: '2021-02-01T01:00:00.000Z' },
+        { value: 10, date: '2021-02-01T00:00:00.000Z' },
       ]);
     });
 
     it('should leave correct sorting intact', () => {
-      expect(sortSeriesDataByDateDesc(data)).toEqual([
-        { value: 11, date: new Date(2021, 1, 1, 3, 0, 0) },
-        { value: 12, date: new Date(2021, 1, 1, 2, 0, 0), missing: true },
-        { value: 11, date: new Date(2021, 1, 1, 1, 0, 0) },
-        { value: 10, date: new Date(2021, 1, 1, 0, 0, 0) },
+      const sortedData = [
+        { value: 11, date: '2021-02-01T03:00:00.000Z' },
+        { value: 12, date: '2021-02-01T02:00:00.000Z', missing: true },
+        { value: 11, date: '2021-02-01T01:00:00.000Z' },
+        { value: 10, date: '2021-02-01T00:00:00.000Z' },
+      ];
+
+      expect(sortSeriesDataByDateDesc(sortedData)).toEqual([
+        { value: 11, date: '2021-02-01T03:00:00.000Z' },
+        { value: 12, date: '2021-02-01T02:00:00.000Z', missing: true },
+        { value: 11, date: '2021-02-01T01:00:00.000Z' },
+        { value: 10, date: '2021-02-01T00:00:00.000Z' },
       ]);
     });
   });

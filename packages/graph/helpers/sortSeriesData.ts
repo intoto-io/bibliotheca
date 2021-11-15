@@ -3,7 +3,13 @@ import { compareAsc, compareDesc } from 'date-fns';
 import { DataPoint } from '../types';
 
 function sortSeriesDataByDate(data: DataPoint[], direction: 'asc' | 'desc'): DataPoint[] {
-  return data.sort((a, b) => (direction === 'asc' ? compareAsc : compareDesc)(a.date, b.date));
+  return data
+    .sort(
+      (a, b) => (direction === 'asc' ? compareAsc : compareDesc)(
+        new Date(a.date),
+        new Date(b.date),
+      ),
+    );
 }
 
 export const sortSeriesDataByDateAsc = (

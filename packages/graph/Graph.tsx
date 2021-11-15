@@ -34,6 +34,7 @@ import locales from './helpers/locales';
 import { valueInThreshold } from './helpers/hasValueInThreshold';
 import { isMissing } from './helpers/dataPoint';
 import { createXScale, createYScale } from './helpers/createScales';
+import { shiftSeriesDates } from './helpers/dateShift';
 import { DataPoint, GraphSeries } from './types';
 
 import AxisLeft from './components/AxisLeft';
@@ -125,10 +126,22 @@ interface TooltipValues {
   ty: number;
 }
 
-const bisectDate = bisector((d: DataPoint, x: Date) => compareDesc(d.date, x)).right;
+const bisectDate = bisector((d: DataPoint, x: Date) => {
+  const date = new Date(d.date);
+
+  if (date < x) {
+    return 1;
+  }
+
+  if (date > x) {
+    return -1;
+  }
+
+  return 0;
+}).right;
 
 const Graph: FunctionComponent<GraphProps> = ({
-  series,
+  series: rawSeries,
   t,
   height = 200,
   entryWidth = 25,
@@ -143,6 +156,7 @@ const Graph: FunctionComponent<GraphProps> = ({
 }) => {
   const styles = useStyles();
   const [ref, dimensions] = useDimensions();
+  const series = useMemo(() => shiftSeriesDates(rawSeries), [rawSeries]);
 
   useEffect(() => {
     // set the D3 locale
@@ -275,7 +289,7 @@ const Graph: FunctionComponent<GraphProps> = ({
               <tbody>
                 <tr key="date">
                   <td colSpan={2}>
-                    {format(tooltipValues.values[0].date, dateFormatWithTime, { locale })}
+                    {format(new Date(tooltipValues.values[0].date), dateFormatWithTime, { locale })}
                   </td>
                 </tr>
                 {series.map((plot, index) => {

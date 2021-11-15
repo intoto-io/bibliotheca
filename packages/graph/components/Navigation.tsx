@@ -132,7 +132,7 @@ const Navigation: FunctionComponent<NavigationProps> = ({
           key={plot.key}
           curve={curveBasis}
           data={plot.data}
-          x={(datum) => xScale(datum.date)}
+          x={(datum) => xScale(new Date(datum.date))}
           y={(datum) => yScales[index](datum.value)}
           stroke="#666"
           strokeWidth={1}

@@ -17,7 +17,7 @@ function useSeriesFacts(series: GraphSeries[]): UseSeriesFacts {
         ...acc,
         ...plot.data
           // get all dates from data series
-          .map((datum) => datum.date)
+          .map((datum) => new Date(datum.date))
           // filter out the duplicates
           .filter((date) => isUniqueDate(date, acc)),
       ],
@@ -29,7 +29,7 @@ function useSeriesFacts(series: GraphSeries[]): UseSeriesFacts {
   const dataPointsPerDay = series.reduce((maxFromPlot, plot) => {
     const dateCounts: Record<string, number> = plot.data
       .reduce((plotAcc: Record<string, number>, datum) => {
-        const s = startOfDay(datum.date).toISOString();
+        const s = startOfDay(new Date(datum.date)).toISOString();
 
         return {
           ...plotAcc,

@@ -2,7 +2,7 @@ import { CurveFactory } from 'd3-shape';
 
 export interface BaseDataPoint {
   value: number;
-  date: Date;
+  date: string;
   minValue?: number;
   maxValue?: number;
 }
