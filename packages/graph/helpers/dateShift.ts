@@ -1,7 +1,8 @@
-import { GraphSeries } from '../types';
-import { addHours, addMinutes, subMinutes } from 'date-fns';
+import { addMinutes, subMinutes } from 'date-fns';
 
-const match = /Z$|([+\-])[0-2][0-9]:[0-5][0-9]$/;
+import { GraphSeries } from '../types';
+
+const match = /Z$|([+-])[0-2][0-9]:[0-5][0-9]$/;
 
 export function getTimezoneOffset(date: string): number {
   const matches = date.match(match);
