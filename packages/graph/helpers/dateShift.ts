@@ -19,23 +19,27 @@ export function getTimezoneOffset(date: string): number {
   return ((hours * 60) + minutes) * (isPositive ? -1 : 1);
 }
 
+export function shiftDate(date: string): string {
+  const offset = getTimezoneOffset(date);
+
+  if (offset === 0) {
+    return date;
+  }
+
+  const localOffset = new Date(date).getTimezoneOffset();
+
+  return addMinutes(subMinutes(new Date(date), offset), localOffset).toISOString();
+}
+
 export function shiftSeriesDates(series: GraphSeries[]): GraphSeries[] {
   return series.map((s) => {
     const { data } = s;
-
-    const dateLocal = new Date(data[0].date);
-    const localOffset = dateLocal.getTimezoneOffset();
-    const offset = getTimezoneOffset(data[0].date);
-
-    if (offset === 0) {
-      return s;
-    }
 
     return {
       ...s,
       data: data.map((d) => ({
         ...d,
-        date: addMinutes(subMinutes(new Date(d.date), offset), localOffset).toISOString(),
+        date: shiftDate(d.date),
       })),
     };
   });

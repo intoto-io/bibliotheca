@@ -3,6 +3,7 @@ import {
   isPredicted,
   createYScale,
   createXScale,
+  shiftDate,
 } from './helpers';
 import Graph from './Graph';
 import { DataPoint, GraphSeries } from './types';
@@ -18,6 +19,7 @@ export {
   isPredicted,
   createYScale,
   createXScale,
+  shiftDate,
 
   // hooks
   useDimensions,
