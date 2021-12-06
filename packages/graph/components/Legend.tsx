@@ -68,13 +68,13 @@ interface LegendProps {
   };
 }
 
-const Legend: FunctionComponent<LegendProps> = ({
+const Legend: FunctionComponent<LegendProps> = function Legend({
   stacked,
   series,
   graphHeight,
   heightWithPadding,
   translations,
-}) => {
+}) {
   const styles = useStyles();
 
   const showLegend = series.every((plot) => !!plot.name);

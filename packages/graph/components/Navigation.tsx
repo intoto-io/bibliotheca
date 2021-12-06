@@ -32,7 +32,7 @@ interface NavigationProps {
   paddingRight?: number;
 }
 
-const Navigation: FunctionComponent<NavigationProps> = ({
+const Navigation: FunctionComponent<NavigationProps> = function Navigation({
   width,
   dates,
   series,
@@ -40,7 +40,7 @@ const Navigation: FunctionComponent<NavigationProps> = ({
   setRange,
   paddingLeft = 0,
   paddingRight = 0,
-}) => {
+}) {
   const styles = useStyles({ paddingLeft });
   const brushRef = useRef<BaseBrush | null>(null);
   const skipChange = useRef(false);

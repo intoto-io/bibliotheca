@@ -7,7 +7,7 @@ import Player from '../Player/Player';
 import mock from './mocks/singleLine.json';
 import profile from './mocks/amotbrua_profile.json';
 
-const HistoricPlayer: FunctionComponent = () => {
+const HistoricPlayer: FunctionComponent = function HistoricPlayer() {
   const [waterLevel, setWaterLevel] = useState<number | null>(null);
   const [now, setNow] = useState<string>('2021-04-21T16:00:00.000Z');
 

@@ -19,14 +19,14 @@ interface SplitLineProps {
   curve?: CurveFactory;
 }
 
-const SplitLine: FunctionComponent<SplitLineProps> = ({
+const SplitLine: FunctionComponent<SplitLineProps> = function SplitLine({
   keyRef,
   color,
   seriesData,
   xScale,
   yScale,
   curve = curveNatural,
-}) => {
+}) {
   const flatData = useMemo(
     () => seriesData
       .reduce((acc: DataPoint[], plot: DataPoint[]): DataPoint[] => [...acc, ...plot], []),

@@ -21,7 +21,7 @@ interface BarProps {
   barPadding?: number;
 }
 
-const Bars: FunctionComponent<BarProps> = ({
+const Bars: FunctionComponent<BarProps> = function Bars({
   plot,
   xScale,
   yScale,
@@ -30,56 +30,57 @@ const Bars: FunctionComponent<BarProps> = ({
   height = 200,
   barWidth = 14,
   barPadding = 0,
-}) => (
-  <Group>
-    {plot.data.map((datum, i) => {
-      // skip last date entry
-      if (compareAsc(new Date(datum.date), lastDate) === 0) return null;
+}) {
+  return (
+    <Group>
+      {plot.data.map((datum, i) => {
+        // skip last date entry
+        if (compareAsc(new Date(datum.date), lastDate) === 0) return null;
 
-      const barHeight = height - yScale(datum.value);
-      const barX = xScale(new Date(datum.date));
-      const barY = height - barHeight;
+        const barHeight = height - yScale(datum.value);
+        const barX = xScale(new Date(datum.date));
+        const barY = height - barHeight;
 
-      const color = colorByThreshold(
-        datum.value,
-        plot.threshold,
-        plot.thresholdColor,
-        plot.thresholdDirection,
-        plot.color || colorByIndex(index),
-      );
+        const color = colorByThreshold(
+          datum.value,
+          plot.threshold,
+          plot.thresholdColor,
+          plot.thresholdDirection,
+          plot.color || colorByIndex(index),
+        );
 
-      const x = barX + (barPadding ? barPadding / 2 : 0);
-      const predictionWidth = 3;
-      const predictionX = (barWidth / 2) + x - (predictionWidth / 2);
+        const x = barX + (barPadding ? barPadding / 2 : 0);
+        const predictionWidth = 3;
+        const predictionX = (barWidth / 2) + x - (predictionWidth / 2);
 
-      const barOpacity = (): number => {
-        if (isMissing(datum)) {
-          return 0.3;
-        }
+        const barOpacity = (): number => {
+          if (isMissing(datum)) {
+            return 0.3;
+          }
 
-        if (isPredicted(datum)) {
-          return 0.6;
-        }
+          if (isPredicted(datum)) {
+            return 0.6;
+          }
 
-        if (typeof plot.barOpacity !== 'undefined') {
-          return plot.barOpacity;
-        }
+          if (typeof plot.barOpacity !== 'undefined') {
+            return plot.barOpacity;
+          }
 
-        return 1;
-      };
+          return 1;
+        };
 
-      return (
+        return (
         // eslint-disable-next-line react/no-array-index-key
-        <Fragment key={`${plot.key}_${i}`}>
-          <Bar
-            x={x}
-            y={barY}
-            width={barWidth - barPadding}
-            height={barHeight}
-            fill={color}
-            fillOpacity={barOpacity()}
-          />
-          {isPredicted(datum) && (
+          <Fragment key={`${plot.key}_${i}`}>
+            <Bar
+              x={x}
+              y={barY}
+              width={barWidth - barPadding}
+              height={barHeight}
+              fill={color}
+              fillOpacity={barOpacity()}
+            />
+            {isPredicted(datum) && (
             <>
               <LineVisx
                 from={{ x: predictionX, y: yScale(datum.minValue) }}
@@ -106,11 +107,12 @@ const Bars: FunctionComponent<BarProps> = ({
                 pointerEvents="none"
               />
             </>
-          )}
-        </Fragment>
-      );
-    })}
-  </Group>
-);
+            )}
+          </Fragment>
+        );
+      })}
+    </Group>
+  );
+};
 
 export default Bars;
