@@ -4,7 +4,7 @@
   "description": "Component library for water data visualisation. By Intoto",
   "engines": {
     "node": "^16.5.0",
-    "npm": "^8.1.2"
+    "npm": "^7.19.1"
   },
   "private": true,
   "scripts": {
