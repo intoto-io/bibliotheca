@@ -7,7 +7,9 @@ export default {
   component: InfoTooltip,
 } as Meta;
 
-const Template: Story<InfoTooltipProps> = (args) => <InfoTooltip {...args} />;
+const Template: Story<InfoTooltipProps> = function Template(args) {
+  return <InfoTooltip {...args} />;
+};
 
 export const Default = Template.bind({});
 

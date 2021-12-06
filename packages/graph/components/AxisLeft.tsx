@@ -13,12 +13,12 @@ interface AxisLeftProps {
   defaultLabelWidth: number;
 }
 
-const AxisLeft: FunctionComponent<AxisLeftProps> = ({
+const AxisLeft: FunctionComponent<AxisLeftProps> = function AxisLeft({
   plot,
   height,
   yScale,
   defaultLabelWidth,
-}) => {
+}) {
   const tickHeight = 30;
 
   return (

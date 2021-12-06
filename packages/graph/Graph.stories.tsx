@@ -19,12 +19,14 @@ export default {
   component: Graph,
 } as Meta;
 
-const Template: Story<GraphProps> = (args) => (
-  <Graph
-    {...args}
-    t={(key: string) => (key === 'missing' ? 'Missing data' : 'Prediction')}
-  />
-);
+const Template: Story<GraphProps> = function Template(args) {
+  return (
+    <Graph
+      {...args}
+      t={(key: string) => (key === 'missing' ? 'Missing data' : 'Prediction')}
+    />
+  );
+};
 
 const singleLine: GraphSeries[] = [{
   key: 'singleLine',

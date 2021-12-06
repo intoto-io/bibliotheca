@@ -7,15 +7,14 @@ export default {
   component: Player,
 } as Meta;
 
-const Template: Story<PlayerProps> = (args) => (
-  <div style={{ marginTop: '2em' }}>
-    <Player {...args} />
-  </div>
-);
+const Template: Story<PlayerProps> = function Template(args) {
+  return (
+    <div style={{ marginTop: '2em' }}>
+      <Player {...args} />
+    </div>
+  );
+};
 
 export const Default = Template.bind({});
 
-Default.args = {
-  start: new Date(2021, 5, 16, 16, 0, 0),
-  finish: new Date(2021, 6, 16, 16, 0, 0),
-};
+Default.args = {};

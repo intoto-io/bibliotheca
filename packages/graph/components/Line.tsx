@@ -18,13 +18,13 @@ interface LineProps {
   index?: number;
 }
 
-const Line: FunctionComponent<LineProps> = ({
+const Line: FunctionComponent<LineProps> = function Line({
   keyRef,
   plot,
   xScale,
   yScale,
   index = 0,
-}) => {
+}) {
   const seriesData = separateSeriesDataOnMissing(plot.data);
 
   const color = plot.color || colorByIndex(index);

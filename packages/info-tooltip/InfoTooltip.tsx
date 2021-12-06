@@ -17,7 +17,7 @@ export interface InfoTooltipProps {
   text: string;
 }
 
-const InfoTooltip: FunctionComponent<InfoTooltipProps> = ({ text }) => {
+const InfoTooltip: FunctionComponent<InfoTooltipProps> = function InfoTooltip({ text }) {
   const styles = useStyles();
 
   return (

@@ -12,12 +12,12 @@ export interface PlayerProps {
   onUpdateDate?: (date: string) => void;
 }
 
-const Player: FunctionComponent<PlayerProps> = ({
+const Player: FunctionComponent<PlayerProps> = function Player({
   dates,
   currentDate = dates[0],
   autoplay = false,
   onUpdateDate,
-}) => {
+}) {
   const datesSorted = useMemo(
     () => dates.sort((a, b) => new Date(a).getTime() - new Date(b).getTime()),
     [dates],

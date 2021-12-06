@@ -140,7 +140,7 @@ const bisectDate = bisector((d: DataPoint, x: Date) => {
   return 0;
 }).right;
 
-const Graph: FunctionComponent<GraphProps> = ({
+const Graph: FunctionComponent<GraphProps> = function Graph({
   series: rawSeries,
   t,
   height = 200,
@@ -153,7 +153,7 @@ const Graph: FunctionComponent<GraphProps> = ({
   locale = enUS,
   now,
   onTooltipValueChange,
-}) => {
+}) {
   const styles = useStyles();
   const [ref, dimensions] = useDimensions();
   const series = useMemo(() => shiftSeriesDates(rawSeries), [rawSeries]);

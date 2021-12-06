@@ -7,8 +7,8 @@ export default {
   component: HistoricPlayer,
 } as Meta;
 
-const Template: Story = (args) => (
-  <HistoricPlayer {...args} />
-);
+const Template: Story = function Template(args) {
+  return <HistoricPlayer {...args} />;
+};
 
 export const Default = Template.bind({});

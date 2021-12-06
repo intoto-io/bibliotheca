@@ -41,7 +41,7 @@ const findHighestPoint = (items: RiverProfile): ProfilePoint => items.reduce((a,
   return a;
 }, { x: 0, msl: 0 });
 
-const Profile: FunctionComponent<ProfileProps> = ({
+const Profile: FunctionComponent<ProfileProps> = function Profile({
   profile,
   currentWaterLevel,
   bridgeLevel,
@@ -51,7 +51,7 @@ const Profile: FunctionComponent<ProfileProps> = ({
   strokeWidth = 1.5,
   groundFill = '#b4967d',
   waterFill = '#99ccff',
-}) => {
+}) {
   const axisLeftRef = useRef<SVGGElement>(null);
   const axisBottomRef = useRef<SVGGElement>(null);
   const rulerWaterRef = useRef<SVGGElement>(null);

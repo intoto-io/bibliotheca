@@ -10,11 +10,13 @@ export default {
   component: Profile,
 } as Meta;
 
-const Template: Story<ProfileProps> = (args) => (
-  <Profile
-    {...args}
-  />
-);
+const Template: Story<ProfileProps> = function Template(args) {
+  return (
+    <Profile
+      {...args}
+    />
+  );
+};
 
 export const Default = Template.bind({});
 
