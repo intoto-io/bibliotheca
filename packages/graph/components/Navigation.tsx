@@ -11,7 +11,8 @@ import { Brush } from '@visx/brush';
 import BaseBrush, { UpdateBrush, BaseBrushState } from '@visx/brush/lib/BaseBrush';
 import { Bounds } from '@visx/brush/lib/types';
 
-import { makeStyles, Theme } from '@material-ui/core/styles';
+import { Theme } from '@mui/material/styles';
+import makeStyles from '@mui/styles/makeStyles';
 
 import { createXScale, createYScale } from '../helpers/createScales';
 import { GraphSeries } from '../types';

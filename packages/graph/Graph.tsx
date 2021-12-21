@@ -20,7 +20,7 @@ import { bisector } from 'd3-array';
 import { timeFormatDefaultLocale } from 'd3-time-format';
 import { UseTranslationResponse } from 'react-i18next';
 
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 
 import { Line as LineVisx } from '@visx/shape';
 import { AxisRight, AxisTop } from '@visx/axis';

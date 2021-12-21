@@ -1,4 +1,3 @@
-import { addDecorator } from '@storybook/react';
 import { ThemeProvider } from '@mui/material/styles';
 import { ThemeProvider as Emotion10ThemeProvider } from 'emotion-theming';
 
@@ -14,7 +13,7 @@ const withThemeProvider = (Story, context) => {
   );
 };
 
-addDecorator(withThemeProvider);
+export const decorators = [withThemeProvider];
 
 export const parameters = {
   actions: { argTypesRegex: "^on[A-Z].*" },

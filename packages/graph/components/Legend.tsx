@@ -1,7 +1,7 @@
 import { FunctionComponent } from 'react';
 import classNames from 'classnames';
 
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 
 import { isMissing, isPredicted } from '../helpers/dataPoint';
 import hasValueInThreshold from '../helpers/hasValueInThreshold';
