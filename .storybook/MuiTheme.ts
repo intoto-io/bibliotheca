@@ -1,10 +1,16 @@
-import { createTheme } from '@material-ui/core/styles';
-import amber from '@material-ui/core/colors/amber';
+import { createTheme, Theme } from '@mui/material/styles';
+import { amber } from '@mui/material/colors';
+
+// @ts-ignore
+declare module '@mui/styles/defaultTheme' {
+  // eslint-disable-next-line @typescript-eslint/no-empty-interface
+  interface DefaultTheme extends Theme {}
+}
 
 const font = `-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
   'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif`;
 
-const MuiTheme = createTheme({
+const T = createTheme({
   palette: {
     primary: { main: '#06f' },
     secondary: amber,
@@ -24,24 +30,19 @@ const MuiTheme = createTheme({
       textTransform: 'none',
     },
   },
-  overrides: {
+  components: {
     MuiToolbar: {
-      regular: {
-        height: '64px',
-        minHeight: '64px',
-        '@media (min-width: 600px)': {
+      styleOverrides: {
+        regular: {
+          height: '64px',
           minHeight: '64px',
+          '@media (min-width: 600px)': {
+            minHeight: '64px',
+          },
         },
-      },
-    },
-  },
-  props: {
-    MuiTypography: {
-      variantMapping: {
-        subtitle1: 'h2',
       },
     },
   },
 });
 
-export default MuiTheme;
+export default T;
