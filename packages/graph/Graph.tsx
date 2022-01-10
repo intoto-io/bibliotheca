@@ -8,6 +8,7 @@ import {
   useEffect,
 } from 'react';
 import classNames from 'classnames';
+import { styled } from '@mui/material/styles';
 /* eslint-disable import/no-duplicates */ // needed to prevent eslint bug
 import {
   format,
@@ -19,8 +20,6 @@ import { enUS } from 'date-fns/locale';
 import { bisector } from 'd3-array';
 import { timeFormatDefaultLocale } from 'd3-time-format';
 import { UseTranslationResponse } from 'react-i18next';
-
-import makeStyles from '@mui/styles/makeStyles';
 
 import { Line as LineVisx } from '@visx/shape';
 import { AxisRight, AxisTop } from '@visx/axis';
@@ -45,42 +44,57 @@ import useSeriesFacts from './hooks/useSeriesFacts';
 import useDimensions from './hooks/useDimensions';
 import Navigation from './components/Navigation';
 
-const useStyles = makeStyles(({
-  container: {
+const PREFIX = 'Graph';
+
+const classes = {
+  container: `${PREFIX}-container`,
+  yAxis: `${PREFIX}-yAxis`,
+  yAxisRight: `${PREFIX}-yAxisRight`,
+  graphContainer: `${PREFIX}-graphContainer`,
+  graphContainerNavigation: `${PREFIX}-graphContainerNavigation`,
+  graphLegendContainer: `${PREFIX}-graphLegendContainer`,
+  graph: `${PREFIX}-graph`,
+  legend: `${PREFIX}-legend`,
+  tooltip: `${PREFIX}-tooltip`,
+  tooltipCell: `${PREFIX}-tooltipCell`,
+};
+
+const Root = styled('div')({
+  [`& .${classes.container}`]: {
     display: 'flex',
   },
-  yAxis: {
+  [`& .${classes.yAxis}`]: {
     flexShrink: 0,
     flexGrow: 0,
     textAlign: 'right',
     display: 'flex',
     flexDirection: 'column',
   },
-  yAxisRight: {
+  [`& .${classes.yAxisRight}`]: {
     flexShrink: 0,
     flexGrow: 0,
     textAlign: 'right',
   },
-  graphContainer: {
+  [`& .${classes.graphContainer}`]: {
     overflowX: 'scroll',
     direction: 'rtl',
     position: 'absolute',
     maxWidth: '100%',
     zIndex: 2,
   },
-  graphContainerNavigation: {
+  [`& .${classes.graphContainerNavigation}`]: {
     overflow: 'visible',
   },
-  graphLegendContainer: {
+  [`& .${classes.graphLegendContainer}`]: {
     flexShrink: 1,
     flexGrow: 1,
     position: 'relative',
   },
-  graph: {
+  [`& .${classes.graph}`]: {
     direction: 'ltr',
     display: 'block',
   },
-  legend: {
+  [`& .${classes.legend}`]: {
     display: 'flex',
     position: 'absolute',
     direction: 'ltr',
@@ -90,16 +104,16 @@ const useStyles = makeStyles(({
     alignItems: 'flex-end',
     zIndex: 1,
   },
-  tooltip: {
+  [`& .${classes.tooltip}`]: {
     position: 'absolute',
     transform: 'translateY(-50%)',
     fontSize: '0.6em',
     zIndex: 10,
   },
-  tooltipCell: {
+  [`& .${classes.tooltipCell}`]: {
     whiteSpace: 'nowrap',
   },
-}));
+});
 
 type Specificity = 'daily' | 'hourly' | 'minutely';
 
@@ -154,7 +168,6 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
   now,
   onTooltipValueChange,
 }) {
-  const styles = useStyles();
   const [ref, dimensions] = useDimensions();
   const series = useMemo(() => shiftSeriesDates(rawSeries), [rawSeries]);
 
@@ -273,12 +286,12 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
   }, [clearTooltip, entryWidth, onTooltipValueChange, series, tooltip, xScale]);
 
   return (
-    <div>
-      <div className={styles.container} ref={ref}>
+    <Root>
+      <div className={classes.container} ref={ref}>
         {tooltipValues && tooltipValues?.values && tooltipValues.values[0] && (
           <div
             ref={tooltipRef}
-            className={classNames(styles.tooltip, 'GraphTooltip')}
+            className={classNames(classes.tooltip, 'GraphTooltip')}
             style={{
               ...defaultStyles,
               top: tooltipValues.ty,
@@ -306,13 +319,13 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
                   return (
                     <tr key={plot.key}>
                       <td
-                        className={styles.tooltipCell}
+                        className={classes.tooltipCell}
                         style={{ color }}
                       >
                         {`${plot.name}:`}
                       </td>
                       <td
-                        className={styles.tooltipCell}
+                        className={classes.tooltipCell}
                         style={{ color }}
                       >
                         {isMissing(tooltipValues.values[index])
@@ -326,7 +339,7 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
             </table>
           </div>
         )}
-        <div className={styles.yAxis}>
+        <div className={classes.yAxis}>
           {series.map((plot, index) => {
             if (index > 0 && !stacked) return null;
 
@@ -345,12 +358,12 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
             );
           })}
         </div>
-        <div className={styles.graphLegendContainer}>
+        <div className={classes.graphLegendContainer}>
           <div
             className={
               classNames(
-                styles.graphContainer,
-                { [styles.graphContainerNavigation]: navigation },
+                classes.graphContainer,
+                { [classes.graphContainerNavigation]: navigation },
                 'GraphContainer',
               )
             }
@@ -369,7 +382,7 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
                   key={`${plot.key}_${stacked ? 'stacked' : 'combined'}`}
                   width={totalWidth}
                   height={heightWithPadding(columnsHeight)}
-                  className={styles.graph}
+                  className={classes.graph}
                 >
                   <GridRows
                     scale={yScales[index]}
@@ -483,7 +496,7 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
           />
         </div>
         {series.length > 1 && (
-          <div className={styles.yAxisRight}>
+          <div className={classes.yAxisRight}>
             {series.map((plot, index) => (stacked || index === 0 ? null : (
               <svg
                 key={plot.key}
@@ -521,7 +534,7 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
           />
         </div>
       )}
-    </div>
+    </Root>
   );
 };
 

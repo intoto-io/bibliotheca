@@ -1,6 +1,6 @@
 {
   "name": "@intoto-dev/bibliotheca",
-  "version": "0.0.10",
+  "version": "0.1.0",
   "description": "Component library for water data visualisation. By Intoto",
   "engines": {
     "node": "^16.13.1",
@@ -31,7 +31,6 @@
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
     "@harelpls/storybook-addon-materialui": "^2.0.0",
-    "@material-ui/core": "^4.12.3",
     "@mui/icons-material": "^5.2.5",
     "@mui/material": "^5.2.5",
     "@mui/styles": "^5.2.3",
