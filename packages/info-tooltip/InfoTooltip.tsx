@@ -1,12 +1,18 @@
 import { FunctionComponent } from 'react';
 
-import { makeStyles } from '@material-ui/core/styles';
-import Tooltip from '@material-ui/core/Tooltip';
-import IconButton from '@material-ui/core/IconButton';
-import InfoIcon from '@material-ui/icons/Info';
+import { styled } from '@mui/material/styles';
+import Tooltip from '@mui/material/Tooltip';
+import IconButton from '@mui/material/IconButton';
+import InfoIcon from '@mui/icons-material/Info';
 
-const useStyles = makeStyles((theme) => ({
-  tooltip: {
+const PREFIX = 'InfoTooltip';
+
+const classes = {
+  tooltip: `${PREFIX}-tooltip`,
+};
+
+const StyledTooltip = styled(Tooltip)(({ theme }) => ({
+  [`& .${classes.tooltip}`]: {
     color: theme.palette.text.disabled,
     fontSize: 16,
     marginTop: -2,
@@ -18,19 +24,17 @@ export interface InfoTooltipProps {
 }
 
 const InfoTooltip: FunctionComponent<InfoTooltipProps> = function InfoTooltip({ text }) {
-  const styles = useStyles();
-
   return (
-    <Tooltip
+    <StyledTooltip
       title={text}
       enterTouchDelay={0}
       placement="bottom"
       arrow
     >
       <IconButton aria-label="info" size="small">
-        <InfoIcon className={styles.tooltip} fontSize="small" />
+        <InfoIcon className={classes.tooltip} fontSize="small" />
       </IconButton>
-    </Tooltip>
+    </StyledTooltip>
   );
 };
 

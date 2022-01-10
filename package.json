@@ -1,10 +1,10 @@
 {
   "name": "@intoto-dev/bibliotheca",
-  "version": "0.0.10",
+  "version": "0.1.0",
   "description": "Component library for water data visualisation. By Intoto",
   "engines": {
-    "node": "^16.5.0",
-    "npm": "^7.19.1"
+    "node": "^16.13.1",
+    "npm": "^8.1.2"
   },
   "private": true,
   "scripts": {
@@ -28,8 +28,12 @@
     ]
   },
   "dependencies": {
+    "@emotion/react": "^11.7.1",
+    "@emotion/styled": "^11.6.0",
     "@harelpls/storybook-addon-materialui": "^2.0.0",
-    "@material-ui/core": "^4.12.3",
+    "@mui/icons-material": "^5.2.5",
+    "@mui/material": "^5.2.5",
+    "@mui/styles": "^5.2.3",
     "@storybook/react": "^6.3.12",
     "@types/jest": "^27.0.2",
     "@types/node": "^16.11.4",
@@ -55,6 +59,7 @@
     "babel-eslint": "^10.1.0",
     "babel-jest": "^27.3.1",
     "commitlint": "^13.2.1",
+    "emotion-theming": "^11.0.0",
     "eslint": "^8.1.0",
     "eslint-config-airbnb": "^19.0.2",
     "eslint-import-resolver-typescript": "^2.3.0",

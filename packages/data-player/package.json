@@ -25,11 +25,10 @@
   "dependencies": {
     "@intoto-dev/bibliotheca-graph": "0.0.22",
     "@intoto-dev/bibliotheca-profile": "0.0.22",
-    "@material-ui/core": "^4.11.4",
-    "@material-ui/icons": "^4.11.2",
+    "@mui/icons-material": "^5.2.5",
+    "@mui/material": "^5.2.5",
     "@storybook/react": "^6.3.8",
     "date-fns": "^2.25.0",
     "react": "^17.0.2"
-  },
-  "devDependencies": {}
+  }
 }

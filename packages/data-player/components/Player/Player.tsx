@@ -1,9 +1,9 @@
 import { FunctionComponent, useMemo, useState } from 'react';
 import format from 'date-fns/format';
 
-import { Grid, IconButton, Slider } from '@material-ui/core';
-import PlayArrowIcon from '@material-ui/icons/PlayArrow';
-import PauseIcon from '@material-ui/icons/Pause';
+import { Grid, IconButton, Slider } from '@mui/material';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import PauseIcon from '@mui/icons-material/Pause';
 
 export interface PlayerProps {
   dates: string[];
@@ -35,12 +35,12 @@ const Player: FunctionComponent<PlayerProps> = function Player({
     <Grid container alignItems="center" spacing={3}>
       <Grid item>
         {!isPlaying && (
-          <IconButton onClick={play} aria-label="play">
+          <IconButton onClick={play} aria-label="play" size="large">
             <PlayArrowIcon />
           </IconButton>
         )}
         {isPlaying && (
-          <IconButton onClick={pause} aria-label="pause">
+          <IconButton onClick={pause} aria-label="pause" size="large">
             <PauseIcon />
           </IconButton>
         )}

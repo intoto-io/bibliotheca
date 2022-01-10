@@ -11,16 +11,8 @@ import { Brush } from '@visx/brush';
 import BaseBrush, { UpdateBrush, BaseBrushState } from '@visx/brush/lib/BaseBrush';
 import { Bounds } from '@visx/brush/lib/types';
 
-import { makeStyles, Theme } from '@material-ui/core/styles';
-
 import { createXScale, createYScale } from '../helpers/createScales';
 import { GraphSeries } from '../types';
-
-const useStyles = makeStyles<Theme, { paddingLeft: number }>({
-  navigationContainer: {
-    marginLeft: (props) => props.paddingLeft,
-  },
-});
 
 interface NavigationProps {
   width: number;
@@ -41,7 +33,6 @@ const Navigation: FunctionComponent<NavigationProps> = function Navigation({
   paddingLeft = 0,
   paddingRight = 0,
 }) {
-  const styles = useStyles({ paddingLeft });
   const brushRef = useRef<BaseBrush | null>(null);
   const skipChange = useRef(false);
 
@@ -126,7 +117,7 @@ const Navigation: FunctionComponent<NavigationProps> = function Navigation({
   }
 
   return (
-    <svg className={styles.navigationContainer} width={navWidth} height={height}>
+    <svg style={{ marginLeft: paddingLeft }} width={navWidth} height={height}>
       {series.map((plot, index) => (
         <LinePath
           key={plot.key}

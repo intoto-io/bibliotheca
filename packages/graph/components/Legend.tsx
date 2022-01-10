@@ -1,15 +1,28 @@
 import { FunctionComponent } from 'react';
+import { styled } from '@mui/material/styles';
 import classNames from 'classnames';
-
-import { makeStyles } from '@material-ui/core/styles';
 
 import { isMissing, isPredicted } from '../helpers/dataPoint';
 import hasValueInThreshold from '../helpers/hasValueInThreshold';
 import colorByIndex from '../helpers/colorByIndex';
 import { GraphSeries } from '../types';
 
-const useStyles = makeStyles(({
-  legend: {
+const PREFIX = 'Legend';
+
+const classes = {
+  legend: `${PREFIX}-legend`,
+  legendItem: `${PREFIX}-legendItem`,
+  legendColors: `${PREFIX}-legendColors`,
+  legendColor: `${PREFIX}-legendColor`,
+  legendColorDashed: `${PREFIX}-legendColorDashed`,
+  legendColorBar: `${PREFIX}-legendColorBar`,
+  legendWrap: `${PREFIX}-legendWrap`,
+  legendPrediction: `${PREFIX}-legendPrediction`,
+  legendPredictionLine: `${PREFIX}-legendPredictionLine`,
+};
+
+const Root = styled('div')({
+  [`&.${classes.legend}`]: {
     display: 'flex',
     position: 'absolute',
     direction: 'ltr',
@@ -19,43 +32,43 @@ const useStyles = makeStyles(({
     alignItems: 'flex-end',
     zIndex: 1,
   },
-  legendItem: {
+  [`& .${classes.legendItem}`]: {
     marginLeft: 8,
     height: 16,
     display: 'flex',
     alignItems: 'center',
   },
-  legendColors: {
+  [`& .${classes.legendColors}`]: {
     width: 15,
     marginRight: 4,
   },
-  legendColor: {
+  [`& .${classes.legendColor}`]: {
     height: 0,
     width: 15,
     marginTop: 3,
     marginBottom: 3,
     borderTop: '3px solid #fff',
   },
-  legendColorDashed: {
+  [`& .${classes.legendColorDashed}`]: {
     borderColor: 'inherit',
     borderStyle: 'dashed',
     borderWidth: 1.5,
   },
-  legendColorBar: {
+  [`& .${classes.legendColorBar}`]: {
     opacity: 0.5,
   },
-  legendWrap: {
+  [`& .${classes.legendWrap}`]: {
     display: 'flex',
   },
-  legendPrediction: {
+  [`& .${classes.legendPrediction}`]: {
     opacity: 0.6,
   },
-  legendPredictionLine: {
+  [`& .${classes.legendPredictionLine}`]: {
     opacity: 0.5,
     margin: 0,
     borderTopWidth: 4.5,
   },
-}));
+});
 
 interface LegendProps {
   stacked: boolean;
@@ -75,8 +88,6 @@ const Legend: FunctionComponent<LegendProps> = function Legend({
   heightWithPadding,
   translations,
 }) {
-  const styles = useStyles();
-
   const showLegend = series.every((plot) => !!plot.name);
 
   if (!showLegend) {
@@ -84,8 +95,8 @@ const Legend: FunctionComponent<LegendProps> = function Legend({
   }
 
   return (
-    <div
-      className={classNames(styles.legend, 'GraphLegend')}
+    <Root
+      className={classNames(classes.legend, 'GraphLegend')}
       style={{ flexDirection: !stacked ? 'row' : 'column' }}
     >
       {series.map((plot, index) => {
@@ -103,16 +114,16 @@ const Legend: FunctionComponent<LegendProps> = function Legend({
         const color = plot.color || colorByIndex(index);
 
         return (
-          <div key={plot.key} className={styles.legendWrap}>
+          <div key={plot.key} className={classes.legendWrap}>
             <div
-              className={styles.legendItem}
+              className={classes.legendItem}
               style={{ marginTop: plotHeight }}
             >
-              <div className={styles.legendColors}>
-                <div className={styles.legendColor} style={{ borderColor: color }} />
+              <div className={classes.legendColors}>
+                <div className={classes.legendColor} style={{ borderColor: color }} />
                 {hasThresholdData && (
                   <div
-                    className={styles.legendColor}
+                    className={classes.legendColor}
                     style={{ borderColor: plot.thresholdColor || '#000' }}
                   />
                 )}
@@ -123,18 +134,18 @@ const Legend: FunctionComponent<LegendProps> = function Legend({
             </div>
             {hasMissingData && (
               <div
-                className={styles.legendItem}
+                className={classes.legendItem}
                 style={{ marginTop: plotHeight }}
               >
-                <div className={styles.legendColors}>
+                <div className={classes.legendColors}>
                   <div
                     style={{ borderColor: color }}
                     className={
                       classNames(
-                        styles.legendColor,
+                        classes.legendColor,
                         {
-                          [styles.legendColorDashed]: plot.type !== 'bar',
-                          [styles.legendColorBar]: plot.type === 'bar',
+                          [classes.legendColorDashed]: plot.type !== 'bar',
+                          [classes.legendColorBar]: plot.type === 'bar',
                         },
                       )
                     }
@@ -145,21 +156,21 @@ const Legend: FunctionComponent<LegendProps> = function Legend({
             )}
             {hasPredictedData && (
               <div
-                className={styles.legendItem}
+                className={classes.legendItem}
                 style={{ marginTop: plotHeight }}
               >
-                <div className={styles.legendColors}>
+                <div className={classes.legendColors}>
                   <div
                     style={{ borderColor: color }}
-                    className={classNames(styles.legendColor, styles.legendPrediction)}
+                    className={classNames(classes.legendColor, classes.legendPrediction)}
                   />
                   {hasThresholdData && (
                     <div
                       className={classNames(
-                        styles.legendColor,
-                        styles.legendPrediction,
+                        classes.legendColor,
+                        classes.legendPrediction,
                         {
-                          [styles.legendPredictionLine]: plot.type === 'line',
+                          [classes.legendPredictionLine]: plot.type === 'line',
                         },
                       )}
                       style={{ borderColor: plot.thresholdColor || '#000' }}
@@ -172,7 +183,7 @@ const Legend: FunctionComponent<LegendProps> = function Legend({
           </div>
         );
       })}
-    </div>
+    </Root>
   );
 };
 
