@@ -12,7 +12,7 @@ import {
   curveLinearClosed,
 } from 'd3-shape';
 import { scaleLinear } from 'd3-scale';
-import { axisLeft, axisBottom, axisTop } from 'd3-axis';
+import { axisBottom, axisTop, axisRight } from 'd3-axis';
 import { select } from 'd3-selection';
 
 import findIntersections from './helpers/findIntersections';
@@ -27,6 +27,7 @@ export interface ProfileProps {
   groundFill?: string;
   strokeColor?: string;
   strokeWidth?: number;
+  waterStrokeColor?: string;
   waterFill?: string;
   width?: number;
 }
@@ -49,10 +50,11 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
   axis = false,
   strokeColor = 'black',
   strokeWidth = 1.5,
+  waterStrokeColor = '#0633ff',
+  waterFill = '#b6c0ff',
   groundFill = '#b4967d',
-  waterFill = '#99ccff',
 }) {
-  const axisLeftRef = useRef<SVGGElement>(null);
+  const axisRightRef = useRef<SVGGElement>(null);
   const axisBottomRef = useRef<SVGGElement>(null);
   const rulerWaterRef = useRef<SVGGElement>(null);
 
@@ -75,12 +77,12 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
   const riverAndBridgeHeight = maxMSL - minMSL;
 
   const padding = 5;
-  const offsetLeft = axis ? 55 : 0;
+  const offsetRight = axis ? 55 : 0;
   const offsetBottom = axis ? 45 : 0;
   const bankPadding = 15;
 
   const totalWidth = width;
-  const renderWidth = totalWidth - (padding * 2) - offsetLeft;
+  const renderWidth = totalWidth - (padding * 2) - offsetRight;
   const renderHeight = ((riverAndBridgeHeight / riverWidth) * renderWidth);
   const totalHeight = renderHeight + bankPadding + (padding * 2) + offsetBottom;
 
@@ -94,8 +96,8 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
     .nice();
 
   const xScaleProfile = useCallback(
-    (x: number): number => xScale(x) + padding + offsetLeft,
-    [offsetLeft, xScale],
+    (x: number): number => xScale(x) + padding,
+    [xScale],
   );
   const yScaleProfile = (msl: number): number => yScale(msl) + padding;
   const profilePointX = (d: ProfilePoint): number => xScaleProfile(d.x);
@@ -111,12 +113,12 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
   }, [intersections, xScaleProfile]);
 
   useEffect(() => {
-    if (axisLeftRef.current !== null && axisBottomRef.current !== null) {
-      const leftAxis = axisLeft(yScale);
+    if (axisRightRef.current !== null && axisBottomRef.current !== null) {
+      const rightAxis = axisRight(yScale);
       const bottomAxis = axisBottom(xScale);
 
-      select(axisLeftRef.current)
-        .call(leftAxis);
+      select(axisRightRef.current)
+        .call(rightAxis);
 
       select(axisBottomRef.current)
         .call(bottomAxis);
@@ -201,10 +203,6 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
       viewBox={`0 0 ${totalWidth} ${totalHeight}`}
     >
       <defs>
-        <linearGradient id="waterFill" x1="0" x2="0" y1="0" y2="1">
-          <stop stopColor={waterFill} stopOpacity={0.6} offset="0%" />
-          <stop stopColor={waterFill} stopOpacity={1} offset="38%" />
-        </linearGradient>
         <linearGradient id="bridgeFill" x1="0" x2="0" y1="0" y2="1">
           <stop stopColor="#000" stopOpacity={0.6} offset="0%" />
           <stop stopColor="#000" stopOpacity={0.7} offset="20%" />
@@ -223,9 +221,9 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
         <path
           id="water"
           d={[waterAreaPath].join(' ')}
-          stroke={strokeColor}
+          stroke={waterStrokeColor}
           strokeWidth={strokeWidth}
-          fill="url(#waterFill)"
+          fill={waterFill}
         />
       )}
       <path
@@ -238,12 +236,12 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
       {axis && (
         <>
           <g
-            ref={axisLeftRef}
-            transform={`translate(${offsetLeft - 3}, ${padding})`}
+            ref={axisRightRef}
+            transform={`translate(${renderWidth + padding}, ${padding})`}
           />
           <text
             style={{ textAnchor: 'middle', transform: 'rotate(-90deg)', fontSize: '12px' }}
-            y={10 + padding}
+            y={36 + padding + renderWidth}
             x={(yScale(minMSL) / 2) * -1}
           >
             MSL
@@ -251,14 +249,14 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
           <g
             ref={axisBottomRef}
             transform={`translate(
-              ${offsetLeft + padding}, 
+              ${padding}, 
               ${yScaleProfile(minMSL) + bankPadding + padding + 3}
             )`}
           />
           <text
             style={{ textAnchor: 'middle', fontSize: '12px' }}
             y={yScaleProfile(minMSL) + bankPadding + padding + 38}
-            x={offsetLeft + padding + (xScale(riverWidth) / 2)}
+            x={padding + (xScale(riverWidth) / 2)}
           >
             Width (M)
           </text>
