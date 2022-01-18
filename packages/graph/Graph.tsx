@@ -419,7 +419,7 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
 
                         return format(date, 'p', { locale });
                       }}
-                      tickTransform={specificity === 'daily'
+                      tickTransform={specificity === 'daily' && !navigation
                         ? `translate(${dateWidth / 2} 0)`
                         : undefined}
                       hideTicks={specificity === 'daily'}
