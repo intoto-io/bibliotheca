@@ -1,4 +1,6 @@
-import { compareDesc, differenceInDays, startOfDay } from 'date-fns';
+import {
+  compareDesc, differenceInDays, isSameDay, startOfDay,
+} from 'date-fns';
 
 import { isUniqueDate } from '@intoto-dev/utils-is-unique-date';
 
@@ -8,6 +10,7 @@ interface UseSeriesFacts {
   dates: Date[];
   numberOfDays: number;
   dataPointsPerDay: number;
+  lastDayEntryMissing: number;
 }
 
 function useSeriesFacts(series: GraphSeries[]): UseSeriesFacts {
@@ -46,10 +49,19 @@ function useSeriesFacts(series: GraphSeries[]): UseSeriesFacts {
     return maxFromPlot;
   }, 0);
 
+  const lastDayEntryMissing = dataPointsPerDay
+    - Math.min(...series.reduce((acc: number[], plot) => {
+      const items = plot.data.filter((d) => isSameDay(new Date(d.date), dates[0]));
+
+      return [...acc, items.length];
+    }, []))
+    + 1;
+
   return {
     dates,
     numberOfDays,
     dataPointsPerDay,
+    lastDayEntryMissing,
   };
 }
 

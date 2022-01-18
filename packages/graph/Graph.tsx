@@ -190,7 +190,12 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
 
   const seriesReversed = useMemo(() => [...series].reverse(), [series]);
 
-  const { dates, numberOfDays, dataPointsPerDay } = useSeriesFacts(series);
+  const {
+    dates,
+    numberOfDays,
+    dataPointsPerDay,
+    lastDayEntryMissing,
+  } = useSeriesFacts(series);
 
   const initialNavStart = dates[Math.ceil(dates.length / 10)];
   const initialNavEnd = dates[0];
@@ -217,13 +222,15 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
     }
 
     if (numberOfDays > 1) {
-      return numberOfDays * entryWidth * dataPointsPerDay;
+      return numberOfDays * dateWidth;
     }
 
-    return entryWidth * dataPointsPerDay;
-  }, [dataPointsPerDay, dimensions.width, entryWidth, navigation, numberOfDays]);
+    return dateWidth;
+  }, [dateWidth, dimensions.width, navigation, numberOfDays]);
 
-  const totalWidth = navigation ? width - labelWidth - padding : width + padding;
+  const dayTickPadding = Math.max((lastDayEntryMissing * entryWidth) - padding, 0);
+
+  const totalWidth = navigation ? width - labelWidth - padding : width + padding + dayTickPadding;
   const chartTotalHeight = heightWithPadding(height);
 
   const xScale = createXScale(rangeDates.length >= 2 ? rangeDates : dates, width);
