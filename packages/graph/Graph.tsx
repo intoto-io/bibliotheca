@@ -121,6 +121,9 @@ export interface GraphProps {
   series: GraphSeries[];
   t: UseTranslationResponse<'graph'>['t'];
   entryWidth?: number;
+  dateWidth?: number;
+  hourWidth?: number;
+  minuteWidth?: number;
   height?: number;
   stacked?: boolean;
   specificity?: Specificity;
@@ -159,6 +162,9 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
   t,
   height = 200,
   entryWidth = 25,
+  dateWidth = 100,
+  hourWidth = 50,
+  minuteWidth = 25,
   tooltip = false,
   stacked = false,
   navigation = false,
@@ -192,9 +198,9 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
 
   const {
     dates,
-    numberOfDays,
-    dataPointsPerDay,
-    lastDayEntryMissing,
+    hoursCount,
+    minutesCount,
+    diffEnd,
   } = useSeriesFacts(series);
 
   const initialNavStart = dates[Math.ceil(dates.length / 10)];
@@ -214,26 +220,39 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
   const defaultLabelWidth = 44;
   const labelWidth = series[0].labelWidth || defaultLabelWidth;
 
-  const dateWidth = entryWidth * dataPointsPerDay;
-
-  const width = useMemo(() => {
+  const graphDataWidth = useMemo(() => {
     if (navigation) {
       return dimensions.width;
     }
 
-    if (numberOfDays > 1) {
-      return numberOfDays * dateWidth;
+    if (specificity === 'hourly') {
+      return hourWidth * hoursCount;
     }
 
-    return dateWidth;
-  }, [dateWidth, dimensions.width, navigation, numberOfDays]);
+    if (specificity === 'minutely') {
+      return minuteWidth * minutesCount;
+    }
 
-  const dayTickPadding = Math.max((lastDayEntryMissing * entryWidth) - padding, 0);
+    return dateWidth * (hoursCount / 24);
+  }, [
+    navigation,
+    specificity,
+    dateWidth,
+    dimensions.width,
+    hourWidth,
+    hoursCount,
+    minuteWidth,
+    minutesCount,
+  ]);
 
-  const totalWidth = navigation ? width - labelWidth - padding : width + padding + dayTickPadding;
+  const dayTickPadding = diffEnd * (dateWidth / 24);
+
+  const totalWidth = navigation
+    ? graphDataWidth - labelWidth - padding
+    : graphDataWidth + padding + dayTickPadding;
   const chartTotalHeight = heightWithPadding(height);
 
-  const xScale = createXScale(rangeDates.length >= 2 ? rangeDates : dates, width);
+  const xScale = createXScale(rangeDates.length >= 2 ? rangeDates : dates, graphDataWidth);
 
   const yScales = useMemo(
     () => series.map((plot) => createYScale(
@@ -393,7 +412,7 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
                 >
                   <GridRows
                     scale={yScales[index]}
-                    width={width}
+                    width={graphDataWidth}
                     stroke="#ccc"
                     strokeOpacity={0.7}
                   />

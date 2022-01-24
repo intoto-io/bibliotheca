@@ -1,7 +1,8 @@
 import {
+  addDays,
   compareDesc,
-  differenceInDays,
-  isSameDay,
+  differenceInHours,
+  differenceInMinutes,
   startOfDay,
 } from 'date-fns';
 
@@ -11,9 +12,10 @@ import { GraphSeries } from '../types';
 
 interface UseSeriesFacts {
   dates: Date[];
-  numberOfDays: number;
+  minutesCount: number;
+  hoursCount: number;
+  diffEnd: number;
   dataPointsPerDay: number;
-  lastDayEntryMissing: number;
 }
 
 function useSeriesFacts(series: GraphSeries[]): UseSeriesFacts {
@@ -30,7 +32,8 @@ function useSeriesFacts(series: GraphSeries[]): UseSeriesFacts {
       [],
     ).sort((a, b) => compareDesc(a, b));
 
-  const numberOfDays: number = differenceInDays(dates[0], dates[dates.length - 1]);
+  const hoursCount: number = differenceInHours(dates[0], dates[dates.length - 1]);
+  const minutesCount: number = differenceInMinutes(dates[0], dates[dates.length - 1]);
 
   const dataPointsPerDay = series.reduce((maxFromPlot, plot) => {
     const dateCounts: Record<string, number> = plot.data
@@ -52,19 +55,14 @@ function useSeriesFacts(series: GraphSeries[]): UseSeriesFacts {
     return maxFromPlot;
   }, 0);
 
-  const lastDayEntryMissing = (dataPointsPerDay
-    - Math.min(...series.reduce((acc: number[], plot) => {
-      const items = plot.data.filter((d) => isSameDay(new Date(d.date), dates[0]));
-
-      return [...acc, items.length];
-    }, []))
-    + 1) % dataPointsPerDay;
+  const diffEnd = differenceInHours(startOfDay(addDays(dates[0], 1)), dates[0]) % 24;
 
   return {
     dates,
-    numberOfDays,
+    diffEnd,
+    hoursCount,
+    minutesCount,
     dataPointsPerDay,
-    lastDayEntryMissing,
   };
 }
 
