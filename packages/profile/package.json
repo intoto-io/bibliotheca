@@ -1,6 +1,6 @@
 {
   "name": "@intoto-dev/bibliotheca-profile",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Explain how to install etc",
   "main": "lib/index.js",
   "module": "lib/index.js",
