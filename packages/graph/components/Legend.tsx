@@ -47,12 +47,12 @@ const Root = styled('div')({
     width: 15,
     marginTop: 3,
     marginBottom: 3,
+    border: 0,
     borderTop: '3px solid #fff',
   },
   [`& .${classes.legendColorDashed}`]: {
     borderColor: 'inherit',
     borderStyle: 'dashed',
-    borderWidth: 1.5,
   },
   [`& .${classes.legendColorBar}`]: {
     opacity: 0.5,
