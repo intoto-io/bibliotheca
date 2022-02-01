@@ -21,13 +21,16 @@ import { ProfilePoint, RiverProfile } from './types';
 
 export interface ProfileProps {
   profile: RiverProfile;
-  axis?: boolean;
-  bridgeLevel?: number;
   currentWaterLevel?: number;
+  bridgeLevel?: number;
+  mean?: number;
+  axis?: boolean;
   groundFill?: string;
   strokeColor?: string;
   strokeWidth?: number;
   waterStrokeColor?: string;
+  meanStrokeColor?: string;
+  bridgeStrokeColor?: string;
   waterFill?: string;
   width?: number;
 }
@@ -45,24 +48,25 @@ const findHighestPoint = (items: RiverProfile): ProfilePoint => items.reduce((a,
 const Profile: FunctionComponent<ProfileProps> = function Profile({
   profile,
   currentWaterLevel,
+  mean,
   bridgeLevel,
-  width = 600,
   axis = false,
+  width = 600,
   strokeColor = 'black',
   strokeWidth = 1.5,
   waterStrokeColor = '#0633ff',
-  waterFill = '#b6c0ff',
+  meanStrokeColor = '#963038',
+  bridgeStrokeColor = '#899eaa',
+  waterFill = '#99ccff',
   groundFill = '#b4967d',
 }) {
   const axisRightRef = useRef<SVGGElement>(null);
   const axisBottomRef = useRef<SVGGElement>(null);
   const rulerWaterRef = useRef<SVGGElement>(null);
 
-  const bridgeSize = 0.5;
-
   const maxMSLRiver = Math.max(...profile.map((p) => p.msl));
   const maxMSL = typeof bridgeLevel !== 'undefined'
-    ? Math.max(maxMSLRiver, bridgeLevel + bridgeSize)
+    ? Math.max(maxMSLRiver, bridgeLevel)
     : maxMSLRiver;
   const minMSL = Math.min(...profile.map((p) => p.msl));
 
@@ -165,9 +169,9 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
         // bottom right bridge
         [profilePointX(lastPoint), yScaleProfile(bridgeLevel)],
         // start top deck
-        [profilePointX(lastPoint), yScaleProfile(bridgeLevel + bridgeSize)],
+        // [profilePointX(lastPoint), yScaleProfile(bridgeLevel + bridgeSize)],
         // end top deck
-        [profilePointX(firstPoint), yScaleProfile(bridgeLevel + bridgeSize)],
+        // [profilePointX(firstPoint), yScaleProfile(bridgeLevel + bridgeSize)],
       ]
       : [],
   );
@@ -196,25 +200,30 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
     .curve(curveBasis);
   const waterAreaPath = waterArea(profile);
 
+  const indicatorSize = 6;
+  const axisOffset = 5;
+
+  const meanIndicatorPath = closedLine(
+    typeof mean !== 'undefined' ? [
+      [xScaleProfile(riverWidth) + axisOffset, yScaleProfile(mean)],
+      [xScaleProfile(riverWidth) + axisOffset + indicatorSize, yScaleProfile(mean) + indicatorSize],
+      [xScaleProfile(riverWidth) + axisOffset + indicatorSize, yScaleProfile(mean) - indicatorSize],
+    ] : [],
+  );
+
   return (
     <svg
       width={totalWidth}
       height={totalHeight}
       viewBox={`0 0 ${totalWidth} ${totalHeight}`}
     >
-      <defs>
-        <linearGradient id="bridgeFill" x1="0" x2="0" y1="0" y2="1">
-          <stop stopColor="#000" stopOpacity={0.6} offset="0%" />
-          <stop stopColor="#000" stopOpacity={0.7} offset="20%" />
-        </linearGradient>
-      </defs>
       {typeof bridgeLevel !== 'undefined' && (
         <path
           id="bridge"
           d={[bridgePath].join(' ')}
-          stroke={strokeColor}
+          stroke={bridgeStrokeColor}
           strokeWidth={strokeWidth}
-          fill="url(#bridgeFill)"
+          fill={bridgeStrokeColor}
         />
       )}
       {typeof currentWaterLevel !== 'undefined' && (
@@ -233,15 +242,34 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
         strokeWidth={strokeWidth}
         fill={groundFill}
       />
+      {typeof mean !== 'undefined' && (
+        <g>
+          <line
+            id="mean"
+            x1={xScaleProfile(0)}
+            x2={xScaleProfile(riverWidth)}
+            y1={yScaleProfile(mean)}
+            y2={yScaleProfile(mean)}
+            stroke={meanStrokeColor}
+            strokeWidth={strokeWidth}
+            strokeDasharray="5, 3"
+          />
+          <path
+            id="mean-indicator"
+            d={[meanIndicatorPath].join(' ')}
+            fill={meanStrokeColor}
+          />
+        </g>
+      )}
       {axis && (
-        <>
+        <g>
           <g
             ref={axisRightRef}
-            transform={`translate(${renderWidth + padding}, ${padding})`}
+            transform={`translate(${renderWidth + padding + axisOffset}, ${padding})`}
           />
           <text
             style={{ textAnchor: 'middle', transform: 'rotate(-90deg)', fontSize: '12px' }}
-            y={36 + padding + renderWidth}
+            y={36 + axisOffset + padding + renderWidth}
             x={(yScale(minMSL) / 2) * -1}
           >
             MSL
@@ -269,7 +297,7 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
               )`}
             />
           )}
-        </>
+        </g>
       )}
     </svg>
   );

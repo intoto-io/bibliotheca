@@ -55,3 +55,13 @@ WithWaterLevelAndBridgeAndAxis.args = {
   bridgeLevel: 12,
   axis: true,
 };
+
+export const WithWaterLevelAndBridgeAndAxisAndMean = Template.bind({});
+
+WithWaterLevelAndBridgeAndAxisAndMean.args = {
+  profile: amotbrua,
+  currentWaterLevel: 7,
+  bridgeLevel: 12,
+  axis: true,
+  mean: 3.415,
+};
