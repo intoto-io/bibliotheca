@@ -1,6 +1,6 @@
 {
   "name": "@intoto-dev/bibliotheca-graph",
-  "version": "0.1.0",
+  "version": "0.1.5",
   "description": "Explain how to install etc",
   "main": "lib/index.js",
   "module": "lib/index.js",
@@ -23,10 +23,9 @@
     "access": "public"
   },
   "dependencies": {
-    "@intoto-dev/utils-is-unique-date": "^0.1.0",
+    "@intoto-dev/utils-is-unique-date": "^0.1.5",
     "@mui/material": "^5.2.5",
     "@mui/styles": "^5.2.3",
-    "@storybook/react": "^6.3.8",
     "@visx/axis": "^2.1.1",
     "@visx/brush": "^2.1.1",
     "@visx/clip-path": "^2.1.0",
@@ -48,6 +47,7 @@
     "react-i18next": "^11.12.0"
   },
   "devDependencies": {
+    "@storybook/react": "^6.3.8",
     "@types/d3-array": "^3.0.1",
     "@types/d3-time-format": "^4.0.0"
   }

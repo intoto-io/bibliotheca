@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { Story, Meta } from '@storybook/react/types-6-0';
 
 import Player, { PlayerProps } from './Player';

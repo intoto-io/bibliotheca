@@ -1,6 +1,6 @@
 {
   "name": "@intoto-dev/bibliotheca-profile",
-  "version": "0.1.0",
+  "version": "0.1.5",
   "description": "Explain how to install etc",
   "main": "lib/index.js",
   "module": "lib/index.js",
@@ -23,7 +23,6 @@
     "access": "public"
   },
   "dependencies": {
-    "@storybook/react": "^6.3.9",
     "d3-axis": "^3.0.0",
     "d3-scale": "^4.0.2",
     "d3-selection": "^3.0.0",
@@ -31,6 +30,7 @@
     "react": "^17.0.2"
   },
   "devDependencies": {
+    "@storybook/react": "^6.3.9",
     "@types/d3-axis": "^3.0.1",
     "@types/d3-scale": "^4.0.1",
     "@types/d3-shape": "^3.0.2"

@@ -1,4 +1,10 @@
-import { compareDesc, differenceInDays, startOfDay } from 'date-fns';
+import {
+  addDays,
+  compareDesc,
+  differenceInHours,
+  differenceInMinutes,
+  startOfDay,
+} from 'date-fns';
 
 import { isUniqueDate } from '@intoto-dev/utils-is-unique-date';
 
@@ -6,7 +12,9 @@ import { GraphSeries } from '../types';
 
 interface UseSeriesFacts {
   dates: Date[];
-  numberOfDays: number;
+  minutesCount: number;
+  hoursCount: number;
+  diffEnd: number;
   dataPointsPerDay: number;
 }
 
@@ -24,7 +32,8 @@ function useSeriesFacts(series: GraphSeries[]): UseSeriesFacts {
       [],
     ).sort((a, b) => compareDesc(a, b));
 
-  const numberOfDays: number = differenceInDays(dates[0], dates[dates.length - 1]);
+  const hoursCount: number = differenceInHours(dates[0], dates[dates.length - 1]);
+  const minutesCount: number = differenceInMinutes(dates[0], dates[dates.length - 1]);
 
   const dataPointsPerDay = series.reduce((maxFromPlot, plot) => {
     const dateCounts: Record<string, number> = plot.data
@@ -46,9 +55,13 @@ function useSeriesFacts(series: GraphSeries[]): UseSeriesFacts {
     return maxFromPlot;
   }, 0);
 
+  const diffEnd = differenceInHours(startOfDay(addDays(dates[0], 1)), dates[0]) % 24;
+
   return {
     dates,
-    numberOfDays,
+    diffEnd,
+    hoursCount,
+    minutesCount,
     dataPointsPerDay,
   };
 }

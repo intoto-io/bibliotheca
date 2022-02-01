@@ -3,7 +3,7 @@ import { ScaleLinear, ScaleTime } from 'd3-scale';
 import { CurveFactory } from 'd3-shape';
 
 import { LinePath } from '@visx/shape';
-import { curveNatural } from '@visx/curve';
+import { curveBasis } from '@visx/curve';
 import { Threshold } from '@visx/threshold';
 import { ClipPath } from '@visx/clip-path';
 
@@ -25,7 +25,7 @@ const SplitLine: FunctionComponent<SplitLineProps> = function SplitLine({
   seriesData,
   xScale,
   yScale,
-  curve = curveNatural,
+  curve = curveBasis,
 }) {
   const flatData = useMemo(
     () => seriesData

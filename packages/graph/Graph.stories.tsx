@@ -1,9 +1,11 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { Story, Meta } from '@storybook/react/types-6-0';
 
 import Graph, { GraphProps } from './Graph';
 import { generateDays, generateMinutes, randomLineData } from './helpers/createData';
 
 import singleLineData from './mocks/singleLine.json';
+import singleLineCutOffData from './mocks/singleLineCutOff.json';
 import singleLineTimezonedData from './mocks/singleLineTimezoned.json';
 import sixtyDayHourly from './mocks/sixtyDayHourly.json';
 import extremeJumps from './mocks/extremeJumps.json';
@@ -398,4 +400,16 @@ SimpleLineTimezoned.args = {
   series: singleLineTimezoned,
   tooltip: true,
   now: new Date('2021-04-21T02:00:00.000Z'),
+};
+
+export const SingleLineCutOff = Template.bind({});
+
+const singleLineCutOff: GraphSeries[] = [{
+  key: 'singleLineCutOff',
+  name: 'Single Line Cut Off',
+  data: singleLineCutOffData,
+}];
+
+SingleLineCutOff.args = {
+  series: singleLineCutOff,
 };
