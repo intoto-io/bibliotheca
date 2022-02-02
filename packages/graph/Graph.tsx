@@ -559,7 +559,7 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
             translations={{
               missing: t('missing'),
               predicted: t('predicted'),
-              meanLevel: t('meanLevel'),
+              meanLevel: t('mean_level'),
             }}
           />
         </div>

@@ -29,7 +29,7 @@ const Template: Story<GraphProps> = function Template(args) {
         switch (key) {
           case 'missing':
             return 'Missing data';
-          case 'meanLevel':
+          case 'mean_level':
             return 'Mean-level';
           default:
             return 'Prediction';
