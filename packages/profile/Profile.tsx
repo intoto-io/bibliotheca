@@ -62,7 +62,7 @@ export interface ProfileProps {
   profile: RiverProfile;
   currentWaterLevel?: number;
   bridgeLevel?: number;
-  mean?: number;
+  meanLevel?: number;
   axis?: boolean;
   width?: number;
   groundFill?: string;
@@ -91,7 +91,7 @@ const findHighestPoint = (items: RiverProfile): ProfilePoint => items.reduce((a,
 const Profile: FunctionComponent<ProfileProps> = function Profile({
   profile,
   currentWaterLevel,
-  mean,
+  meanLevel,
   bridgeLevel,
   axis = false,
   width = 600,
@@ -247,14 +247,23 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
   const axisOffset = 5;
 
   const meanIndicatorPath = closedLine(
-    typeof mean !== 'undefined' ? [
-      [xScaleProfile(riverWidth) + axisOffset, yScaleProfile(mean)],
-      [xScaleProfile(riverWidth) + axisOffset + indicatorSize, yScaleProfile(mean) + indicatorSize],
-      [xScaleProfile(riverWidth) + axisOffset + indicatorSize, yScaleProfile(mean) - indicatorSize],
+    typeof meanLevel !== 'undefined' ? [
+      [xScaleProfile(riverWidth) + axisOffset, yScaleProfile(meanLevel)],
+      [
+        xScaleProfile(riverWidth) + axisOffset + indicatorSize,
+        yScaleProfile(meanLevel) + indicatorSize,
+      ],
+      [
+        xScaleProfile(riverWidth) + axisOffset + indicatorSize,
+        yScaleProfile(meanLevel) - indicatorSize,
+      ],
     ] : [],
   );
 
-  const hasLegend = [typeof bridgeLevel !== 'undefined', typeof mean !== 'undefined'].some(Boolean);
+  const hasLegend = [
+    typeof bridgeLevel !== 'undefined',
+    typeof meanLevel !== 'undefined',
+  ].some(Boolean);
 
   return (
     <StyledSection style={{ width: totalWidth }}>
@@ -288,14 +297,14 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
           strokeWidth={strokeWidth}
           fill={groundFill}
         />
-        {typeof mean !== 'undefined' && (
+        {typeof meanLevel !== 'undefined' && (
           <g>
             <line
               id="mean"
               x1={xScaleProfile(0)}
               x2={xScaleProfile(riverWidth)}
-              y1={yScaleProfile(mean)}
-              y2={yScaleProfile(mean)}
+              y1={yScaleProfile(meanLevel)}
+              y2={yScaleProfile(meanLevel)}
               stroke={meanStrokeColor}
               strokeWidth={strokeWidth}
               strokeDasharray="5, 3"
@@ -359,7 +368,7 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
               {bridgeLabel}
             </LegendItem>
           )}
-          {typeof mean !== 'undefined' && (
+          {typeof meanLevel !== 'undefined' && (
             <LegendItem>
               <LegendIconMean
                 style={{
