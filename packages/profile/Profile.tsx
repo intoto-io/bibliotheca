@@ -14,10 +14,49 @@ import {
 import { scaleLinear } from 'd3-scale';
 import { axisBottom, axisTop, axisRight } from 'd3-axis';
 import { select } from 'd3-selection';
+import styled from '@mui/styled-engine';
 
 import findIntersections from './helpers/findIntersections';
 
 import { ProfilePoint, RiverProfile } from './types';
+
+const StyledSection = styled('section')({
+  display: 'flex',
+  flexDirection: 'column',
+});
+
+const Legend = styled('ul')({
+  display: 'flex',
+  justifyContent: 'flex-end',
+  listStyle: 'none',
+  margin: 0,
+  padding: 0,
+});
+
+const LegendItem = styled('li')({
+  display: 'flex',
+  alignItems: 'center',
+  marginLeft: '1rem',
+  fontSize: 12,
+});
+
+const LegendIconMean = styled('span')({
+  display: 'block',
+  width: 0,
+  height: 0,
+  borderTop: '6px solid transparent',
+  borderBottom: '6px solid transparent',
+  borderRight: '6px solid red',
+  marginRight: 5,
+});
+
+const LegendIconBridge = styled('span')({
+  display: 'block',
+  width: 10,
+  height: 0,
+  borderTop: '2px solid red',
+  marginRight: 5,
+});
 
 export interface ProfileProps {
   profile: RiverProfile;
@@ -25,6 +64,7 @@ export interface ProfileProps {
   bridgeLevel?: number;
   mean?: number;
   axis?: boolean;
+  width?: number;
   groundFill?: string;
   strokeColor?: string;
   strokeWidth?: number;
@@ -32,7 +72,10 @@ export interface ProfileProps {
   meanStrokeColor?: string;
   bridgeStrokeColor?: string;
   waterFill?: string;
-  width?: number;
+  widthLabel?: string;
+  mslLabel?: string;
+  meanLabel?: string;
+  bridgeLabel?: string;
 }
 
 const closedLine = line().curve(curveLinearClosed);
@@ -59,6 +102,10 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
   bridgeStrokeColor = '#899eaa',
   waterFill = '#99ccff',
   groundFill = '#b4967d',
+  widthLabel = 'Width (M)',
+  mslLabel = 'MSL',
+  meanLabel = 'Mean-level',
+  bridgeLabel = 'Bottom of bridge',
 }) {
   const axisRightRef = useRef<SVGGElement>(null);
   const axisBottomRef = useRef<SVGGElement>(null);
@@ -168,10 +215,6 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
         [profilePointX(firstPoint), yScaleProfile(bridgeLevel)],
         // bottom right bridge
         [profilePointX(lastPoint), yScaleProfile(bridgeLevel)],
-        // start top deck
-        // [profilePointX(lastPoint), yScaleProfile(bridgeLevel + bridgeSize)],
-        // end top deck
-        // [profilePointX(firstPoint), yScaleProfile(bridgeLevel + bridgeSize)],
       ]
       : [],
   );
@@ -200,7 +243,7 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
     .curve(curveBasis);
   const waterAreaPath = waterArea(profile);
 
-  const indicatorSize = 6;
+  const indicatorSize = 5;
   const axisOffset = 5;
 
   const meanIndicatorPath = closedLine(
@@ -211,95 +254,127 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
     ] : [],
   );
 
+  const hasLegend = [typeof bridgeLevel !== 'undefined', typeof mean !== 'undefined'].some(Boolean);
+
   return (
-    <svg
-      width={totalWidth}
-      height={totalHeight}
-      viewBox={`0 0 ${totalWidth} ${totalHeight}`}
-    >
-      {typeof bridgeLevel !== 'undefined' && (
-        <path
-          id="bridge"
-          d={[bridgePath].join(' ')}
-          stroke={bridgeStrokeColor}
-          strokeWidth={strokeWidth}
-          fill={bridgeStrokeColor}
-        />
-      )}
-      {typeof currentWaterLevel !== 'undefined' && (
-        <path
-          id="water"
-          d={[waterAreaPath].join(' ')}
-          stroke={waterStrokeColor}
-          strokeWidth={strokeWidth}
-          fill={waterFill}
-        />
-      )}
-      <path
-        id="ground"
-        d={[bankPath].join(' ')}
-        stroke={strokeColor}
-        strokeWidth={strokeWidth}
-        fill={groundFill}
-      />
-      {typeof mean !== 'undefined' && (
-        <g>
-          <line
-            id="mean"
-            x1={xScaleProfile(0)}
-            x2={xScaleProfile(riverWidth)}
-            y1={yScaleProfile(mean)}
-            y2={yScaleProfile(mean)}
-            stroke={meanStrokeColor}
-            strokeWidth={strokeWidth}
-            strokeDasharray="5, 3"
-          />
+    <StyledSection style={{ width: totalWidth }}>
+      <svg
+        width={totalWidth}
+        height={totalHeight}
+        viewBox={`0 0 ${totalWidth} ${totalHeight}`}
+      >
+        {typeof bridgeLevel !== 'undefined' && (
           <path
-            id="mean-indicator"
-            d={[meanIndicatorPath].join(' ')}
-            fill={meanStrokeColor}
+            id="bridge"
+            d={[bridgePath].join(' ')}
+            stroke={bridgeStrokeColor}
+            strokeWidth={strokeWidth}
+            fill={bridgeStrokeColor}
           />
-        </g>
-      )}
-      {axis && (
-        <g>
-          <g
-            ref={axisRightRef}
-            transform={`translate(${renderWidth + padding + axisOffset}, ${padding})`}
+        )}
+        {typeof currentWaterLevel !== 'undefined' && (
+          <path
+            id="water"
+            d={[waterAreaPath].join(' ')}
+            stroke={waterStrokeColor}
+            strokeWidth={strokeWidth}
+            fill={waterFill}
           />
-          <text
-            style={{ textAnchor: 'middle', transform: 'rotate(-90deg)', fontSize: '12px' }}
-            y={36 + axisOffset + padding + renderWidth}
-            x={(yScale(minMSL) / 2) * -1}
-          >
-            MSL
-          </text>
-          <g
-            ref={axisBottomRef}
-            transform={`translate(
-              ${padding}, 
-              ${yScaleProfile(minMSL) + bankPadding + padding + 3}
-            )`}
-          />
-          <text
-            style={{ textAnchor: 'middle', fontSize: '12px' }}
-            y={yScaleProfile(minMSL) + bankPadding + padding + 38}
-            x={padding + (xScale(riverWidth) / 2)}
-          >
-            Width (M)
-          </text>
-          {typeof currentWaterLevel !== 'undefined' && intersections && (
+        )}
+        <path
+          id="ground"
+          d={[bankPath].join(' ')}
+          stroke={strokeColor}
+          strokeWidth={strokeWidth}
+          fill={groundFill}
+        />
+        {typeof mean !== 'undefined' && (
+          <g>
+            <line
+              id="mean"
+              x1={xScaleProfile(0)}
+              x2={xScaleProfile(riverWidth)}
+              y1={yScaleProfile(mean)}
+              y2={yScaleProfile(mean)}
+              stroke={meanStrokeColor}
+              strokeWidth={strokeWidth}
+              strokeDasharray="5, 3"
+            />
+            <path
+              id="mean-indicator"
+              d={[meanIndicatorPath].join(' ')}
+              fill={meanStrokeColor}
+            />
+          </g>
+        )}
+        {axis && (
+          <g>
             <g
-              ref={rulerWaterRef}
+              ref={axisRightRef}
+              transform={`translate(${renderWidth + padding + axisOffset}, ${padding})`}
+            />
+            <text
+              style={{ textAnchor: 'middle', transform: 'rotate(-90deg)', fontSize: '12px' }}
+              y={36 + axisOffset + padding + renderWidth}
+              x={(yScale(minMSL) / 2) * -1}
+            >
+              {mslLabel}
+            </text>
+            <g
+              ref={axisBottomRef}
               transform={`translate(
-                ${xScaleProfile(intersections[0].x)}, 
-                ${yScaleProfile(currentWaterLevel || minMSL) - 10}
+                ${padding}, 
+                ${yScaleProfile(minMSL) + bankPadding + padding + 3}
               )`}
             />
+            <text
+              style={{ textAnchor: 'middle', fontSize: '12px' }}
+              y={yScaleProfile(minMSL) + bankPadding + padding + 38}
+              x={padding + (xScale(riverWidth) / 2)}
+            >
+              {widthLabel}
+            </text>
+            {typeof currentWaterLevel !== 'undefined' && intersections && (
+              <g
+                ref={rulerWaterRef}
+                transform={`translate(
+                  ${xScaleProfile(intersections[0].x)}, 
+                  ${yScaleProfile(currentWaterLevel || minMSL) - 10}
+                )`}
+              />
+            )}
+          </g>
+        )}
+      </svg>
+      {hasLegend && (
+        <Legend style={{ paddingRight: offsetRight + padding }}>
+          {typeof bridgeLevel !== 'undefined' && (
+            <LegendItem>
+              <LegendIconBridge
+                style={{
+                  borderColor: bridgeStrokeColor,
+                  borderWidth: strokeWidth,
+                }}
+              />
+              {bridgeLabel}
+            </LegendItem>
           )}
-        </g>
+          {typeof mean !== 'undefined' && (
+            <LegendItem>
+              <LegendIconMean
+                style={{
+                  borderRightColor: meanStrokeColor,
+                  borderRightWidth: indicatorSize,
+                  borderTopWidth: indicatorSize,
+                  borderBottomWidth: indicatorSize,
+                }}
+              />
+              {meanLabel}
+            </LegendItem>
+          )}
+        </Legend>
       )}
-    </svg>
+    </StyledSection>
   );
 };
 

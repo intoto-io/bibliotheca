@@ -60,8 +60,8 @@ export const WithWaterLevelAndBridgeAndAxisAndMean = Template.bind({});
 
 WithWaterLevelAndBridgeAndAxisAndMean.args = {
   profile: amotbrua,
-  currentWaterLevel: 7,
-  bridgeLevel: 12,
+  currentWaterLevel: 4.2,
+  bridgeLevel: 9.5,
   axis: true,
   mean: 3.415,
 };
