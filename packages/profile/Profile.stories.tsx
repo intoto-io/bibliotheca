@@ -62,5 +62,5 @@ WithWaterLevelAndBridgeAndAxisAndMean.args = {
   currentWaterLevel: 4.2,
   bridgeLevel: 9.5,
   axis: true,
-  mean: 3.415,
+  meanLevel: 3.415,
 };
