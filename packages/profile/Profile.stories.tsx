@@ -47,12 +47,11 @@ WithOverflowingWaterLevel.args = {
   currentWaterLevel: 9,
 };
 
-export const WithWaterLevelAndBridgeAndAxis = Template.bind({});
+export const WithWaterLevelAndAxis = Template.bind({});
 
-WithWaterLevelAndBridgeAndAxis.args = {
+WithWaterLevelAndAxis.args = {
   profile: amotbrua,
   currentWaterLevel: 7,
-  bridgeLevel: 12,
   axis: true,
 };
 
