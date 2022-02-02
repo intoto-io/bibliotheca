@@ -25,7 +25,16 @@ const Template: Story<GraphProps> = function Template(args) {
   return (
     <Graph
       {...args}
-      t={(key: string) => (key === 'missing' ? 'Missing data' : 'Prediction')}
+      t={(key: string) => {
+        switch (key) {
+          case 'missing':
+            return 'Missing data';
+          case 'meanLevel':
+            return 'Mean-level';
+          default:
+            return 'Prediction';
+        }
+      }}
     />
   );
 };
@@ -412,4 +421,12 @@ const singleLineCutOff: GraphSeries[] = [{
 
 SingleLineCutOff.args = {
   series: singleLineCutOff,
+};
+
+export const SimpleLineWithMeanLevel = Template.bind({});
+
+SimpleLineWithMeanLevel.args = {
+  series: singleLine,
+  tooltip: true,
+  meanLevel: 8.5,
 };
