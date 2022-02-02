@@ -69,6 +69,7 @@ const Root = styled('div')({
     textAlign: 'right',
     display: 'flex',
     flexDirection: 'column',
+    position: 'relative',
   },
   [`& .${classes.yAxisRight}`]: {
     flexShrink: 0,
@@ -115,6 +116,19 @@ const Root = styled('div')({
   },
 });
 
+const MeanLevelIndicator = styled('div')({
+  position: 'absolute',
+  top: 0,
+  right: 0,
+  display: 'block',
+  width: 0,
+  height: 0,
+  borderTop: '5px solid transparent',
+  borderBottom: '5px solid transparent',
+  borderLeft: '5px solid red',
+  transform: 'translateY(-50%)',
+});
+
 type Specificity = 'daily' | 'hourly' | 'minutely';
 
 export interface GraphProps {
@@ -131,6 +145,8 @@ export interface GraphProps {
   lang?: 'nb' | 'en';
   locale?: Locale;
   now?: Date;
+  meanLevel?: number;
+  meanLevelStrokeColor?: string;
   tooltip?: boolean;
   onTooltipValueChange?: (value: number | null) => void;
 }
@@ -172,6 +188,8 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
   lang = 'en',
   locale = enUS,
   now,
+  meanLevel,
+  meanLevelStrokeColor = '#b7323f',
   onTooltipValueChange,
 }) {
   const [ref, dimensions] = useDimensions();
@@ -383,6 +401,14 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
               />
             );
           })}
+          {typeof meanLevel !== 'undefined' && (
+            <MeanLevelIndicator
+              style={{
+                top: yScales[0](meanLevel),
+                borderLeftColor: meanLevelStrokeColor,
+              }}
+            />
+          )}
         </div>
         <div className={classes.graphLegendContainer}>
           <div
@@ -506,6 +532,19 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
                       strokeDasharray="8,8"
                     />
                   )}
+                  {typeof meanLevel !== 'undefined' && (
+                    <LineVisx
+                      from={{ x: xScale(rangeDates[0]), y: yScales[0](meanLevel) }}
+                      to={{
+                        x: xScale(rangeDates[rangeDates.length - 1]),
+                        y: yScales[0](meanLevel),
+                      }}
+                      stroke={meanLevelStrokeColor}
+                      strokeWidth={1.5}
+                      pointerEvents="none"
+                      strokeDasharray="5,3"
+                    />
+                  )}
                 </svg>
               );
             })}
@@ -515,9 +554,12 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
             series={series}
             graphHeight={height}
             heightWithPadding={heightWithPadding}
+            meanLevel={meanLevel}
+            meanLevelStrokeColor={meanLevelStrokeColor}
             translations={{
               missing: t('missing'),
               predicted: t('predicted'),
+              meanLevel: t('meanLevel'),
             }}
           />
         </div>

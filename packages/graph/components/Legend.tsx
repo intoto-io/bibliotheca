@@ -14,6 +14,7 @@ const classes = {
   legendItem: `${PREFIX}-legendItem`,
   legendColors: `${PREFIX}-legendColors`,
   legendColor: `${PREFIX}-legendColor`,
+  legendMeanLevel: `${PREFIX}-legendMeanLevel`,
   legendColorDashed: `${PREFIX}-legendColorDashed`,
   legendColorBar: `${PREFIX}-legendColorBar`,
   legendWrap: `${PREFIX}-legendWrap`,
@@ -50,6 +51,14 @@ const Root = styled('div')({
     border: 0,
     borderTop: '3px solid #fff',
   },
+  [`& .${classes.legendMeanLevel}`]: {
+    height: 0,
+    width: 0,
+    borderTop: '5px solid transparent',
+    borderBottom: '5px solid transparent',
+    borderLeft: '5px solid red',
+    marginRight: 5,
+  },
   [`& .${classes.legendColorDashed}`]: {
     borderColor: 'inherit',
     borderStyle: 'dashed',
@@ -75,9 +84,12 @@ interface LegendProps {
   series: GraphSeries[];
   graphHeight: number;
   heightWithPadding(height: number): number;
+  meanLevel?: number;
+  meanLevelStrokeColor: string;
   translations: {
     missing: string;
     predicted: string;
+    meanLevel: string;
   };
 }
 
@@ -86,6 +98,8 @@ const Legend: FunctionComponent<LegendProps> = function Legend({
   series,
   graphHeight,
   heightWithPadding,
+  meanLevel,
+  meanLevelStrokeColor,
   translations,
 }) {
   const showLegend = series.every((plot) => !!plot.name);
@@ -99,6 +113,17 @@ const Legend: FunctionComponent<LegendProps> = function Legend({
       className={classNames(classes.legend, 'GraphLegend')}
       style={{ flexDirection: !stacked ? 'row' : 'column' }}
     >
+      {typeof meanLevel !== 'undefined' && (
+        <div className={classes.legendItem}>
+          <div
+            className={classes.legendMeanLevel}
+            style={{ borderLeftColor: meanLevelStrokeColor }}
+          />
+          <div className={classes.legendWrap}>
+            <div>{translations.meanLevel}</div>
+          </div>
+        </div>
+      )}
       {series.map((plot, index) => {
         const plotHeight = stacked && plot.axisHeight
           ? heightWithPadding(plot.axisHeight) - 16
