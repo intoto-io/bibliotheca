@@ -1,5 +1,5 @@
 import { observationTypeToUnit, observationTypeToSeriesProperties } from './observationType';
-import formatObservationValue from './formatValue';
+import formatObservationValue from './formatObservationValue';
 import formatNumber from './formatNumber';
 import './types';
 
