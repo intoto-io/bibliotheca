@@ -1,6 +1,6 @@
 import { GraphSeries } from '@intoto-dev/bibliotheca-graph';
 
-import formatObservationValue from './formatValue';
+import formatObservationValue from './formatObservationValue';
 import { AppLang, ObservationType } from './types';
 
 export function observationTypeToUnit(type: ObservationType): string | undefined {

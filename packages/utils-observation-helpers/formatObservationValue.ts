@@ -5,7 +5,7 @@ function formatObservationValue(value: number | null, locale = 'nb', decimals = 
     return '';
   }
 
-  return formatNumber(value.toFixed(decimals), locale);
+  return formatNumber(parseFloat(value.toFixed(decimals)), locale);
 }
 
 export default formatObservationValue;
