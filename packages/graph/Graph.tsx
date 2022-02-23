@@ -464,9 +464,6 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
                       top={padding}
                       scale={xScale}
                       tickFormat={(tick) => {
-                        // don't render last day
-                        if (compareDesc(tick.valueOf(), dates[0]) === 0) return '';
-
                         const date = tick.valueOf();
 
                         if (compareDesc(startOfDay(date), date) === 0) {
@@ -475,10 +472,6 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
 
                         return format(date, 'p', { locale });
                       }}
-                      tickTransform={specificity === 'daily' && !navigation
-                        ? `translate(${dateWidth / 2} 0)`
-                        : undefined}
-                      hideTicks={specificity === 'daily'}
                     />
                   )}
                   {seriesReversed.map((innerPlot, i) => {
