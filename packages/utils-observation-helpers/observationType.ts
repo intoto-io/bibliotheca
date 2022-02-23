@@ -3,20 +3,11 @@ import { GraphSeries } from '@intoto-dev/bibliotheca-graph';
 import formatObservationValue from './formatObservationValue';
 import { AppLang, ObservationType } from './types';
 
-export function observationTypeToUnit(type: ObservationType): string | undefined {
-  if (type === 'water-temperature') {
-    return '°C';
-  }
-
-  return undefined;
-}
-
 export function observationTypeToSeriesProperties(
   type: ObservationType,
   locale: AppLang,
 ): Partial<GraphSeries> {
   const defaultProperties = {
-    unit: observationTypeToUnit(type),
     formatValue: (value: number) => formatObservationValue(value, locale),
   };
 
