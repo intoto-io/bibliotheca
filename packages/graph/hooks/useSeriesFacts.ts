@@ -1,5 +1,4 @@
 import {
-  addDays,
   compareDesc,
   differenceInHours,
   differenceInMinutes,
@@ -14,7 +13,6 @@ interface UseSeriesFacts {
   dates: Date[];
   minutesCount: number;
   hoursCount: number;
-  diffEnd: number;
   dataPointsPerDay: number;
 }
 
@@ -55,11 +53,8 @@ function useSeriesFacts(series: GraphSeries[]): UseSeriesFacts {
     return maxFromPlot;
   }, 0);
 
-  const diffEnd = differenceInHours(startOfDay(addDays(dates[0], 1)), dates[0]) % 24;
-
   return {
     dates,
-    diffEnd,
     hoursCount,
     minutesCount,
     dataPointsPerDay,

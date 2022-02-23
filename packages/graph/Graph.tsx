@@ -14,6 +14,8 @@ import {
   format,
   compareDesc,
   startOfDay,
+  endOfDay,
+  isSameSecond,
 } from 'date-fns';
 import { enUS } from 'date-fns/locale';
 /* eslint-enable */
@@ -218,15 +220,26 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
     dates,
     hoursCount,
     minutesCount,
-    diffEnd,
   } = useSeriesFacts(series);
 
   const initialNavStart = dates[Math.ceil(dates.length / 10)];
   const initialNavEnd = dates[0];
   const [range, setRange] = useState<[number, number]>([+initialNavStart, +initialNavEnd]);
-  const rangeDates = navigation
-    ? dates.filter((date) => +date >= range[0] && +date <= range[1])
-    : dates;
+
+  const rangeDates = useMemo((): Date[] => {
+    if (navigation) {
+      return dates.filter((date) => +date >= range[0] && +date <= range[1]);
+    }
+
+    if (specificity === 'daily' && !isSameSecond(startOfDay(dates[0]), dates[0])) {
+      return [
+        endOfDay(dates[0]),
+        ...dates,
+      ];
+    }
+
+    return dates;
+  }, [dates, navigation, range, specificity]);
 
   const dateFormat = lang === 'nb' ? 'cccccc. d. LLL' : 'ccc, d. LLL';
   const dateFormatWithTime = 'Pp';
@@ -263,11 +276,9 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
     minutesCount,
   ]);
 
-  const dayTickPadding = diffEnd * (dateWidth / 24);
-
   const totalWidth = navigation
     ? graphDataWidth - labelWidth - padding
-    : graphDataWidth + padding + dayTickPadding;
+    : graphDataWidth + padding;
   const chartTotalHeight = heightWithPadding(height);
 
   const xScale = createXScale(rangeDates.length >= 2 ? rangeDates : dates, graphDataWidth);
