@@ -56,6 +56,7 @@ const Line: FunctionComponent<LineProps> = function Line({
             key={`${keyRef}_threshold`}
             keyRef={`${keyRef}_threshold`}
             color={plot.thresholdColor || '#000'}
+            area={plot.area}
           />
         </g>
       )}
@@ -76,6 +77,7 @@ const Line: FunctionComponent<LineProps> = function Line({
           key={`${keyRef}_main`}
           keyRef={`${keyRef}_main`}
           color={color}
+          area={plot.area}
         />
       </g>
     </>

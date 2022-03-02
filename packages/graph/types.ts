@@ -41,4 +41,6 @@ export interface GraphSeries {
   unit?: string;
   formatValue?: (value: number) => number | string;
   curve?: CurveFactory;
+  area?: boolean;
+  bottom?: number;
 }

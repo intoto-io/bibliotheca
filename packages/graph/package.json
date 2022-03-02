@@ -31,6 +31,7 @@
     "@visx/clip-path": "^2.1.0",
     "@visx/curve": "^2.1.0",
     "@visx/event": "^2.1.0",
+    "@visx/gradient": "^2.1.0",
     "@visx/grid": "^2.1.1",
     "@visx/group": "^2.1.0",
     "@visx/scale": "^2.1.0",
