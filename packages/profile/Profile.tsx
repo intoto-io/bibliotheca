@@ -12,7 +12,7 @@ import {
   curveLinearClosed,
 } from 'd3-shape';
 import { scaleLinear } from 'd3-scale';
-import { axisBottom, axisTop, axisRight } from 'd3-axis';
+import { axisTop, axisRight } from 'd3-axis';
 import { select } from 'd3-selection';
 import styled from '@mui/styled-engine';
 
@@ -103,12 +103,11 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
   waterFill = '#99ccff',
   groundFill = '#b4967d',
   widthLabel = 'Width (M)',
-  mslLabel = 'MSL',
+  mslLabel = 'MASL',
   meanLabel = 'Mean-level',
   bridgeLabel = 'Bottom of bridge',
 }) {
   const axisRightRef = useRef<SVGGElement>(null);
-  const axisBottomRef = useRef<SVGGElement>(null);
   const rulerWaterRef = useRef<SVGGElement>(null);
 
   const maxMSLRiver = Math.max(...profile.map((p) => p.msl));
@@ -129,7 +128,7 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
 
   const padding = 5;
   const offsetRight = axis ? 55 : 0;
-  const offsetBottom = axis ? 45 : 0;
+  const offsetBottom = 0;
   const bankPadding = 15;
 
   const totalWidth = width;
@@ -164,15 +163,11 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
   }, [intersections, xScaleProfile]);
 
   useEffect(() => {
-    if (axisRightRef.current !== null && axisBottomRef.current !== null) {
+    if (axisRightRef.current !== null) {
       const rightAxis = axisRight(yScale);
-      const bottomAxis = axisBottom(xScale);
 
       select(axisRightRef.current)
         .call(rightAxis);
-
-      select(axisBottomRef.current)
-        .call(bottomAxis);
     }
 
     if (rulerWaterRef.current !== null && intersections) {
@@ -329,13 +324,6 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
             >
               {mslLabel}
             </text>
-            <g
-              ref={axisBottomRef}
-              transform={`translate(
-                ${padding}, 
-                ${yScaleProfile(minMSL) + bankPadding + padding + 3}
-              )`}
-            />
             <text
               style={{ textAnchor: 'middle', fontSize: '12px' }}
               y={yScaleProfile(minMSL) + bankPadding + padding + 38}
