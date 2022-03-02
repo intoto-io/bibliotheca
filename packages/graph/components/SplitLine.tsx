@@ -2,10 +2,11 @@ import { FunctionComponent, useCallback, useMemo } from 'react';
 import { ScaleLinear, ScaleTime } from 'd3-scale';
 import { CurveFactory } from 'd3-shape';
 
-import { LinePath } from '@visx/shape';
+import { Area, LinePath } from '@visx/shape';
 import { curveBasis } from '@visx/curve';
 import { Threshold } from '@visx/threshold';
 import { ClipPath } from '@visx/clip-path';
+import { LinearGradient } from '@visx/gradient';
 
 import { isMissing, isPredicted } from '../helpers/dataPoint';
 import { DataPoint } from '../types';
@@ -17,6 +18,7 @@ interface SplitLineProps {
   yScale: ScaleLinear<number, number>;
   color: string;
   curve?: CurveFactory;
+  area?: boolean;
 }
 
 const SplitLine: FunctionComponent<SplitLineProps> = function SplitLine({
@@ -26,6 +28,7 @@ const SplitLine: FunctionComponent<SplitLineProps> = function SplitLine({
   xScale,
   yScale,
   curve = curveBasis,
+  area = false,
 }) {
   const flatData = useMemo(
     () => seriesData
@@ -89,6 +92,25 @@ const SplitLine: FunctionComponent<SplitLineProps> = function SplitLine({
           <ClipPath id={`${keyRef}_missing_data`}>
             {seriesData.map((plot, index, otherPlots) => clipPathRect(plot, index, otherPlots))}
           </ClipPath>
+          {area && (
+            <>
+              <LinearGradient
+                id={`${keyRef}_missing_area_gradient`}
+                from={color}
+                to={color}
+                fromOpacity={0.5}
+                toOpacity={0}
+              />
+              <Area
+                curve={curve}
+                data={flatData}
+                x={(datum) => xScale(new Date(datum.date))}
+                y0={(datum) => yScale(datum.value)}
+                y1={() => yScale(Math.min(...yScale.domain()))}
+                fill={`url(#${keyRef}_missing_area_gradient)`}
+              />
+            </>
+          )}
           <LinePath
             curve={curve}
             data={flatData}
@@ -106,6 +128,25 @@ const SplitLine: FunctionComponent<SplitLineProps> = function SplitLine({
           {seriesData
             .map((plot, index, otherPlots) => clipPathRect(plot, index, otherPlots, false))}
         </ClipPath>
+        {area && (
+          <>
+            <LinearGradient
+              id={`${keyRef}_area_gradient`}
+              from={color}
+              to={color}
+              fromOpacity={0.75}
+              toOpacity={0.1}
+            />
+            <Area
+              curve={curve}
+              data={flatData}
+              x={(datum) => xScale(new Date(datum.date))}
+              y0={(datum) => yScale(datum.value)}
+              y1={() => yScale(Math.min(...yScale.domain()))}
+              fill={`url(#${keyRef}_area_gradient)`}
+            />
+          </>
+        )}
         <LinePath
           curve={curve}
           data={flatData}

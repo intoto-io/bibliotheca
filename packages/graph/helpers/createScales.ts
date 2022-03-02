@@ -19,13 +19,16 @@ export function createYScale(
   const yScaleRange = [padding, height + padding];
 
   const max = Math.max(...values, ...minValues, ...maxValues);
-  const min = Math.min(...values, ...minValues, ...maxValues);
+  const min = typeof plot.bottom !== 'undefined'
+    ? plot.bottom
+    : Math.min(...values, ...minValues, ...maxValues);
   const domainPadding = (max - min) * 0.2;
+  const domainPaddingBottom = typeof plot.bottom !== 'undefined' ? 0 : domainPadding;
 
   return scaleLinear({
     domain: plot.domain || [
       max + domainPadding,
-      min - domainPadding,
+      min - domainPaddingBottom,
     ],
     range: yScaleRange,
     round: true,

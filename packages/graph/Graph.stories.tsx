@@ -430,3 +430,19 @@ SimpleLineWithMeanLevel.args = {
   tooltip: true,
   meanLevel: 8.5,
 };
+
+const singleLineWithArea: GraphSeries[] = [{
+  key: 'singleLineWithArea',
+  name: 'Water level',
+  color: '#1442b7',
+  area: true,
+  bottom: 0,
+  data: lineWithGapsData,
+}];
+
+export const SimpleLineWithArea = Template.bind({});
+
+SimpleLineWithArea.args = {
+  series: singleLineWithArea,
+  tooltip: true,
+};
