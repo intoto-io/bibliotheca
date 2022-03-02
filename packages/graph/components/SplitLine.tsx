@@ -2,7 +2,7 @@ import { FunctionComponent, useCallback, useMemo } from 'react';
 import { ScaleLinear, ScaleTime } from 'd3-scale';
 import { CurveFactory } from 'd3-shape';
 
-import { Area, AreaClosed, LinePath } from '@visx/shape';
+import { Area, LinePath } from '@visx/shape';
 import { curveBasis } from '@visx/curve';
 import { Threshold } from '@visx/threshold';
 import { ClipPath } from '@visx/clip-path';
