@@ -19,6 +19,7 @@ import styled from '@mui/styled-engine';
 import findIntersections from './helpers/findIntersections';
 
 import { ProfilePoint, RiverProfile } from './types';
+import calcWaterVolume from './helpers/calcWaterVolume';
 
 const StyledSection = styled('section')({
   display: 'flex',
@@ -123,6 +124,7 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
     .slice(Math.round(profile.length / 2) * -1)), [profile]);
 
   const intersections = findIntersections(profile, currentWaterLevel);
+  const waterVolume = calcWaterVolume(profile, intersections);
 
   const riverWidth = Math.max(...profile.map((p) => p.x));
   const riverAndBridgeHeight = maxMSL - minMSL;
@@ -216,6 +218,14 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
   const waterArea = area<ProfilePoint>()
     .x((d) => {
       const linePoint = profilePointX(d);
+
+      if (intersections && linePoint < xScaleProfile(intersections[0].x)) {
+        return xScaleProfile(intersections[0].x);
+      }
+
+      if (intersections && linePoint > xScaleProfile(intersections[1].x)) {
+        return xScaleProfile(intersections[1].x);
+      }
 
       if (linePoint < waterLeft) {
         return waterLeft;
@@ -348,11 +358,12 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
                   transform={
                     `translate(${xScaleProfile((intersections[1].x - intersections[0].x) / 2)}, -5)`
                   }
-                  style={{
-                    fontSize: '12px',
-                  }}
+                  fontSize={12}
                 >
                   {formatDistance((intersections[1].x - intersections[0].x) * 100)}
+                  {' / '}
+                  {formatDistance(waterVolume * 100)}
+                  <tspan dy="-4" fontSize={9}>2</tspan>
                 </text>
               </g>
             )}
