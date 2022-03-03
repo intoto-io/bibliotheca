@@ -12,7 +12,7 @@ import {
   curveLinearClosed,
 } from 'd3-shape';
 import { scaleLinear } from 'd3-scale';
-import { axisTop, axisRight } from 'd3-axis';
+import { axisRight } from 'd3-axis';
 import { select } from 'd3-selection';
 import styled from '@mui/styled-engine';
 
@@ -76,6 +76,7 @@ export interface ProfileProps {
   mslLabel?: string;
   meanLabel?: string;
   bridgeLabel?: string;
+  formatDistance?: (d: number) => string;
 }
 
 const closedLine = line().curve(curveLinearClosed);
@@ -106,9 +107,9 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
   mslLabel = 'MASL',
   meanLabel = 'Mean-level',
   bridgeLabel = 'Bottom of bridge',
+  formatDistance = (d: number) => `${(d / 100).toFixed(1)} m`,
 }) {
   const axisRightRef = useRef<SVGGElement>(null);
-  const rulerWaterRef = useRef<SVGGElement>(null);
 
   const maxMSLRiver = Math.max(...profile.map((p) => p.msl));
   const maxMSL = typeof bridgeLevel !== 'undefined'
@@ -130,6 +131,8 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
   const offsetRight = axis ? 55 : 0;
   const offsetBottom = 0;
   const bankPadding = 15;
+  const rulerOffset = 8;
+  const rulerTickSize = 8;
 
   const totalWidth = width;
   const renderWidth = totalWidth - (padding * 2) - offsetRight;
@@ -169,23 +172,7 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
       select(axisRightRef.current)
         .call(rightAxis);
     }
-
-    if (rulerWaterRef.current !== null && intersections) {
-      const maxTick = intersections[1].x - intersections[0].x;
-
-      const waterAxis = axisTop(xScaleWater)
-        .tickValues([
-          0,
-          maxTick / 4,
-          maxTick / 2,
-          maxTick / (4 / 3),
-          maxTick,
-        ]);
-
-      select(rulerWaterRef.current)
-        .call(waterAxis);
-    }
-  }, [intersections, xScale, xScaleWater, yScale]);
+  }, [yScale]);
 
   const bankLine = area<ProfilePoint>()
     .x(profilePointX)
@@ -212,6 +199,17 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
         [profilePointX(lastPoint), yScaleProfile(bridgeLevel)],
       ]
       : [],
+  );
+
+  const waterRulerPath = line()(
+    typeof currentWaterLevel !== 'undefined' ? [
+      [xScaleWater(xScaleWater.domain()[0]), -(rulerTickSize / 2)],
+      [xScaleWater(xScaleWater.domain()[0]), rulerTickSize / 2],
+      [xScaleWater(xScaleWater.domain()[0]), 0],
+      [xScaleWater(xScaleWater.domain()[1]), 0],
+      [xScaleWater(xScaleWater.domain()[1]), rulerTickSize / 2],
+      [xScaleWater(xScaleWater.domain()[1]), -(rulerTickSize / 2)],
+    ] : [],
   );
 
   const maxWaterPoint = yScaleProfile(currentWaterLevel || minMSL);
@@ -333,12 +331,30 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
             </text>
             {typeof currentWaterLevel !== 'undefined' && intersections && (
               <g
-                ref={rulerWaterRef}
                 transform={`translate(
                   ${xScaleProfile(intersections[0].x)}, 
-                  ${yScaleProfile(currentWaterLevel || minMSL) - 10}
+                  ${yScaleProfile(currentWaterLevel || minMSL) - rulerOffset}
                 )`}
-              />
+              >
+                <path
+                  id="water-ruler"
+                  d={[waterRulerPath].join(' ')}
+                  stroke={strokeColor}
+                  strokeWidth={strokeWidth}
+                  fillOpacity={0}
+                />
+                <text
+                  textAnchor="middle"
+                  transform={
+                    `translate(${xScaleProfile((intersections[1].x - intersections[0].x) / 2)}, -5)`
+                  }
+                  style={{
+                    fontSize: '12px',
+                  }}
+                >
+                  {formatDistance((intersections[1].x - intersections[0].x) * 100)}
+                </text>
+              </g>
             )}
           </g>
         )}
