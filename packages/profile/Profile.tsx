@@ -285,13 +285,21 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
           />
         )}
         {typeof currentWaterLevel !== 'undefined' && (
-          <path
-            id="water"
-            d={[waterAreaPath].join(' ')}
-            stroke={waterStrokeColor}
-            strokeWidth={strokeWidth}
-            fill={waterFill}
-          />
+          <>
+            <defs>
+              <linearGradient id="water-gradient" x1="0" x2="0" y1="0" y2="1">
+                <stop stopColor={waterFill} stopOpacity={1} offset="0%" />
+                <stop stopColor={waterFill} stopOpacity={0.6} offset="100%" />
+              </linearGradient>
+            </defs>
+            <path
+              id="water"
+              d={[waterAreaPath].join(' ')}
+              stroke={waterStrokeColor}
+              strokeWidth={strokeWidth}
+              fill="url(#water-gradient)"
+            />
+          </>
         )}
         <path
           id="ground"
