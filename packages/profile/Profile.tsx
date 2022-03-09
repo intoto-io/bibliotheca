@@ -12,11 +12,13 @@ import {
   curveLinearClosed,
 } from 'd3-shape';
 import { scaleLinear } from 'd3-scale';
-import { axisBottom, axisTop, axisRight } from 'd3-axis';
+import { axisRight } from 'd3-axis';
 import { select } from 'd3-selection';
 import styled from '@mui/styled-engine';
 
 import findIntersections from './helpers/findIntersections';
+import calcWaterVolume from './helpers/calcWaterVolume';
+import bridgeLine from './helpers/bridgeLine';
 
 import { ProfilePoint, RiverProfile } from './types';
 
@@ -50,18 +52,12 @@ const LegendIconMean = styled('span')({
   marginRight: 5,
 });
 
-const LegendIconBridge = styled('span')({
-  display: 'block',
-  width: 10,
-  height: 0,
-  borderTop: '2px solid red',
-  marginRight: 5,
-});
-
 export interface ProfileProps {
   profile: RiverProfile;
   currentWaterLevel?: number;
   bridgeLevel?: number;
+  bridgeHeight?: number;
+  bridgeStrokeWidth?: number;
   meanLevel?: number;
   axis?: boolean;
   width?: number;
@@ -72,10 +68,9 @@ export interface ProfileProps {
   meanStrokeColor?: string;
   bridgeStrokeColor?: string;
   waterFill?: string;
-  widthLabel?: string;
   mslLabel?: string;
   meanLabel?: string;
-  bridgeLabel?: string;
+  formatDistance?: (d: number) => string;
 }
 
 const closedLine = line().curve(curveLinearClosed);
@@ -93,27 +88,26 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
   currentWaterLevel,
   meanLevel,
   bridgeLevel,
+  bridgeHeight = 1.2,
+  bridgeStrokeWidth = 2,
   axis = false,
   width = 600,
   strokeColor = 'black',
   strokeWidth = 1.5,
   waterStrokeColor = '#0633ff',
   meanStrokeColor = '#b7323f',
-  bridgeStrokeColor = '#899eaa',
+  bridgeStrokeColor = 'black',
   waterFill = '#99ccff',
   groundFill = '#b4967d',
-  widthLabel = 'Width (M)',
-  mslLabel = 'MSL',
+  mslLabel = 'MASL',
   meanLabel = 'Mean-level',
-  bridgeLabel = 'Bottom of bridge',
+  formatDistance = (d: number) => `${(d / 100).toFixed(1)} m`,
 }) {
   const axisRightRef = useRef<SVGGElement>(null);
-  const axisBottomRef = useRef<SVGGElement>(null);
-  const rulerWaterRef = useRef<SVGGElement>(null);
 
   const maxMSLRiver = Math.max(...profile.map((p) => p.msl));
   const maxMSL = typeof bridgeLevel !== 'undefined'
-    ? Math.max(maxMSLRiver, bridgeLevel)
+    ? Math.max(maxMSLRiver, bridgeLevel + bridgeHeight)
     : maxMSLRiver;
   const minMSL = Math.min(...profile.map((p) => p.msl));
 
@@ -123,14 +117,17 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
     .slice(Math.round(profile.length / 2) * -1)), [profile]);
 
   const intersections = findIntersections(profile, currentWaterLevel);
+  const waterVolume = calcWaterVolume(profile, intersections);
 
   const riverWidth = Math.max(...profile.map((p) => p.x));
   const riverAndBridgeHeight = maxMSL - minMSL;
 
   const padding = 5;
   const offsetRight = axis ? 55 : 0;
-  const offsetBottom = axis ? 45 : 0;
+  const offsetBottom = 0;
   const bankPadding = 15;
+  const rulerOffset = 8;
+  const rulerTickSize = 8;
 
   const totalWidth = width;
   const renderWidth = totalWidth - (padding * 2) - offsetRight;
@@ -164,33 +161,13 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
   }, [intersections, xScaleProfile]);
 
   useEffect(() => {
-    if (axisRightRef.current !== null && axisBottomRef.current !== null) {
+    if (axisRightRef.current !== null) {
       const rightAxis = axisRight(yScale);
-      const bottomAxis = axisBottom(xScale);
 
       select(axisRightRef.current)
         .call(rightAxis);
-
-      select(axisBottomRef.current)
-        .call(bottomAxis);
     }
-
-    if (rulerWaterRef.current !== null && intersections) {
-      const maxTick = intersections[1].x - intersections[0].x;
-
-      const waterAxis = axisTop(xScaleWater)
-        .tickValues([
-          0,
-          maxTick / 4,
-          maxTick / 2,
-          maxTick / (4 / 3),
-          maxTick,
-        ]);
-
-      select(rulerWaterRef.current)
-        .call(waterAxis);
-    }
-  }, [intersections, xScale, xScaleWater, yScale]);
+  }, [yScale]);
 
   const bankLine = area<ProfilePoint>()
     .x(profilePointX)
@@ -208,21 +185,41 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
   const waterRight = typeof currentWaterLevel !== 'undefined' && currentWaterLevel > maxWaterXR.msl
     ? xScaleProfile(profile[profile.length - 1].x) : xScaleProfile(maxWaterXR.x);
 
-  const bridgePath = closedLine(
-    typeof bridgeLevel !== 'undefined'
-      ? [
-        // bottom left bridge
-        [profilePointX(firstPoint), yScaleProfile(bridgeLevel)],
-        // bottom right bridge
-        [profilePointX(lastPoint), yScaleProfile(bridgeLevel)],
-      ]
-      : [],
+  const [bridgePath, bridgeSupportPath] = bridgeLine(
+    xScaleProfile,
+    yScaleProfile,
+    firstPoint,
+    lastPoint,
+    bridgeLevel,
+    bridgeHeight,
+  );
+
+  const bridgePathLine = line()(bridgePath);
+  const bridgeSupportPathLine = line()(bridgeSupportPath);
+
+  const waterRulerPath = line()(
+    typeof currentWaterLevel !== 'undefined' ? [
+      [xScaleWater(xScaleWater.domain()[0]), -(rulerTickSize / 2)],
+      [xScaleWater(xScaleWater.domain()[0]), rulerTickSize / 2],
+      [xScaleWater(xScaleWater.domain()[0]), 0],
+      [xScaleWater(xScaleWater.domain()[1]), 0],
+      [xScaleWater(xScaleWater.domain()[1]), rulerTickSize / 2],
+      [xScaleWater(xScaleWater.domain()[1]), -(rulerTickSize / 2)],
+    ] : [],
   );
 
   const maxWaterPoint = yScaleProfile(currentWaterLevel || minMSL);
   const waterArea = area<ProfilePoint>()
     .x((d) => {
       const linePoint = profilePointX(d);
+
+      if (intersections && linePoint < xScaleProfile(intersections[0].x)) {
+        return xScaleProfile(intersections[0].x);
+      }
+
+      if (intersections && linePoint > xScaleProfile(intersections[1].x)) {
+        return xScaleProfile(intersections[1].x);
+      }
 
       if (linePoint < waterLeft) {
         return waterLeft;
@@ -261,7 +258,6 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
   );
 
   const hasLegend = [
-    typeof bridgeLevel !== 'undefined',
     typeof meanLevel !== 'undefined',
   ].some(Boolean);
 
@@ -272,23 +268,22 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
         height={totalHeight}
         viewBox={`0 0 ${totalWidth} ${totalHeight}`}
       >
-        {typeof bridgeLevel !== 'undefined' && (
-          <path
-            id="bridge"
-            d={[bridgePath].join(' ')}
-            stroke={bridgeStrokeColor}
-            strokeWidth={strokeWidth}
-            fill={bridgeStrokeColor}
-          />
-        )}
         {typeof currentWaterLevel !== 'undefined' && (
-          <path
-            id="water"
-            d={[waterAreaPath].join(' ')}
-            stroke={waterStrokeColor}
-            strokeWidth={strokeWidth}
-            fill={waterFill}
-          />
+          <>
+            <defs>
+              <linearGradient id="water-gradient" x1="0" x2="0" y1="0" y2="1">
+                <stop stopColor={waterFill} stopOpacity={1} offset="0%" />
+                <stop stopColor={waterFill} stopOpacity={0.6} offset="100%" />
+              </linearGradient>
+            </defs>
+            <path
+              id="water"
+              d={[waterAreaPath].join(' ')}
+              stroke={waterStrokeColor}
+              strokeWidth={strokeWidth}
+              fill="url(#water-gradient)"
+            />
+          </>
         )}
         <path
           id="ground"
@@ -297,6 +292,25 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
           strokeWidth={strokeWidth}
           fill={groundFill}
         />
+        {typeof bridgeLevel !== 'undefined' && (
+          <>
+            <path
+              id="bridge-support"
+              d={[bridgeSupportPathLine].join(' ')}
+              stroke={bridgeStrokeColor}
+              strokeWidth={bridgeStrokeWidth}
+              strokeOpacity={0.5}
+              fill="transparent"
+            />
+            <path
+              id="bridge"
+              d={[bridgePathLine].join(' ')}
+              stroke={bridgeStrokeColor}
+              strokeWidth={bridgeStrokeWidth}
+              fill="transparent"
+            />
+          </>
+        )}
         {typeof meanLevel !== 'undefined' && (
           <g>
             <line
@@ -329,45 +343,39 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
             >
               {mslLabel}
             </text>
-            <g
-              ref={axisBottomRef}
-              transform={`translate(
-                ${padding}, 
-                ${yScaleProfile(minMSL) + bankPadding + padding + 3}
-              )`}
-            />
-            <text
-              style={{ textAnchor: 'middle', fontSize: '12px' }}
-              y={yScaleProfile(minMSL) + bankPadding + padding + 38}
-              x={padding + (xScale(riverWidth) / 2)}
-            >
-              {widthLabel}
-            </text>
             {typeof currentWaterLevel !== 'undefined' && intersections && (
               <g
-                ref={rulerWaterRef}
                 transform={`translate(
                   ${xScaleProfile(intersections[0].x)}, 
-                  ${yScaleProfile(currentWaterLevel || minMSL) - 10}
+                  ${yScaleProfile(currentWaterLevel || minMSL) - rulerOffset}
                 )`}
-              />
+              >
+                <path
+                  id="water-ruler"
+                  d={[waterRulerPath].join(' ')}
+                  stroke={strokeColor}
+                  strokeWidth={strokeWidth}
+                  fillOpacity={0}
+                />
+                <text
+                  textAnchor="middle"
+                  transform={
+                    `translate(${xScaleProfile((intersections[1].x - intersections[0].x) / 2)}, -5)`
+                  }
+                  fontSize={12}
+                >
+                  {formatDistance((intersections[1].x - intersections[0].x) * 100)}
+                  {' / '}
+                  {formatDistance(waterVolume * 100)}
+                  <tspan dy="-4" fontSize={9}>2</tspan>
+                </text>
+              </g>
             )}
           </g>
         )}
       </svg>
       {hasLegend && (
         <Legend style={{ paddingRight: offsetRight + padding }}>
-          {typeof bridgeLevel !== 'undefined' && (
-            <LegendItem>
-              <LegendIconBridge
-                style={{
-                  borderColor: bridgeStrokeColor,
-                  borderWidth: strokeWidth,
-                }}
-              />
-              {bridgeLabel}
-            </LegendItem>
-          )}
           {typeof meanLevel !== 'undefined' && (
             <LegendItem>
               <LegendIconMean
