@@ -17,9 +17,10 @@ import { select } from 'd3-selection';
 import styled from '@mui/styled-engine';
 
 import findIntersections from './helpers/findIntersections';
+import calcWaterVolume from './helpers/calcWaterVolume';
+import bridgeLine from './helpers/bridgeLine';
 
 import { ProfilePoint, RiverProfile } from './types';
-import calcWaterVolume from './helpers/calcWaterVolume';
 
 const StyledSection = styled('section')({
   display: 'flex',
@@ -51,18 +52,12 @@ const LegendIconMean = styled('span')({
   marginRight: 5,
 });
 
-const LegendIconBridge = styled('span')({
-  display: 'block',
-  width: 10,
-  height: 0,
-  borderTop: '2px solid red',
-  marginRight: 5,
-});
-
 export interface ProfileProps {
   profile: RiverProfile;
   currentWaterLevel?: number;
   bridgeLevel?: number;
+  bridgeHeight?: number;
+  bridgeStrokeWidth?: number;
   meanLevel?: number;
   axis?: boolean;
   width?: number;
@@ -73,10 +68,8 @@ export interface ProfileProps {
   meanStrokeColor?: string;
   bridgeStrokeColor?: string;
   waterFill?: string;
-  widthLabel?: string;
   mslLabel?: string;
   meanLabel?: string;
-  bridgeLabel?: string;
   formatDistance?: (d: number) => string;
 }
 
@@ -95,26 +88,26 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
   currentWaterLevel,
   meanLevel,
   bridgeLevel,
+  bridgeHeight = 1.2,
+  bridgeStrokeWidth = 2,
   axis = false,
   width = 600,
   strokeColor = 'black',
   strokeWidth = 1.5,
   waterStrokeColor = '#0633ff',
   meanStrokeColor = '#b7323f',
-  bridgeStrokeColor = '#899eaa',
+  bridgeStrokeColor = 'black',
   waterFill = '#99ccff',
   groundFill = '#b4967d',
-  widthLabel = 'Width (M)',
   mslLabel = 'MASL',
   meanLabel = 'Mean-level',
-  bridgeLabel = 'Bottom of bridge',
   formatDistance = (d: number) => `${(d / 100).toFixed(1)} m`,
 }) {
   const axisRightRef = useRef<SVGGElement>(null);
 
   const maxMSLRiver = Math.max(...profile.map((p) => p.msl));
   const maxMSL = typeof bridgeLevel !== 'undefined'
-    ? Math.max(maxMSLRiver, bridgeLevel)
+    ? Math.max(maxMSLRiver, bridgeLevel + bridgeHeight)
     : maxMSLRiver;
   const minMSL = Math.min(...profile.map((p) => p.msl));
 
@@ -192,16 +185,17 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
   const waterRight = typeof currentWaterLevel !== 'undefined' && currentWaterLevel > maxWaterXR.msl
     ? xScaleProfile(profile[profile.length - 1].x) : xScaleProfile(maxWaterXR.x);
 
-  const bridgePath = closedLine(
-    typeof bridgeLevel !== 'undefined'
-      ? [
-        // bottom left bridge
-        [profilePointX(firstPoint), yScaleProfile(bridgeLevel)],
-        // bottom right bridge
-        [profilePointX(lastPoint), yScaleProfile(bridgeLevel)],
-      ]
-      : [],
+  const [bridgePath, bridgeSupportPath] = bridgeLine(
+    xScaleProfile,
+    yScaleProfile,
+    firstPoint,
+    lastPoint,
+    bridgeLevel,
+    bridgeHeight,
   );
+
+  const bridgePathLine = line()(bridgePath);
+  const bridgeSupportPathLine = line()(bridgeSupportPath);
 
   const waterRulerPath = line()(
     typeof currentWaterLevel !== 'undefined' ? [
@@ -264,7 +258,6 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
   );
 
   const hasLegend = [
-    typeof bridgeLevel !== 'undefined',
     typeof meanLevel !== 'undefined',
   ].some(Boolean);
 
@@ -275,15 +268,6 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
         height={totalHeight}
         viewBox={`0 0 ${totalWidth} ${totalHeight}`}
       >
-        {typeof bridgeLevel !== 'undefined' && (
-          <path
-            id="bridge"
-            d={[bridgePath].join(' ')}
-            stroke={bridgeStrokeColor}
-            strokeWidth={strokeWidth}
-            fill={bridgeStrokeColor}
-          />
-        )}
         {typeof currentWaterLevel !== 'undefined' && (
           <>
             <defs>
@@ -308,6 +292,25 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
           strokeWidth={strokeWidth}
           fill={groundFill}
         />
+        {typeof bridgeLevel !== 'undefined' && (
+          <>
+            <path
+              id="bridge-support"
+              d={[bridgeSupportPathLine].join(' ')}
+              stroke={bridgeStrokeColor}
+              strokeWidth={bridgeStrokeWidth}
+              strokeOpacity={0.5}
+              fill="transparent"
+            />
+            <path
+              id="bridge"
+              d={[bridgePathLine].join(' ')}
+              stroke={bridgeStrokeColor}
+              strokeWidth={bridgeStrokeWidth}
+              fill="transparent"
+            />
+          </>
+        )}
         {typeof meanLevel !== 'undefined' && (
           <g>
             <line
@@ -339,13 +342,6 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
               x={(yScale(minMSL) / 2) * -1}
             >
               {mslLabel}
-            </text>
-            <text
-              style={{ textAnchor: 'middle', fontSize: '12px' }}
-              y={yScaleProfile(minMSL) + bankPadding + padding + 38}
-              x={padding + (xScale(riverWidth) / 2)}
-            >
-              {widthLabel}
             </text>
             {typeof currentWaterLevel !== 'undefined' && intersections && (
               <g
@@ -380,17 +376,6 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
       </svg>
       {hasLegend && (
         <Legend style={{ paddingRight: offsetRight + padding }}>
-          {typeof bridgeLevel !== 'undefined' && (
-            <LegendItem>
-              <LegendIconBridge
-                style={{
-                  borderColor: bridgeStrokeColor,
-                  borderWidth: strokeWidth,
-                }}
-              />
-              {bridgeLabel}
-            </LegendItem>
-          )}
           {typeof meanLevel !== 'undefined' && (
             <LegendItem>
               <LegendIconMean
