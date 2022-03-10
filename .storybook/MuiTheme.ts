@@ -1,13 +1,23 @@
-import { createTheme, Theme } from '@mui/material/styles';
-import { amber } from '@mui/material/colors';
+import { createTheme } from '@mui/material/styles';
 
 const font = `-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
   'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif`;
 
 const T = createTheme({
   palette: {
-    primary: { main: '#06f' },
-    secondary: amber,
+    primary: {
+      main: '#06f',
+      light: '#6b93ff',
+      dark: '#003dcb',
+    },
+    secondary: {
+      main: '#ffa726',
+      light: '#ffd95b',
+      dark: '#c77800',
+    },
+    grey: {
+      50: '#eef6f8',
+    },
   },
   typography: {
     fontFamily: font,
