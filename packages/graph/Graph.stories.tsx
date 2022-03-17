@@ -2,7 +2,7 @@
 import { Story, Meta } from '@storybook/react/types-6-0';
 
 import Graph, { GraphProps } from './Graph';
-import { generateDays, generateMinutes, randomLineData } from './helpers/createData';
+import { generateDays, randomLineData } from './helpers/createData';
 
 import singleLineData from './mocks/singleLine.json';
 import singleLineCutOffData from './mocks/singleLineCutOff.json';
@@ -56,13 +56,6 @@ export const SingleLineCustomHeight = Template.bind({});
 SingleLineCustomHeight.args = {
   series: singleLine,
   height: 400,
-};
-
-export const SingleLineCustomDateWidth = Template.bind({});
-
-SingleLineCustomDateWidth.args = {
-  series: singleLine,
-  entryWidth: 30,
 };
 
 const singleLineWithGaps = [{
@@ -280,42 +273,6 @@ OneLineOneBarStacked.args = {
   tooltip: true,
   stacked: true,
   series: oneLineOneBarWithLabels,
-};
-
-const hourlyThreeDays = generateDays(3, 24);
-
-const singleLineHourly: GraphSeries[] = [{
-  key: 'singleLineHourly',
-  name: 'Temperature',
-  unit: '°C',
-  labelWidth: 46,
-  data: randomLineData(hourlyThreeDays),
-}];
-
-export const SingleLineHourly = Template.bind({});
-
-SingleLineHourly.args = {
-  series: singleLineHourly,
-  tooltip: true,
-  specificity: 'hourly',
-};
-
-const minutelyOneDay = generateMinutes(3);
-
-const singleLineMinutely: GraphSeries[] = [{
-  key: 'singleLineMinutely',
-  name: 'Temperature',
-  unit: '°C',
-  labelWidth: 46,
-  data: randomLineData(minutelyOneDay),
-}];
-
-export const SingleLineMinutely = Template.bind({});
-
-SingleLineMinutely.args = {
-  series: singleLineMinutely,
-  tooltip: true,
-  specificity: 'minutely',
 };
 
 const twoWeekAndFuture = generateDays(14, 4, 4);

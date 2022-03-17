@@ -14,8 +14,6 @@ import {
   format,
   compareDesc,
   startOfDay,
-  endOfDay,
-  isSameSecond,
 } from 'date-fns';
 import { enUS } from 'date-fns/locale';
 /* eslint-enable */
@@ -42,7 +40,7 @@ import AxisLeft from './components/AxisLeft';
 import Line from './components/Line';
 import Bars from './components/Bars';
 import Legend from './components/Legend';
-import useSeriesFacts from './hooks/useSeriesFacts';
+import useSeriesDates from './hooks/useSeriesDates';
 import useDimensions from './hooks/useDimensions';
 import Navigation from './components/Navigation';
 
@@ -79,11 +77,7 @@ const Root = styled('div')({
     textAlign: 'right',
   },
   [`& .${classes.graphContainer}`]: {
-    overflowX: 'scroll',
-    direction: 'rtl',
-    position: 'absolute',
     maxWidth: '100%',
-    zIndex: 2,
   },
   [`& .${classes.graphContainerNavigation}`]: {
     overflow: 'visible',
@@ -96,6 +90,8 @@ const Root = styled('div')({
   [`& .${classes.graph}`]: {
     direction: 'ltr',
     display: 'block',
+    position: 'relative',
+    zIndex: 2,
   },
   [`& .${classes.legend}`]: {
     display: 'flex',
@@ -105,6 +101,7 @@ const Root = styled('div')({
     right: 30,
     top: -5,
     alignItems: 'flex-end',
+    pointerEvents: 'none',
     zIndex: 1,
   },
   [`& .${classes.tooltip}`]: {
@@ -131,18 +128,11 @@ const MeanLevelIndicator = styled('div')({
   transform: 'translateY(-50%)',
 });
 
-type Specificity = 'daily' | 'hourly' | 'minutely';
-
 export interface GraphProps {
   series: GraphSeries[];
   t: UseTranslationResponse<'graph'>['t'];
-  entryWidth?: number;
-  dateWidth?: number;
-  hourWidth?: number;
-  minuteWidth?: number;
   height?: number;
   stacked?: boolean;
-  specificity?: Specificity;
   navigation?: boolean;
   lang?: 'nb' | 'en';
   locale?: Locale;
@@ -179,14 +169,9 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
   series: rawSeries,
   t,
   height = 200,
-  entryWidth = 25,
-  dateWidth = 100,
-  hourWidth = 50,
-  minuteWidth = 25,
   tooltip = false,
   stacked = false,
   navigation = false,
-  specificity = 'daily',
   lang = 'en',
   locale = enUS,
   now,
@@ -216,11 +201,7 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
 
   const seriesReversed = useMemo(() => [...series].reverse(), [series]);
 
-  const {
-    dates,
-    hoursCount,
-    minutesCount,
-  } = useSeriesFacts(series);
+  const dates = useSeriesDates(series);
 
   const initialNavStart = dates[Math.ceil(dates.length / 10)];
   const initialNavEnd = dates[0];
@@ -231,15 +212,8 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
       return dates.filter((date) => +date >= range[0] && +date <= range[1]);
     }
 
-    if (specificity === 'daily' && !isSameSecond(startOfDay(dates[0]), dates[0])) {
-      return [
-        endOfDay(dates[0]),
-        ...dates,
-      ];
-    }
-
     return dates;
-  }, [dates, navigation, range, specificity]);
+  }, [dates, navigation, range]);
 
   const dateFormat = lang === 'nb' ? 'cccccc. d. LLL' : 'ccc, d. LLL';
   const dateFormatWithTime = 'Pp';
@@ -251,34 +225,9 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
   const defaultLabelWidth = 44;
   const labelWidth = series[0].labelWidth || defaultLabelWidth;
 
-  const graphDataWidth = useMemo(() => {
-    if (navigation) {
-      return dimensions.width;
-    }
+  const graphDataWidth = useMemo(() => dimensions.width, [dimensions.width]);
 
-    if (specificity === 'hourly') {
-      return hourWidth * hoursCount;
-    }
-
-    if (specificity === 'minutely') {
-      return minuteWidth * minutesCount;
-    }
-
-    return dateWidth * (hoursCount / 24);
-  }, [
-    navigation,
-    specificity,
-    dateWidth,
-    dimensions.width,
-    hourWidth,
-    hoursCount,
-    minuteWidth,
-    minutesCount,
-  ]);
-
-  const totalWidth = navigation
-    ? graphDataWidth - labelWidth - padding
-    : graphDataWidth + padding;
+  const totalWidth = graphDataWidth - labelWidth - padding;
   const chartTotalHeight = heightWithPadding(height);
 
   const xScale = createXScale(rangeDates.length >= 2 ? rangeDates : dates, graphDataWidth);
@@ -301,29 +250,17 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
     const coords = localPoint(event.target as Element, event);
 
     if (coords) {
-      const tooltipDataPositionOffset = entryWidth / 2;
-      const date = xScale.invert(coords.x + tooltipDataPositionOffset);
+      const date = xScale.invert(coords.x);
       const values = series.map((plot) => plot.data[bisectDate(plot.data, date)]);
 
       let xOffset = 10;
 
-      if (graphContainerRef.current) {
+      if (graphContainerRef.current && tooltipRef.current) {
         const graphContainerRefBox = graphContainerRef.current.getBoundingClientRect();
+        const tooltipBox = tooltipRef.current.getBoundingClientRect();
 
-        if (
-          event.clientX
-          > graphContainerRefBox.right - Math.max(padding + graphContainerRef.current.scrollLeft, 0)
-        ) {
-          clearTooltip();
-          return;
-        }
-
-        if (tooltipRef.current && graphContainerRef.current) {
-          const tooltipBox = tooltipRef.current.getBoundingClientRect();
-
-          if (event.clientX + tooltipBox.width > graphContainerRefBox.right) {
-            xOffset = (tooltipBox.width + xOffset) * -1;
-          }
+        if (event.clientX + tooltipBox.width + xOffset > graphContainerRefBox.right) {
+          xOffset = (tooltipBox.width + xOffset) * -1;
         }
       }
 
@@ -338,7 +275,7 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
         ty: event.clientY + window.scrollY,
       });
     }
-  }, [clearTooltip, entryWidth, onTooltipValueChange, series, tooltip, xScale]);
+  }, [onTooltipValueChange, series, tooltip, xScale]);
 
   return (
     <Root>
@@ -433,7 +370,6 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
             ref={graphContainerRef}
             onMouseMove={handleMouseOver}
             onMouseLeave={clearTooltip}
-            onScroll={clearTooltip}
           >
             {series.map((plot, index) => {
               if (!stacked && index > 0) return null;
@@ -490,8 +426,7 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
                         <Bars
                           key={`${innerPlot.key}_${plot.key}`}
                           plot={innerPlot}
-                          barWidth={typeof innerPlot.barWidth !== 'undefined'
-                            ? innerPlot.barWidth : entryWidth}
+                          barWidth={innerPlot.barWidth}
                           barPadding={typeof innerPlot.barPadding !== 'undefined'
                             ? innerPlot.barPadding : 4}
                           xScale={xScale}

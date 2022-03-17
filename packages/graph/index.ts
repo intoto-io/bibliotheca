@@ -8,7 +8,7 @@ import {
 import Graph from './Graph';
 import { DataPoint, GraphSeries } from './types';
 import useDimensions from './hooks/useDimensions';
-import useSeriesFacts from './hooks/useSeriesFacts';
+import useSeriesDates from './hooks/useSeriesDates';
 
 export {
   // main
@@ -23,7 +23,7 @@ export {
 
   // hooks
   useDimensions,
-  useSeriesFacts,
+  useSeriesDates,
 };
 
 export type {
