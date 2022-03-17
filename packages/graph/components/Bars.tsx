@@ -49,9 +49,9 @@ const Bars: FunctionComponent<BarProps> = function Bars({
           plot.color || colorByIndex(index),
         );
 
-        const x = barX + (barPadding ? barPadding / 2 : 0);
+        const x = barX + (barPadding ? barPadding / 2 : 0) - (barWidth / 2);
         const predictionWidth = 3;
-        const predictionX = (barWidth / 2) + x - (predictionWidth / 2);
+        const predictionX = x + (barWidth / 2) - (predictionWidth / 2);
 
         const barOpacity = (): number => {
           if (isMissing(datum)) {
@@ -81,32 +81,32 @@ const Bars: FunctionComponent<BarProps> = function Bars({
               fillOpacity={barOpacity()}
             />
             {isPredicted(datum) && (
-            <>
-              <LineVisx
-                from={{ x: predictionX, y: yScale(datum.minValue) }}
-                to={{ x: predictionX, y: yScale(datum.maxValue) }}
-                stroke="#000"
-                strokeWidth={predictionWidth}
-                strokeOpacity={1}
-                pointerEvents="none"
-              />
-              <LineVisx
-                from={{ x: predictionX - 6, y: yScale(datum.maxValue) }}
-                to={{ x: predictionX + 6, y: yScale(datum.maxValue) }}
-                stroke="#000"
-                strokeWidth={predictionWidth}
-                strokeOpacity={1}
-                pointerEvents="none"
-              />
-              <LineVisx
-                from={{ x: predictionX - 6, y: yScale(datum.minValue) }}
-                to={{ x: predictionX + 6, y: yScale(datum.minValue) }}
-                stroke="#000"
-                strokeWidth={predictionWidth}
-                strokeOpacity={1}
-                pointerEvents="none"
-              />
-            </>
+              <>
+                <LineVisx
+                  from={{ x: predictionX - (barWidth / 2), y: yScale(datum.maxValue) }}
+                  to={{ x: predictionX + (barWidth / 2), y: yScale(datum.maxValue) }}
+                  stroke="#000"
+                  strokeWidth={predictionWidth}
+                  strokeOpacity={1}
+                  pointerEvents="none"
+                />
+                <LineVisx
+                  from={{ x: predictionX, y: yScale(datum.minValue) }}
+                  to={{ x: predictionX, y: yScale(datum.maxValue) }}
+                  stroke="#000"
+                  strokeWidth={predictionWidth}
+                  strokeOpacity={1}
+                  pointerEvents="none"
+                />
+                <LineVisx
+                  from={{ x: predictionX - (barWidth / 2), y: yScale(datum.minValue) }}
+                  to={{ x: predictionX + (barWidth / 2), y: yScale(datum.minValue) }}
+                  stroke="#000"
+                  strokeWidth={predictionWidth}
+                  strokeOpacity={1}
+                  pointerEvents="none"
+                />
+              </>
             )}
           </Fragment>
         );
