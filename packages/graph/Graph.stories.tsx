@@ -9,6 +9,7 @@ import singleLineCutOffData from './mocks/singleLineCutOff.json';
 import singleLineTimezonedData from './mocks/singleLineTimezoned.json';
 import sixtyDayHourly from './mocks/sixtyDayHourly.json';
 import extremeJumps from './mocks/extremeJumps.json';
+import highRes from './mocks/highRes.json';
 import { GraphSeries, SeriesType } from './types';
 
 const dates = generateDays(14);
@@ -401,5 +402,21 @@ export const SimpleLineWithArea = Template.bind({});
 
 SimpleLineWithArea.args = {
   series: singleLineWithArea,
+  tooltip: true,
+};
+
+const highResGraph: GraphSeries[] = [{
+  key: 'barHighRes',
+  name: 'Water level',
+  color: '#00F',
+  data: highRes,
+  type: 'line',
+  formatValue: (value: number) => value.toFixed(2),
+}];
+
+export const HighResGraph = Template.bind({});
+
+HighResGraph.args = {
+  series: highResGraph,
   tooltip: true,
 };

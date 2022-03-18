@@ -230,7 +230,7 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
   const totalWidth = graphDataWidth - labelWidth - padding;
   const chartTotalHeight = heightWithPadding(height);
 
-  const xScale = createXScale(rangeDates.length >= 2 ? rangeDates : dates, graphDataWidth);
+  const xScale = createXScale(rangeDates.length >= 2 ? rangeDates : dates, totalWidth);
 
   const yScales = useMemo(
     () => series.map((plot) => createYScale(
