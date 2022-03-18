@@ -28,7 +28,9 @@ export function shiftDate(date: string): string {
 
   const localOffset = new Date(date).getTimezoneOffset();
 
-  return addMinutes(subMinutes(new Date(date), offset), localOffset).toISOString();
+  const shift = localOffset - offset;
+
+  return addMinutes(new Date(date), shift).toISOString();
 }
 
 export function shiftSeriesDates(series: GraphSeries[]): GraphSeries[] {
