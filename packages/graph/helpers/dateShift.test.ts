@@ -100,7 +100,7 @@ describe('dateShift', () => {
         {
           key: 'UTC+02:00 two',
           data: [
-            { value: 10, date: '2021-01-31T23:00:00.000Z' },
+            { value: 10, date: '2021-02-01T23:00:00.000Z' },
             { value: 11, date: '2021-02-02T00:00:00.000Z' },
             { value: 12, date: '2021-02-02T01:00:00.000Z', missing: true },
             { value: 11, date: '2021-02-02T02:00:00.000Z' },
@@ -144,10 +144,10 @@ describe('dateShift', () => {
         {
           key: 'UTC-02:00 two',
           data: [
-            { value: 10, date: '2021-01-31T23:00:00.000Z' },
-            { value: 11, date: '2021-02-01T00:00:00.000Z' },
-            { value: 12, date: '2021-02-01T01:00:00.000Z', missing: true },
-            { value: 11, date: '2021-02-01T02:00:00.000Z' },
+            { value: 10, date: '2021-02-01T23:00:00.000Z' },
+            { value: 11, date: '2021-02-02T00:00:00.000Z' },
+            { value: 12, date: '2021-02-02T01:00:00.000Z', missing: true },
+            { value: 11, date: '2021-02-02T02:00:00.000Z' },
           ],
         },
       ]);
