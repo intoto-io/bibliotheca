@@ -63,6 +63,7 @@ const classes = {
 const Root = styled('div')({
   [`& .${classes.container}`]: {
     display: 'flex',
+    position: 'relative',
   },
   [`& .${classes.yAxis}`]: {
     flexShrink: 0,
@@ -103,7 +104,8 @@ const Root = styled('div')({
   },
   [`& .${classes.tooltipCurrent}`]: {
     position: 'absolute',
-    transform: ' translateY(25%) translateX(calc(50% + 4px))',
+    transform: ' translateY(-50%) translateX(5px)',
+    whiteSpace: 'nowrap',
     zIndex: 10,
     backgroundColor: '#fff',
     padding: '3px 5px',
