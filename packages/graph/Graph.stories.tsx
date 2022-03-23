@@ -28,6 +28,8 @@ const Template: Story<GraphProps> = function Template(args) {
       {...args}
       t={(key: string) => {
         switch (key) {
+          case 'updated_at':
+            return 'Updated {time} ago';
           case 'missing':
             return 'Missing data';
           case 'mean_level':
@@ -391,18 +393,21 @@ SimpleLineWithMeanLevel.args = {
 
 const singleLineWithArea: GraphSeries[] = [{
   key: 'singleLineWithArea',
-  name: 'Water level',
+  name: 'Water level (mASL)',
   color: '#1442b7',
   area: true,
   bottom: 0,
   data: lineWithGapsData,
+  formatValue: (value: number) => `${value} m`,
 }];
 
-export const SimpleLineWithArea = Template.bind({});
+export const SimpleLineWithAreaMeanCurrent = Template.bind({});
 
-SimpleLineWithArea.args = {
+SimpleLineWithAreaMeanCurrent.args = {
   series: singleLineWithArea,
   tooltip: true,
+  meanLevel: 8.5,
+  showCurrent: true,
 };
 
 const highResGraph: GraphSeries[] = [{
