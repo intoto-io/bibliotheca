@@ -1,4 +1,4 @@
-import { addMinutes, subMinutes } from 'date-fns';
+import { addMinutes } from 'date-fns';
 
 import { GraphSeries } from '../types';
 
