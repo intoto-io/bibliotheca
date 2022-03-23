@@ -450,15 +450,29 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
                     );
                   })}
                   {tooltipValues && (
-                    <LineVisx
-                      from={{ x: tooltipValues.x, y: padding }}
-                      to={{ x: tooltipValues.x, y: columnsHeight + padding }}
-                      stroke="#f00"
-                      strokeWidth={1}
-                      strokeOpacity={0.8}
-                      pointerEvents="none"
-                      strokeDasharray="5,5"
-                    />
+                    <>
+                      <LineVisx
+                        from={{ x: xScale(new Date(tooltipValues.values[0].date)), y: padding }}
+                        to={{
+                          x: xScale(new Date(tooltipValues.values[0].date)),
+                          y: columnsHeight + padding,
+                        }}
+                        stroke="#f00"
+                        strokeWidth={1}
+                        strokeOpacity={0.8}
+                        pointerEvents="none"
+                        strokeDasharray="5,5"
+                      />
+                      <circle
+                        cx={xScale(new Date(tooltipValues.values[0].date))}
+                        cy={yScales[0](tooltipValues.values[0].value)}
+                        r={4}
+                        fill="#f00"
+                        stroke="white"
+                        strokeWidth={2}
+                        pointerEvents="none"
+                      />
+                    </>
                   )}
                   {now && (
                     <LineVisx
