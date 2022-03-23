@@ -56,6 +56,7 @@ const classes = {
   graph: `${PREFIX}-graph`,
   legend: `${PREFIX}-legend`,
   tooltip: `${PREFIX}-tooltip`,
+  tooltipCurrent: `${PREFIX}-tooltipCurrent`,
   tooltipCell: `${PREFIX}-tooltipCell`,
 };
 
@@ -92,23 +93,23 @@ const Root = styled('div')({
     display: 'block',
     position: 'relative',
     zIndex: 2,
-  },
-  [`& .${classes.legend}`]: {
-    display: 'flex',
-    position: 'absolute',
-    direction: 'ltr',
-    fontSize: '0.75em',
-    right: 30,
-    top: -5,
-    alignItems: 'flex-end',
-    pointerEvents: 'none',
-    zIndex: 1,
+    overflow: 'visible',
   },
   [`& .${classes.tooltip}`]: {
     position: 'absolute',
     transform: 'translateY(-50%)',
     fontSize: '0.6em',
     zIndex: 10,
+  },
+  [`& .${classes.tooltipCurrent}`]: {
+    position: 'absolute',
+    transform: ' translateY(25%) translateX(calc(50% + 4px))',
+    zIndex: 10,
+    backgroundColor: '#fff',
+    padding: '3px 5px',
+    borderRadius: '4px',
+    fontSize: '0.8em',
+    boxShadow: '3px 3px 6px rgba(0, 0, 0, 0.3)',
   },
   [`& .${classes.tooltipCell}`]: {
     whiteSpace: 'nowrap',
@@ -137,6 +138,7 @@ export interface GraphProps {
   lang?: 'nb' | 'en';
   locale?: Locale;
   now?: Date;
+  showCurrent?: boolean;
   meanLevel?: number;
   meanLevelStrokeColor?: string;
   tooltip?: boolean;
@@ -172,6 +174,7 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
   tooltip = false,
   stacked = false,
   navigation = false,
+  showCurrent = false,
   lang = 'en',
   locale = enUS,
   now,
@@ -280,6 +283,17 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
   return (
     <Root>
       <div className={classes.container} ref={ref}>
+        {!tooltipValues && showCurrent && (
+          <div
+            className={classes.tooltipCurrent}
+            style={{
+              left: xScale(new Date(series[0].data[0].date)) + labelWidth,
+              top: yScales[0](series[0].data[0].value),
+            }}
+          >
+            {tickFormat(series[0], series[0].data[0].value)}
+          </div>
+        )}
         {tooltipValues && tooltipValues?.values && tooltipValues.values[0] && (
           <div
             ref={tooltipRef}
@@ -385,7 +399,7 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
                 >
                   <GridRows
                     scale={yScales[index]}
-                    width={graphDataWidth}
+                    width={totalWidth}
                     stroke="#ccc"
                     strokeOpacity={0.7}
                   />
@@ -449,15 +463,42 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
                       />
                     );
                   })}
-                  {tooltipValues && (
-                    <LineVisx
-                      from={{ x: tooltipValues.x, y: padding }}
-                      to={{ x: tooltipValues.x, y: columnsHeight + padding }}
-                      stroke="#f00"
-                      strokeWidth={1}
-                      strokeOpacity={0.8}
+                  {tooltipValues && tooltipValues.values[0] && (
+                    <>
+                      <LineVisx
+                        from={{ x: xScale(new Date(tooltipValues.values[0].date)), y: padding }}
+                        to={{
+                          x: xScale(new Date(tooltipValues.values[0].date)),
+                          y: columnsHeight + padding,
+                        }}
+                        stroke={plot.color || colorByIndex(index)}
+                        strokeWidth={1}
+                        strokeOpacity={0.8}
+                        pointerEvents="none"
+                        strokeDasharray="5,5"
+                      />
+                      {tooltipValues.values.map((v, i) => (
+                        <circle
+                          cx={xScale(new Date(v.date))}
+                          cy={yScales[i](v.value)}
+                          r={4}
+                          fill={plot.color || colorByIndex(index)}
+                          stroke="white"
+                          strokeWidth={2}
+                          pointerEvents="none"
+                        />
+                      ))}
+                    </>
+                  )}
+                  {!tooltipValues && showCurrent && (
+                    <circle
+                      cx={xScale(new Date(plot.data[0].date))}
+                      cy={yScales[0](plot.data[0].value)}
+                      r={4}
+                      fill={plot.color || colorByIndex(index)}
+                      stroke="white"
+                      strokeWidth={2}
                       pointerEvents="none"
-                      strokeDasharray="5,5"
                     />
                   )}
                   {now && (
@@ -491,11 +532,13 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
           <Legend
             stacked={stacked}
             series={series}
-            graphHeight={height}
-            heightWithPadding={heightWithPadding}
             meanLevel={meanLevel}
             meanLevelStrokeColor={meanLevelStrokeColor}
+            locale={locale}
+            showCurrent={showCurrent}
+            padding={padding}
             translations={{
+              updated_at: t('updated_at'),
               missing: t('missing'),
               predicted: t('predicted'),
               meanLevel: t('mean_level'),
