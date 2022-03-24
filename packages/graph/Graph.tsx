@@ -290,8 +290,9 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
           <div
             className={classes.tooltipCurrent}
             style={{
-              left: xScale(new Date(series[0].data[0].date)) + labelWidth + currentValueOffset.left,
-              top: yScales[0](series[0].data[0].value) + currentValueOffset.top,
+              left: xScale(new Date(series[0].data[0].date))
+                + labelWidth + currentValueOffset.left + window.scrollX,
+              top: yScales[0](series[0].data[0].value) + currentValueOffset.top + window.scrollY,
             }}
           >
             {tickFormat(series[0], series[0].data[0].value)}
