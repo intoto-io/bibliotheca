@@ -63,7 +63,6 @@ const classes = {
 const Root = styled('div')({
   [`& .${classes.container}`]: {
     display: 'flex',
-    position: 'relative',
   },
   [`& .${classes.yAxis}`]: {
     flexShrink: 0,
@@ -261,10 +260,10 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
       let xOffset = 10;
 
       if (graphContainerRef.current && tooltipRef.current) {
-        const graphContainerRefBox = graphContainerRef.current.getBoundingClientRect();
+        const graphContainerBounds = graphContainerRef.current.getBoundingClientRect();
         const tooltipBox = tooltipRef.current.getBoundingClientRect();
 
-        if (event.clientX + tooltipBox.width + xOffset > graphContainerRefBox.right) {
+        if (event.clientX + tooltipBox.width + xOffset > graphContainerBounds.right) {
           xOffset = (tooltipBox.width + xOffset) * -1;
         }
       }
@@ -282,6 +281,8 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
     }
   }, [onTooltipValueChange, series, tooltip, xScale]);
 
+  const currentValueOffset = ref.current?.getBoundingClientRect() || { top: 0, left: 0 };
+
   return (
     <Root>
       <div className={classes.container} ref={ref}>
@@ -289,8 +290,8 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
           <div
             className={classes.tooltipCurrent}
             style={{
-              left: xScale(new Date(series[0].data[0].date)) + labelWidth,
-              top: yScales[0](series[0].data[0].value),
+              left: xScale(new Date(series[0].data[0].date)) + labelWidth + currentValueOffset.left,
+              top: yScales[0](series[0].data[0].value) + currentValueOffset.top,
             }}
           >
             {tickFormat(series[0], series[0].data[0].value)}
