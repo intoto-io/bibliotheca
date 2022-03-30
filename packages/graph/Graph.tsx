@@ -15,7 +15,7 @@ import {
   compareDesc,
   startOfDay,
 } from 'date-fns';
-import { enUS } from 'date-fns/locale';
+import enUS from 'date-fns/locale/en-US';
 /* eslint-enable */
 import { bisector } from 'd3-array';
 import { timeFormatDefaultLocale } from 'd3-time-format';
