@@ -483,6 +483,7 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
                       />
                       {tooltipValues.values.map((v, i) => (
                         <circle
+                          key={`circle_${v.value}_${v.date}`}
                           cx={xScale(new Date(v.date))}
                           cy={yScales[i](v.value)}
                           r={4}
