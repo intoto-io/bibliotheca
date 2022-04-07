@@ -4,7 +4,7 @@ import { ScaleLinear, ScaleTime } from 'd3-scale';
 import { RectClipPath } from '@visx/clip-path';
 
 import colorByIndex from '../helpers/colorByIndex';
-import { separateSeriesDataOnMissing } from '../helpers/separateSeriesData';
+import { separateSeriesDataOnMissingAndPredicted } from '../helpers/separateSeriesData';
 import hasValueInThreshold from '../helpers/hasValueInThreshold';
 import { GraphSeries } from '../types';
 
@@ -25,7 +25,7 @@ const Line: FunctionComponent<LineProps> = function Line({
   yScale,
   index = 0,
 }) {
-  const seriesData = separateSeriesDataOnMissing(plot.data);
+  const seriesData = separateSeriesDataOnMissingAndPredicted(plot.data);
 
   const color = plot.color || colorByIndex(index);
 
