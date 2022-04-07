@@ -541,7 +541,7 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
             meanLevel={meanLevel}
             meanLevelStrokeColor={meanLevelStrokeColor}
             locale={locale}
-            showCurrent={showCurrent}
+            currentPoint={showCurrent ? currentPoint : undefined}
             padding={padding}
             translations={{
               updated_at: t('updated_at'),
