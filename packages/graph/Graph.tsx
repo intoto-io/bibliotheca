@@ -31,7 +31,7 @@ import tickFormat from './helpers/tickFormat';
 import colorByIndex from './helpers/colorByIndex';
 import locales from './helpers/locales';
 import { valueInThreshold } from './helpers/hasValueInThreshold';
-import { isMissing } from './helpers/dataPoint';
+import { isMissing, isPredicted } from './helpers/dataPoint';
 import { createXScale, createYScale } from './helpers/createScales';
 import { shiftSeriesDates } from './helpers/dateShift';
 import { DataPoint, GraphSeries } from './types';
@@ -282,20 +282,21 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
   }, [onTooltipValueChange, series, tooltip, xScale]);
 
   const currentValueOffset = ref.current?.getBoundingClientRect() || { top: 0, left: 0 };
+  const currentPoint = series[0].data.find((d) => !isPredicted(d));
 
   return (
     <Root>
       <div className={classes.container} ref={ref}>
-        {!tooltipValues && showCurrent && (
+        {!tooltipValues && showCurrent && currentPoint && (
           <div
             className={classes.tooltipCurrent}
             style={{
-              left: xScale(new Date(series[0].data[0].date))
+              left: xScale(new Date(currentPoint.date))
                 + labelWidth + currentValueOffset.left + window.scrollX,
-              top: yScales[0](series[0].data[0].value) + currentValueOffset.top + window.scrollY,
+              top: yScales[0](currentPoint.value) + currentValueOffset.top + window.scrollY,
             }}
           >
-            {tickFormat(series[0], series[0].data[0].value)}
+            {tickFormat(series[0], currentPoint.value)}
           </div>
         )}
         {tooltipValues && tooltipValues?.values && tooltipValues.values[0] && (
@@ -495,10 +496,10 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
                       ))}
                     </>
                   )}
-                  {!tooltipValues && showCurrent && (
+                  {!tooltipValues && showCurrent && currentPoint && (
                     <circle
-                      cx={xScale(new Date(plot.data[0].date))}
-                      cy={yScales[0](plot.data[0].value)}
+                      cx={xScale(new Date(currentPoint.date))}
+                      cy={yScales[0](currentPoint.value)}
                       r={4}
                       fill={plot.color || colorByIndex(index)}
                       stroke="white"
@@ -540,7 +541,7 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
             meanLevel={meanLevel}
             meanLevelStrokeColor={meanLevelStrokeColor}
             locale={locale}
-            showCurrent={showCurrent}
+            currentPoint={showCurrent ? currentPoint : undefined}
             padding={padding}
             translations={{
               updated_at: t('updated_at'),

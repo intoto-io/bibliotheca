@@ -10,6 +10,8 @@ import singleLineTimezonedData from './mocks/singleLineTimezoned.json';
 import sixtyDayHourly from './mocks/sixtyDayHourly.json';
 import extremeJumps from './mocks/extremeJumps.json';
 import highRes from './mocks/highRes.json';
+import oneDayPredictionHourly from './mocks/oneDayPredictionHourly.json';
+
 import { GraphSeries, SeriesType } from './types';
 
 const dates = generateDays(14);
@@ -424,4 +426,24 @@ export const HighResGraph = Template.bind({});
 HighResGraph.args = {
   series: highResGraph,
   tooltip: true,
+};
+
+const twentyfourPrediction: GraphSeries[] = [{
+  key: 'twentyfourPrediction',
+  name: 'Water level (mASL)',
+  color: '#1442b7',
+  area: true,
+  bottom: 0,
+  data: oneDayPredictionHourly,
+  formatValue: (value: number) => `${value} m`,
+}];
+
+export const TwentyFourHoursAndPrediction = Template.bind({});
+
+TwentyFourHoursAndPrediction.args = {
+  series: twentyfourPrediction,
+  tooltip: true,
+  meanLevel: 6.5,
+  showCurrent: true,
+  now: new Date('2021-05-19T12:00:00.000Z'),
 };

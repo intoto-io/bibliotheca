@@ -7,7 +7,7 @@ import formatDistanceToNowStrict from 'date-fns/formatDistanceToNowStrict';
 import { isMissing, isPredicted } from '../helpers/dataPoint';
 import hasValueInThreshold from '../helpers/hasValueInThreshold';
 import colorByIndex from '../helpers/colorByIndex';
-import { GraphSeries } from '../types';
+import { DataPoint, GraphSeries } from '../types';
 
 const PREFIX = 'Legend';
 
@@ -91,7 +91,7 @@ interface LegendProps {
   stacked: boolean;
   series: GraphSeries[];
   meanLevel?: number;
-  showCurrent: boolean;
+  currentPoint?: DataPoint;
   padding: number;
   meanLevelStrokeColor: string;
   locale: Locale;
@@ -111,7 +111,7 @@ const Legend: FunctionComponent<LegendProps> = function Legend({
   translations,
   locale,
   padding,
-  showCurrent,
+  currentPoint,
 }) {
   const showLegend = series.every((plot) => !!plot.name);
   const [, setTime] = useState<number>(0);
@@ -126,14 +126,14 @@ const Legend: FunctionComponent<LegendProps> = function Legend({
     return null;
   }
 
-  const updatedAt: Date = new Date(series[0].data[0].date);
+  const updatedAt: Date = currentPoint ? new Date(currentPoint.date) : new Date();
 
   return (
     <Root
       className={classNames(classes.legend, 'GraphLegend')}
       style={{ flexDirection: !stacked ? 'row' : 'column', paddingRight: padding }}
     >
-      {showCurrent && (
+      {currentPoint && (
         <div className={classNames(classes.legendItem, classes.legendItemUpdated)}>
           {translations.updated_at
             .replace('{time}', formatDistanceToNowStrict(updatedAt, { locale }))}
