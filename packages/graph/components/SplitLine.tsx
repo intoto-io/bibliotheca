@@ -35,7 +35,18 @@ const SplitLine: FunctionComponent<SplitLineProps> = function SplitLine({
       .reduce((acc: DataPoint[], plot: DataPoint[]): DataPoint[] => [...acc, ...plot], []),
     [seriesData],
   );
-  const hasPredictedData = useMemo(() => flatData.some(isPredicted), [flatData]);
+  const flatDataWithoutPredictions = useMemo(
+    () => flatData.filter((p) => !isPredicted(p)),
+    [flatData],
+  );
+  const flatDataWithPredictions = useMemo(
+    () => [...flatData.filter((p) => isPredicted(p)), flatDataWithoutPredictions[0]],
+    [flatData, flatDataWithoutPredictions],
+  );
+  const hasPredictedData = useMemo(
+    () => flatDataWithoutPredictions.length > 0,
+    [flatDataWithoutPredictions],
+  );
   const areaProps = {
     fill: color,
     fillOpacity: 0.15,
@@ -74,18 +85,32 @@ const SplitLine: FunctionComponent<SplitLineProps> = function SplitLine({
   return (
     <>
       {hasPredictedData && (
-        <Threshold
-          id={keyRef}
-          data={flatData}
-          x={(datum) => xScale(new Date(datum.date))}
-          y0={(datum) => (isPredicted(datum) ? yScale(datum.minValue) : yScale(datum.value))}
-          y1={(datum) => (isPredicted(datum) ? yScale(datum.maxValue) : yScale(datum.value))}
-          curve={curve}
-          clipAboveTo={0}
-          clipBelowTo={3000}
-          belowAreaProps={areaProps}
-          aboveAreaProps={areaProps}
-        />
+        <>
+          <Threshold
+            id={keyRef}
+            data={flatDataWithPredictions}
+            x={(datum) => xScale(new Date(datum.date))}
+            y0={(datum) => (isPredicted(datum) && typeof datum.minValue !== 'undefined'
+              ? yScale(datum.minValue) : yScale(datum.value))}
+            y1={(datum) => (isPredicted(datum) && typeof datum.maxValue !== 'undefined'
+              ? yScale(datum.maxValue) : yScale(datum.value))}
+            curve={curve}
+            clipAboveTo={0}
+            clipBelowTo={3000}
+            belowAreaProps={areaProps}
+            aboveAreaProps={areaProps}
+          />
+          <LinePath
+            curve={curve}
+            data={flatDataWithPredictions}
+            x={(datum) => xScale(new Date(datum.date))}
+            y={(datum) => yScale(datum.value)}
+            stroke={color}
+            strokeWidth={1.8}
+            strokeDasharray="5, 8"
+            strokeOpacity={1}
+          />
+        </>
       )}
       {hasMissingData && (
         <g clipPath={`url(#${keyRef}_missing_data)`}>
@@ -139,7 +164,7 @@ const SplitLine: FunctionComponent<SplitLineProps> = function SplitLine({
             />
             <Area
               curve={curve}
-              data={flatData}
+              data={flatDataWithoutPredictions}
               x={(datum) => xScale(new Date(datum.date))}
               y0={(datum) => yScale(datum.value)}
               y1={() => yScale(Math.min(...yScale.domain()))}
@@ -149,7 +174,7 @@ const SplitLine: FunctionComponent<SplitLineProps> = function SplitLine({
         )}
         <LinePath
           curve={curve}
-          data={flatData}
+          data={flatDataWithoutPredictions}
           x={(datum) => xScale(new Date(datum.date))}
           y={(datum) => yScale(datum.value)}
           stroke={color}
