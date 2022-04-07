@@ -36,3 +36,7 @@ export function separateSeriesDataOnMissing(data: DataPoint[]): DataPoint[][] {
 export function separateSeriesDataOnPredicted(data: DataPoint[]): DataPoint[][] {
   return separateSeriesData(data, isPredicted);
 }
+
+export function separateSeriesDataOnMissingAndPredicted(data: DataPoint[]): DataPoint[][] {
+  return separateSeriesData(data, (p) => isPredicted(p) || isMissing(p));
+}

@@ -35,17 +35,9 @@ const SplitLine: FunctionComponent<SplitLineProps> = function SplitLine({
       .reduce((acc: DataPoint[], plot: DataPoint[]): DataPoint[] => [...acc, ...plot], []),
     [seriesData],
   );
-  const flatDataWithoutPredictions = useMemo(
-    () => flatData.filter((p) => !isPredicted(p)),
-    [flatData],
-  );
-  const flatDataWithPredictions = useMemo(
-    () => [...flatData.filter((p) => isPredicted(p)), flatDataWithoutPredictions[0]],
-    [flatData, flatDataWithoutPredictions],
-  );
   const hasPredictedData = useMemo(
-    () => flatDataWithoutPredictions.length > 0,
-    [flatDataWithoutPredictions],
+    () => flatData.some((p) => isPredicted(p)),
+    [flatData],
   );
   const areaProps = {
     fill: color,
@@ -59,18 +51,41 @@ const SplitLine: FunctionComponent<SplitLineProps> = function SplitLine({
     index: number,
     otherPlots: DataPoint[][],
     missing = true,
+    predicted = false,
   ) => {
-    if (plot.some((p) => isMissing(p) === missing)) {
-      const from = xScale(new Date(plot[plot.length - 1].date));
-      const to = xScale(
-        otherPlots[index - 1]
-          ? new Date(otherPlots[index - 1][otherPlots[index - 1].length - 1].date)
+    if (plot.some((p) => isMissing(p) === missing && isPredicted(p) === predicted)) {
+      const nextPlot = otherPlots[index + 1];
+      const prevPlot = otherPlots[index - 1];
+
+      let from = xScale(new Date(plot[plot.length - 1].date));
+      let to = xScale(
+        prevPlot && !prevPlot.some((p) => isPredicted(p))
+          ? new Date(prevPlot[prevPlot.length - 1].date)
           : new Date(plot[0].date),
       );
+      let name = `${keyRef}_main_rect_${from}`;
+
+      if (plot.some((p) => isPredicted(p))) {
+        from = xScale(new Date(nextPlot[0].date));
+        to = xScale(
+          prevPlot
+            ? new Date(prevPlot[prevPlot.length - 1].date)
+            : new Date(plot[0].date),
+        );
+        name = `${keyRef}_predicted_rect_${from}`;
+      } else if (plot.some((p) => isMissing(p))) {
+        from = xScale(new Date(plot[plot.length - 1].date));
+        to = xScale(
+          otherPlots[index - 1]
+            ? new Date(otherPlots[index - 1][otherPlots[index - 1].length - 1].date)
+            : new Date(plot[0].date),
+        );
+        name = `${keyRef}_missing_rect_${from}`;
+      }
 
       return (
         <rect
-          key={`${keyRef}_missing_rect_${from}`}
+          key={name}
           y={0}
           x={from}
           width={to - from}
@@ -85,10 +100,14 @@ const SplitLine: FunctionComponent<SplitLineProps> = function SplitLine({
   return (
     <>
       {hasPredictedData && (
-        <>
+        <g clipPath={`url(#${keyRef}_predicted_data)`}>
+          <ClipPath id={`${keyRef}_predicted_data`}>
+            {seriesData
+              .map((plot, index, otherPlots) => clipPathRect(plot, index, otherPlots, false, true))}
+          </ClipPath>
           <Threshold
             id={keyRef}
-            data={flatDataWithPredictions}
+            data={flatData}
             x={(datum) => xScale(new Date(datum.date))}
             y0={(datum) => (isPredicted(datum) && typeof datum.minValue !== 'undefined'
               ? yScale(datum.minValue) : yScale(datum.value))}
@@ -102,7 +121,7 @@ const SplitLine: FunctionComponent<SplitLineProps> = function SplitLine({
           />
           <LinePath
             curve={curve}
-            data={flatDataWithPredictions}
+            data={flatData}
             x={(datum) => xScale(new Date(datum.date))}
             y={(datum) => yScale(datum.value)}
             stroke={color}
@@ -110,12 +129,13 @@ const SplitLine: FunctionComponent<SplitLineProps> = function SplitLine({
             strokeDasharray="5, 8"
             strokeOpacity={1}
           />
-        </>
+        </g>
       )}
       {hasMissingData && (
         <g clipPath={`url(#${keyRef}_missing_data)`}>
           <ClipPath id={`${keyRef}_missing_data`}>
-            {seriesData.map((plot, index, otherPlots) => clipPathRect(plot, index, otherPlots))}
+            {seriesData
+              .map((plot, index, otherPlots) => clipPathRect(plot, index, otherPlots, true, false))}
           </ClipPath>
           {area && (
             <>
@@ -151,7 +171,7 @@ const SplitLine: FunctionComponent<SplitLineProps> = function SplitLine({
       <g clipPath={`url(#${keyRef}_data)`}>
         <ClipPath id={`${keyRef}_data`}>
           {seriesData
-            .map((plot, index, otherPlots) => clipPathRect(plot, index, otherPlots, false))}
+            .map((plot, index, otherPlots) => clipPathRect(plot, index, otherPlots, false, false))}
         </ClipPath>
         {area && (
           <>
@@ -164,7 +184,7 @@ const SplitLine: FunctionComponent<SplitLineProps> = function SplitLine({
             />
             <Area
               curve={curve}
-              data={flatDataWithoutPredictions}
+              data={flatData}
               x={(datum) => xScale(new Date(datum.date))}
               y0={(datum) => yScale(datum.value)}
               y1={() => yScale(Math.min(...yScale.domain()))}
@@ -174,7 +194,7 @@ const SplitLine: FunctionComponent<SplitLineProps> = function SplitLine({
         )}
         <LinePath
           curve={curve}
-          data={flatDataWithoutPredictions}
+          data={flatData}
           x={(datum) => xScale(new Date(datum.date))}
           y={(datum) => yScale(datum.value)}
           stroke={color}
