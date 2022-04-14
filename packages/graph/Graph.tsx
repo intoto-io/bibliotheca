@@ -7,8 +7,7 @@ import {
   useCallback,
   useEffect,
 } from 'react';
-import classNames from 'classnames';
-import { styled } from '@mui/material/styles';
+import { UseTranslationResponse } from 'react-i18next';
 /* eslint-disable import/no-duplicates */ // needed to prevent eslint bug
 import {
   format,
@@ -19,7 +18,8 @@ import enUS from 'date-fns/locale/en-US';
 /* eslint-enable */
 import { bisector } from 'd3-array';
 import { timeFormatDefaultLocale } from 'd3-time-format';
-import { UseTranslationResponse } from 'react-i18next';
+
+import Box from '@mui/material/Box';
 
 import { Line as LineVisx } from '@visx/shape';
 import { AxisRight, AxisTop } from '@visx/axis';
@@ -43,92 +43,6 @@ import Legend from './components/Legend';
 import useSeriesDates from './hooks/useSeriesDates';
 import useDimensions from './hooks/useDimensions';
 import Navigation from './components/Navigation';
-
-const PREFIX = 'Graph';
-
-const classes = {
-  container: `${PREFIX}-container`,
-  yAxis: `${PREFIX}-yAxis`,
-  yAxisRight: `${PREFIX}-yAxisRight`,
-  graphContainer: `${PREFIX}-graphContainer`,
-  graphContainerNavigation: `${PREFIX}-graphContainerNavigation`,
-  graphLegendContainer: `${PREFIX}-graphLegendContainer`,
-  graph: `${PREFIX}-graph`,
-  legend: `${PREFIX}-legend`,
-  tooltip: `${PREFIX}-tooltip`,
-  tooltipCurrent: `${PREFIX}-tooltipCurrent`,
-  tooltipCell: `${PREFIX}-tooltipCell`,
-};
-
-const Root = styled('div')({
-  [`& .${classes.container}`]: {
-    display: 'flex',
-  },
-  [`& .${classes.yAxis}`]: {
-    flexShrink: 0,
-    flexGrow: 0,
-    textAlign: 'right',
-    display: 'flex',
-    flexDirection: 'column',
-    position: 'relative',
-  },
-  [`& .${classes.yAxisRight}`]: {
-    flexShrink: 0,
-    flexGrow: 0,
-    textAlign: 'right',
-  },
-  [`& .${classes.graphContainer}`]: {
-    maxWidth: '100%',
-  },
-  [`& .${classes.graphContainerNavigation}`]: {
-    overflow: 'visible',
-  },
-  [`& .${classes.graphLegendContainer}`]: {
-    flexShrink: 1,
-    flexGrow: 1,
-    position: 'relative',
-  },
-  [`& .${classes.graph}`]: {
-    direction: 'ltr',
-    display: 'block',
-    position: 'relative',
-    zIndex: 2,
-    overflow: 'visible',
-  },
-  [`& .${classes.tooltip}`]: {
-    position: 'absolute',
-    transform: 'translateY(-50%)',
-    fontSize: '0.6em',
-    zIndex: 10,
-  },
-  [`& .${classes.tooltipCurrent}`]: {
-    position: 'absolute',
-    transform: ' translateY(-50%) translateX(5px)',
-    whiteSpace: 'nowrap',
-    zIndex: 10,
-    backgroundColor: '#fff',
-    padding: '3px 5px',
-    borderRadius: '4px',
-    fontSize: '0.8em',
-    boxShadow: '3px 3px 6px rgba(0, 0, 0, 0.3)',
-  },
-  [`& .${classes.tooltipCell}`]: {
-    whiteSpace: 'nowrap',
-  },
-});
-
-const MeanLevelIndicator = styled('div')({
-  position: 'absolute',
-  top: 0,
-  right: 0,
-  display: 'block',
-  width: 0,
-  height: 0,
-  borderTop: '5px solid transparent',
-  borderBottom: '5px solid transparent',
-  borderLeft: '5px solid red',
-  transform: 'translateY(-50%)',
-});
 
 export interface GraphProps {
   series: GraphSeries[];
@@ -285,11 +199,21 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
   const currentPoint = series[0].data.find((d) => !isPredicted(d));
 
   return (
-    <Root>
-      <div className={classes.container} ref={ref}>
+    <div>
+      <Box sx={{ display: 'flex' }} ref={ref}>
         {!tooltipValues && showCurrent && currentPoint && (
-          <div
-            className={classes.tooltipCurrent}
+          <Box
+            sx={{
+              position: 'absolute',
+              transform: ' translateY(-50%) translateX(5px)',
+              whiteSpace: 'nowrap',
+              zIndex: 10,
+              backgroundColor: '#fff',
+              padding: '3px 5px',
+              borderRadius: '4px',
+              fontSize: '0.8em',
+              boxShadow: '3px 3px 6px rgba(0, 0, 0, 0.3)',
+            }}
             style={{
               left: xScale(new Date(currentPoint.date))
                 + labelWidth + currentValueOffset.left + window.scrollX,
@@ -297,12 +221,18 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
             }}
           >
             {tickFormat(series[0], currentPoint.value)}
-          </div>
+          </Box>
         )}
         {tooltipValues && tooltipValues?.values && tooltipValues.values[0] && (
-          <div
+          <Box
             ref={tooltipRef}
-            className={classNames(classes.tooltip, 'GraphTooltip')}
+            className="GraphTooltip"
+            sx={{
+              position: 'absolute',
+              transform: 'translateY(-50%)',
+              fontSize: '0.6em',
+              zIndex: 10,
+            }}
             style={{
               ...defaultStyles,
               top: tooltipValues.ty,
@@ -329,28 +259,43 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
 
                   return (
                     <tr key={plot.key}>
-                      <td
-                        className={classes.tooltipCell}
-                        style={{ color }}
+                      <Box
+                        component="td"
+                        sx={{
+                          whiteSpace: 'nowrap',
+                          color,
+                        }}
                       >
                         {`${plot.name}:`}
-                      </td>
-                      <td
-                        className={classes.tooltipCell}
-                        style={{ color }}
+                      </Box>
+                      <Box
+                        component="td"
+                        sx={{
+                          whiteSpace: 'nowrap',
+                          color,
+                        }}
                       >
                         {isMissing(tooltipValues.values[index])
                           ? t('missing')
                           : tickFormat(plot, tooltipValues.values[index].value)}
-                      </td>
+                      </Box>
                     </tr>
                   );
                 })}
               </tbody>
             </table>
-          </div>
+          </Box>
         )}
-        <div className={classes.yAxis}>
+        <Box
+          sx={{
+            flexShrink: 0,
+            flexGrow: 0,
+            textAlign: 'right',
+            display: 'flex',
+            flexDirection: 'column',
+            position: 'relative',
+          }}
+        >
           {series.map((plot, index) => {
             if (index > 0 && !stacked) return null;
 
@@ -369,23 +314,36 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
             );
           })}
           {typeof meanLevel !== 'undefined' && (
-            <MeanLevelIndicator
-              style={{
+            <Box
+              sx={{
+                position: 'absolute',
+                right: 0,
+                display: 'block',
+                width: 0,
+                height: 0,
+                borderTop: '5px solid transparent',
+                borderBottom: '5px solid transparent',
+                borderLeft: '5px solid red',
+                transform: 'translateY(-50%)',
                 top: yScales[0](meanLevel),
                 borderLeftColor: meanLevelStrokeColor,
               }}
             />
           )}
-        </div>
-        <div className={classes.graphLegendContainer}>
-          <div
-            className={
-              classNames(
-                classes.graphContainer,
-                { [classes.graphContainerNavigation]: navigation },
-                'GraphContainer',
-              )
-            }
+        </Box>
+        <Box
+          sx={{
+            flexShrink: 1,
+            flexGrow: 1,
+            position: 'relative',
+          }}
+        >
+          <Box
+            sx={{
+              maxWidth: '100%',
+              overflow: navigation ? 'visible' : 'hidden',
+            }}
+            className="GraphContainer"
             ref={graphContainerRef}
             onMouseMove={handleMouseOver}
             onMouseLeave={clearTooltip}
@@ -396,11 +354,18 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
               const columnsHeight = stacked && plot.axisHeight ? plot.axisHeight : height;
 
               return (
-                <svg
+                <Box
+                  component="svg"
                   key={`${plot.key}_${stacked ? 'stacked' : 'combined'}`}
                   width={totalWidth}
                   height={heightWithPadding(columnsHeight)}
-                  className={classes.graph}
+                  sx={{
+                    direction: 'ltr',
+                    display: 'block',
+                    position: 'relative',
+                    zIndex: 2,
+                    overflow: 'visible',
+                  }}
                 >
                   <GridRows
                     scale={yScales[index]}
@@ -531,10 +496,10 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
                       strokeDasharray="5,3"
                     />
                   )}
-                </svg>
+                </Box>
               );
             })}
-          </div>
+          </Box>
           <Legend
             stacked={stacked}
             series={series}
@@ -550,9 +515,15 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
               meanLevel: t('mean_level'),
             }}
           />
-        </div>
+        </Box>
         {series.length > 1 && (
-          <div className={classes.yAxisRight}>
+          <Box
+            sx={{
+              flexShrink: 0,
+              flexGrow: 0,
+              textAlign: 'right',
+            }}
+          >
             {series.map((plot, index) => (stacked || index === 0 ? null : (
               <svg
                 key={plot.key}
@@ -574,9 +545,9 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
                 />
               </svg>
             )))}
-          </div>
+          </Box>
         )}
-      </div>
+      </Box>
       {navigation && (
         <div>
           <Navigation
@@ -590,7 +561,7 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
           />
         </div>
       )}
-    </Root>
+    </div>
   );
 };
 

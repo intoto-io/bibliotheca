@@ -1,91 +1,34 @@
 import { FunctionComponent, useEffect, useState } from 'react';
-import { styled } from '@mui/material/styles';
-import classNames from 'classnames';
 
 import formatDistanceToNowStrict from 'date-fns/formatDistanceToNowStrict';
+
+import Box from '@mui/material/Box';
 
 import { isMissing, isPredicted } from '../helpers/dataPoint';
 import hasValueInThreshold from '../helpers/hasValueInThreshold';
 import colorByIndex from '../helpers/colorByIndex';
 import { DataPoint, GraphSeries } from '../types';
 
-const PREFIX = 'Legend';
-
-const classes = {
-  legend: `${PREFIX}-legend`,
-  legendItem: `${PREFIX}-legendItem`,
-  legendColors: `${PREFIX}-legendColors`,
-  legendColor: `${PREFIX}-legendColor`,
-  legendMeanLevel: `${PREFIX}-legendMeanLevel`,
-  legendColorDashed: `${PREFIX}-legendColorDashed`,
-  legendColorBar: `${PREFIX}-legendColorBar`,
-  legendWrap: `${PREFIX}-legendWrap`,
-  legendPrediction: `${PREFIX}-legendPrediction`,
-  legendPredictionLine: `${PREFIX}-legendPredictionLine`,
-  legendItemUpdated: `${PREFIX}-legendItemUpdated`,
+const LegendItem = {
+  marginLeft: 1,
+  height: 16,
+  display: 'flex',
+  alignItems: 'center',
 };
 
-const Root = styled('div')({
-  [`&.${classes.legend}`]: {
-    display: 'flex',
-    direction: 'ltr',
-    fontSize: '0.75em',
-    alignItems: 'flex-end',
-    zIndex: 1,
-    transform: 'translateY(-100%)',
-    marginTop: '-5px',
-    justifyContent: 'flex-end',
-  },
-  [`& .${classes.legendItem}`]: {
-    marginLeft: 8,
-    height: 16,
-    display: 'flex',
-    alignItems: 'center',
-  },
-  [`& .${classes.legendItemUpdated}`]: {
-    marginLeft: 0,
-    flexGrow: 1,
-    fontStyle: 'italic',
-  },
-  [`& .${classes.legendColors}`]: {
-    width: 15,
-    marginRight: 4,
-  },
-  [`& .${classes.legendColor}`]: {
-    height: 0,
-    width: 15,
-    marginTop: 3,
-    marginBottom: 3,
-    border: 0,
-    borderTop: '3px solid #fff',
-  },
-  [`& .${classes.legendMeanLevel}`]: {
-    height: 0,
-    width: 0,
-    borderTop: '5px solid transparent',
-    borderBottom: '5px solid transparent',
-    borderLeft: '5px solid red',
-    marginRight: 5,
-  },
-  [`& .${classes.legendColorDashed}`]: {
-    borderColor: 'inherit',
-    borderStyle: 'dashed',
-  },
-  [`& .${classes.legendColorBar}`]: {
-    opacity: 0.5,
-  },
-  [`& .${classes.legendWrap}`]: {
-    display: 'flex',
-  },
-  [`& .${classes.legendPrediction}`]: {
-    opacity: 0.6,
-  },
-  [`& .${classes.legendPredictionLine}`]: {
-    opacity: 0.5,
-    margin: 0,
-    borderTopWidth: 4.5,
-  },
-});
+const LegendColor = {
+  height: 0,
+  width: 15,
+  marginTop: '3px',
+  marginBottom: '3px',
+  border: 0,
+  borderTop: '3px solid #fff',
+};
+
+const LegendColors = {
+  width: 15,
+  marginRight: 0.5,
+};
 
 interface LegendProps {
   stacked: boolean;
@@ -129,26 +72,51 @@ const Legend: FunctionComponent<LegendProps> = function Legend({
   const updatedAt: Date = currentPoint ? new Date(currentPoint.date) : new Date();
 
   return (
-    <Root
-      className={classNames(classes.legend, 'GraphLegend')}
-      style={{ flexDirection: !stacked ? 'row' : 'column', paddingRight: padding }}
+    <Box
+      className="GraphLegend"
+      sx={{
+        display: 'flex',
+        direction: 'ltr',
+        fontSize: '0.75em',
+        alignItems: 'flex-end',
+        zIndex: 1,
+        transform: 'translateY(-100%)',
+        marginTop: '-5px',
+        justifyContent: 'flex-end',
+        flexDirection: !stacked ? 'row' : 'column',
+        paddingRight: `${padding}px`,
+      }}
     >
       {currentPoint && (
-        <div className={classNames(classes.legendItem, classes.legendItemUpdated)}>
+        <Box
+          sx={{
+            ...LegendItem,
+            marginLeft: 0,
+            flexGrow: 1,
+            fontStyle: 'italic',
+          }}
+        >
           {translations.updated_at
             .replace('{time}', formatDistanceToNowStrict(updatedAt, { locale }))}
-        </div>
+        </Box>
       )}
       {typeof meanLevel !== 'undefined' && (
-        <div className={classes.legendItem}>
-          <div
-            className={classes.legendMeanLevel}
-            style={{ borderLeftColor: meanLevelStrokeColor }}
+        <Box sx={LegendItem}>
+          <Box
+            sx={{
+              height: 0,
+              width: 0,
+              borderTop: '5px solid transparent',
+              borderBottom: '5px solid transparent',
+              borderLeft: '5px solid red',
+              marginRight: '6px',
+              borderLeftColor: meanLevelStrokeColor,
+            }}
           />
-          <div className={classes.legendWrap}>
+          <Box sx={{ display: 'flex' }}>
             <div>{translations.meanLevel}</div>
-          </div>
-        </div>
+          </Box>
+        </Box>
       )}
       {series.map((plot, index) => {
         const hasThresholdData = hasValueInThreshold(
@@ -162,67 +130,78 @@ const Legend: FunctionComponent<LegendProps> = function Legend({
         const color = plot.color || colorByIndex(index);
 
         return (
-          <div key={plot.key} className={classes.legendWrap}>
-            <div className={classes.legendItem}>
-              <div className={classes.legendColors}>
-                <div className={classes.legendColor} style={{ borderColor: color }} />
+          <Box key={plot.key} sx={{ display: 'flex' }}>
+            <Box sx={LegendItem}>
+              <Box sx={LegendColors}>
+                <Box
+                  sx={{
+                    ...LegendColor,
+                    borderColor: color,
+                  }}
+                />
                 {hasThresholdData && (
-                  <div
-                    className={classes.legendColor}
-                    style={{ borderColor: plot.thresholdColor || '#000' }}
+                  <Box
+                    sx={{
+                      ...LegendColor,
+                      borderColor: plot.thresholdColor || '#000',
+                    }}
                   />
                 )}
-              </div>
+              </Box>
               <div>
                 {plot.name}
               </div>
-            </div>
+            </Box>
             {hasMissingData && (
-              <div className={classes.legendItem}>
-                <div className={classes.legendColors}>
-                  <div
-                    style={{ borderColor: color }}
-                    className={
-                      classNames(
-                        classes.legendColor,
-                        {
-                          [classes.legendColorDashed]: plot.type !== 'bar',
-                          [classes.legendColorBar]: plot.type === 'bar',
-                        },
-                      )
-                    }
+              <Box sx={LegendItem}>
+                <Box sx={LegendColors}>
+                  <Box
+                    sx={{
+                      ...LegendColor,
+                      borderColor: color,
+                      opacity: plot.type === 'bar' ? 0.5 : 1,
+                      ...(plot.type !== 'bar' ? {
+                        borderColor: 'inherit',
+                        borderStyle: 'dashed',
+                      } : {}),
+                    }}
                   />
-                </div>
+                </Box>
                 <div>{translations.missing}</div>
-              </div>
+              </Box>
             )}
             {hasPredictedData && (
-              <div className={classes.legendItem}>
-                <div className={classes.legendColors}>
-                  <div
-                    style={{ borderColor: color }}
-                    className={classNames(classes.legendColor, classes.legendPrediction)}
+              <Box sx={LegendItem}>
+                <Box sx={LegendColors}>
+                  <Box
+                    sx={{
+                      ...LegendColor,
+                      borderColor: color,
+                      opacity: 0.6,
+                    }}
                   />
                   {hasThresholdData && (
-                    <div
-                      className={classNames(
-                        classes.legendColor,
-                        classes.legendPrediction,
-                        {
-                          [classes.legendPredictionLine]: plot.type === 'line',
-                        },
-                      )}
-                      style={{ borderColor: plot.thresholdColor || '#000' }}
+                    <Box
+                      sx={{
+                        ...LegendColor,
+                        borderColor: plot.thresholdColor || '#000',
+                        opacity: 0.6,
+                        ...(plot.type === 'line' ? {
+                          opacity: 0.5,
+                          margin: 0,
+                          borderTopWidth: 4.5,
+                        } : {}),
+                      }}
                     />
                   )}
-                </div>
+                </Box>
                 <div>{translations.predicted}</div>
-              </div>
+              </Box>
             )}
-          </div>
+          </Box>
         );
       })}
-    </Root>
+    </Box>
   );
 };
 

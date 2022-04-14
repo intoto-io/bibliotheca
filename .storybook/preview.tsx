@@ -1,4 +1,4 @@
-import { ThemeProvider } from '@mui/material/styles';
+import { ThemeProvider as MUIThemeProvider } from '@mui/system';
 import { ThemeProvider as Emotion10ThemeProvider } from 'emotion-theming';
 
 import MuiTheme from './MuiTheme';
@@ -6,7 +6,7 @@ import MuiTheme from './MuiTheme';
 const withThemeProvider = (Story, context) => {
   return (
     <Emotion10ThemeProvider theme={MuiTheme}>
-      <ThemeProvider theme={MuiTheme}>
+      <MUIThemeProvider theme={MuiTheme}>
         {/* Default font settings for components not using MUI5 */}
         <style>
           {`
@@ -17,7 +17,7 @@ const withThemeProvider = (Story, context) => {
           `}
         </style>
         <Story {...context} />
-      </ThemeProvider>
+      </MUIThemeProvider>
     </Emotion10ThemeProvider>
   );
 };

@@ -25,7 +25,6 @@
   "dependencies": {
     "@intoto-dev/utils-is-unique-date": "^0.7.1",
     "@mui/material": "^5.2.5",
-    "@mui/styles": "^5.2.3",
     "@visx/axis": "^2.1.1",
     "@visx/brush": "^2.1.1",
     "@visx/clip-path": "^2.1.0",
