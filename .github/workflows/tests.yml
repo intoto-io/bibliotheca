@@ -17,6 +17,8 @@ jobs:
         run: npm i
       - name: Lint
         run: npm run lint
+      - name: TypeScript check
+        run: npm run tsc
       - name: Build packages
         run: npm run build-packages
       - name: Unit tests

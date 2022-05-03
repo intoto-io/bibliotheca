@@ -38,13 +38,27 @@ if (conflict) {
       readline.close();
 
       if (a === '' || a.toLowerCase() === 'y') {
+        const names = [];
+
         rootPackage.workspaces.forEach((p) => {
           // eslint-disable-next-line import/no-dynamic-require,global-require
           const packageJson = require(`../${p}/package.json`);
           packageJson.version = rootPackage.version;
+
+          // also update internal dependencies
+          names.forEach((n) => {
+            if (!packageJson.dependencies[n]) {
+              return;
+            }
+
+            packageJson.dependencies[n] = `^${rootPackage.version}`;
+          });
+
           // eslint-disable-next-line import/no-dynamic-require,global-require
           const fs = require('fs');
           fs.writeFileSync(`${p}/package.json`, JSON.stringify(packageJson, null, 2));
+
+          names.push(packageJson.name);
         });
         console.log('------------------------');
         console.log('Changed versions. Committing changes...');
