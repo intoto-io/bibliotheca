@@ -30,6 +30,7 @@
   "keywords": [],
   "author": "Intoto AS",
   "dependencies": {
+    "@emotion/react": "^11.9.0",
     "@mui/icons-material": "^5.2.5",
     "@mui/material": "^5.2.5",
     "@mui/system": "^5.6.1",
