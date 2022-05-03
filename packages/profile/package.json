@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "@mui/styled-engine": "^5.3.0",
+    "@types/react": "^18.0.8",
     "d3-axis": "^3.0.0",
     "d3-scale": "^4.0.2",
     "d3-selection": "^3.0.0",
