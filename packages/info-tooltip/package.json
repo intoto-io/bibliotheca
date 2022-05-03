@@ -29,8 +29,5 @@
     "@mui/icons-material": "^5.2.5",
     "@mui/material": "^5.2.5",
     "@types/react": "^17.0.24"
-  },
-  "devDependencies": {
-    "@storybook/react": "^6.3.8"
   }
 }

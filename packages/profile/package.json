@@ -34,7 +34,6 @@
     "react": "^17.0.2"
   },
   "devDependencies": {
-    "@storybook/react": "^6.3.9",
     "@types/d3-axis": "^3.0.1",
     "@types/d3-scale": "^4.0.1",
     "@types/d3-shape": "^3.0.2"
