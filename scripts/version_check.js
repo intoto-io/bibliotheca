@@ -8,7 +8,7 @@ const rootPackage = require('../package.json');
 
 const gitBranch = child.execSync('git branch --show-current');
 
-if (gitBranch.toString() !== 'workspaces\n') {
+if (gitBranch.toString() !== 'master\n') {
   console.log('You are not on the master branch. Please switch to master before publishing.');
   process.exit(1);
 }
@@ -51,16 +51,15 @@ if (conflict) {
 
         child.execSync('git add .');
         child.execSync(`git commit -m "chore: bumped packages to version: ${rootPackage.version}"`);
-        // child.execSync('git push origin master');
+        child.execSync('git push origin master');
+        console.log('Publishing packages...');
       } else {
         console.log('------------------------');
         console.log('Cancelled publishing');
+        process.exit(1);
       }
-
-      process.exit(1);
     },
   );
 } else {
   console.log('Publishing packages...');
-  process.exit(1);
 }
