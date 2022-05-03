@@ -16,15 +16,15 @@ export function getTimezoneOffset(date: string): number {
   const hours = parseInt(matches[0].substr(1, 2), 10);
   const minutes = parseInt(matches[0].substr(4, 2), 10);
 
+  if (hours === 0 && minutes === 0) {
+    return 0;
+  }
+
   return ((hours * 60) + minutes) * (isPositive ? -1 : 1);
 }
 
 export function shiftDate(date: string): string {
   const offset = getTimezoneOffset(date);
-
-  if (offset === 0) {
-    return date;
-  }
 
   const localOffset = new Date(date).getTimezoneOffset();
 

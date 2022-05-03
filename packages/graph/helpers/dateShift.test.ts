@@ -7,6 +7,10 @@ describe('dateShift', () => {
       expect(getTimezoneOffset('2021-01-01T00:00:00.000Z')).toEqual(0);
     });
 
+    it('Should return 0 on UTC different format', () => {
+      expect(getTimezoneOffset('2021-01-01T00:00:00.000+00:00')).toEqual(0);
+    });
+
     it('Should return -120 on UTC+02:00', () => {
       expect(getTimezoneOffset('2021-01-01T00:00:00.000+02:00')).toEqual(-120);
     });
@@ -21,7 +25,7 @@ describe('dateShift', () => {
   });
 
   describe('shiftSeriesDates', () => {
-    it('Should not shift UTC dates', () => {
+    it('Should shift UTC dates to TZ', () => {
       const series: GraphSeries[] = [
         {
           key: 'UTC',
@@ -47,19 +51,19 @@ describe('dateShift', () => {
         {
           key: 'UTC',
           data: [
-            { value: 10, date: '2021-02-01T00:00:00.000Z' },
-            { value: 11, date: '2021-02-01T01:00:00.000Z' },
-            { value: 12, date: '2021-02-01T02:00:00.000Z', missing: true },
-            { value: 11, date: '2021-02-01T03:00:00.000Z' },
+            { value: 10, date: '2021-01-31T23:00:00.000Z' },
+            { value: 11, date: '2021-02-01T00:00:00.000Z' },
+            { value: 12, date: '2021-02-01T01:00:00.000Z', missing: true },
+            { value: 11, date: '2021-02-01T02:00:00.000Z' },
           ],
         },
         {
           key: 'UTC two',
           data: [
-            { value: 10, date: '2021-02-02T00:00:00.000Z' },
-            { value: 11, date: '2021-02-02T01:00:00.000Z' },
-            { value: 12, date: '2021-02-02T02:00:00.000Z', missing: true },
-            { value: 11, date: '2021-02-02T03:00:00.000Z' },
+            { value: 10, date: '2021-02-01T23:00:00.000Z' },
+            { value: 11, date: '2021-02-02T00:00:00.000Z' },
+            { value: 12, date: '2021-02-02T01:00:00.000Z', missing: true },
+            { value: 11, date: '2021-02-02T02:00:00.000Z' },
           ],
         },
       ]);
