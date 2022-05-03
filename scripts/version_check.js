@@ -52,7 +52,7 @@ if (conflict) {
         child.execSync('git add .');
         child.execSync(`git commit -m "chore: bumped packages to version: ${rootPackage.version}"`);
         child.execSync('git push origin master');
-        console.log('Publishing packages...');
+        process.exit(0);
       } else {
         console.log('------------------------');
         console.log('Cancelled publishing');
@@ -61,5 +61,5 @@ if (conflict) {
     },
   );
 } else {
-  console.log('Publishing packages...');
+  process.exit(0);
 }
