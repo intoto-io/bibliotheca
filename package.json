@@ -24,8 +24,8 @@
     "build-storybook": "build-storybook",
     "prebuild-packages": "npm run clean",
     "build-packages": "npm run build --workspaces",
-    "prepublish-all": "npm run build-packages",
-    "publish-all": "sh ./scripts/publish.sh"
+    "-prepublish-all": "npm run build-packages",
+    "publish-all": "node ./scripts/version_check.js && sh ./scripts/publish.sh"
   },
   "keywords": [],
   "author": "Intoto AS",
@@ -68,7 +68,6 @@
     "eslint-plugin-react-hooks": "^4.3.0",
     "husky": "^7.0.4",
     "jest": "^27.3.1",
-    "lerna": "^4.0.0",
     "rimraf": "^3.0.2",
     "rollup": "^2.58.1",
     "tslib": "^2.3.1"
