@@ -1,24 +1,31 @@
 {
   "name": "@intoto-dev/bibliotheca",
-  "version": "0.1.0",
+  "version": "0.9.0",
   "description": "Component library for water data visualisation. By Intoto",
   "engines": {
     "node": "^16.13.1",
     "npm": "^8.1.2"
   },
   "private": true,
+  "workspaces": [
+    "./packages/info-tooltip",
+    "./packages/profile",
+    "./packages/utils-is-unique-date",
+    "./packages/graph",
+    "./packages/utils-observation-helpers",
+    "./packages/data-player"
+  ],
   "scripts": {
-    "clean": "rimraf packages/**/lib && rimraf packages/**/node_modules && lerna bootstrap",
+    "clean": "rimraf packages/**/lib",
     "test": "CI=true jest --env=jsdom",
     "prepare": "husky install",
     "start": "start-storybook -p 6006",
     "lint": "eslint packages --max-warnings 0",
     "build-storybook": "build-storybook",
     "prebuild-packages": "npm run clean",
-    "build-packages": "lerna exec --parallel -- rollup --config ../../rollup.config.js",
+    "build-packages": "npm run build --workspaces",
     "prepublish-all": "npm run build-packages",
-    "publish-all": "sh ./scripts/publish.sh",
-    "postinstall": "lerna bootstrap"
+    "publish-all": "sh ./scripts/publish.sh"
   },
   "keywords": [],
   "author": "Intoto AS",
