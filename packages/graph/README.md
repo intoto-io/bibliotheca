@@ -82,7 +82,7 @@ This includes all possible translation keys and an example of how `{time}` is us
 
 ## API
 
-### `<Graph />`
+### React Component: `<Graph />`
 
 ```ts
 import { Graph } from '@intoto-dev/bibliotheca-graph';
@@ -90,8 +90,8 @@ import { Graph } from '@intoto-dev/bibliotheca-graph';
 
 | Property             | Description                                                                                                            | Type                      | Default      |
 |----------------------|------------------------------------------------------------------------------------------------------------------------|---------------------------|--------------|
-| series               | List of series to be displayed in the graph.                                                                           | `GraphSeries[]`           |              |
-| t                    | Translation function.                                                                                                  | `(key: string) => string` |              |
+| series *             | List of series to be displayed in the graph.                                                                           | `GraphSeries[]`           |              |
+| t *                  | Translation function.                                                                                                  | `(key: string) => string` |              |
 | height               | Height of the graph in pixels.                                                                                         | `number`                  | `200`        |
 | tooltip              | Whether to show a tooltip when hovering over a point.                                                                  | `boolean`                 | `true`       |
 | stacked              | Whether to display the series in a stacked manner. Default is merged into a single Y-axis (multiple lines in a graph). | `boolean`                 | `false`      |
@@ -104,7 +104,7 @@ import { Graph } from '@intoto-dev/bibliotheca-graph';
 | meanLevelStrokeColor | The color of the mean level line.                                                                                      | `string`                  | `'#b7323f'`  |
 | onTooltipValueChange | Callback for when the tooltip value changes. Used for external communication.                                          | `(value: number) => void` |              |
 
-### `GraphSeries`
+### Type: `GraphSeries`
 
 | Property           | Description                                                                                                                       | Type                                  | Default                    |
 |--------------------|-----------------------------------------------------------------------------------------------------------------------------------|---------------------------------------|----------------------------|
@@ -117,24 +117,147 @@ import { Graph } from '@intoto-dev/bibliotheca-graph';
 | thresholdColor     | Hexadecimal color code for the threshold line (normal will be other color).                                                       | `string`                              |                            |
 | thresholdDirection | Direction of where the threshold is calculated from.                                                                              | `'up'` or `'down'`                    | `'up'`                     |
 | domain             | Domain of the series (min and max values). This automatically calculated from the `data`, but can be overwritten.                 | `[number, number]`                    |                            |
-| labelWidth         | Width of the label in pixels on the Y-Axis.                                                                                       | `number`                              | 44                         |
+| labelWidth         | Width of the label in pixels on the Y-Axis.                                                                                       | `number`                              | `44`                       |
 | axisHeight         | Height of the axis in pixels on the Y-Axis. Defaults to the graph's height.                                                       | `number`                              |                            |
 | barWidth           | Width of the bar in a bar chart. This is automatically calculated, but can be overwritten.                                        | `number`                              |                            |
 | barPadding         | Padding between bars in a bar chart. This is automatically calculated, but can be overwritten.                                    | `number`                              |                            |
-| barOpacity         | Opacity of the bar in a bar chart.                                                                                                | `number`                              | 1                          |
+| barOpacity         | Opacity of the bar in a bar chart.                                                                                                | `number`                              | `1`                        |
 | unit               | Unit to be appended to the values in the series.                                                                                  | `string`                              |                            |
 | formatValue        | Format function for the values in the series.                                                                                     | `(value: number) => string or number` | `(value: number) => value` |
 | curve              | Curve to be used for drawing the line. A list of curves can be found in the [visx/curves](https://airbnb.io/visx/curves) library. | `CurveFactory`                        | `curveNatural`             |
 | area               | Whether to draw a gradient filled area from the drawn line to the bottom.                                                         | `boolean`                             | `false`                    |
-| bottom             | The value which is considered the bottom for the area. Automically calculated as the lowest value in `data`.                      | `number`                              |                            |
+| bottom             | The value which is considered the bottom for the area. Automatically calculated as the lowest value in `data`.                    | `number`                              |                            |
 
-### `DataPoint`
+### Type: `DataPoint`
 
-| Property   | Description                                                               | Type    | Default |
-|------------|---------------------------------------------------------------------------|---------|---------|
-| value *    | Value of the data point                                                   | number  |         |
-| date *     | Date of the data point (ISO 8601)                                         | string  |         |
-| missing    | Whether the data point needs to be marked as missing                      | boolean | false   |
-| prediction | Whether the data point is a prediction                                    | boolean | false   |
-| minValue   | When the data point is a prediction, this is the smallest predicted value | number  |         |
-| maxValue   | When the data point is a prediction, this is the largest predicted value  | number  |         |
+| Property   | Description                                                               | Type      | Default |
+|------------|---------------------------------------------------------------------------|-----------|---------|
+| value *    | Value of the data point                                                   | `number`  |         |
+| date *     | Date of the data point (ISO 8601)                                         | `string`  |         |
+| missing    | Whether the data point needs to be marked as missing                      | `boolean` | `false` |
+| prediction | Whether the data point is a prediction                                    | `boolean` | `false` |
+| minValue   | When the data point is a prediction, this is the smallest predicted value | `number`  |         |
+| maxValue   | When the data point is a prediction, this is the largest predicted value  | `number`  |         |
+
+### Helper: `isMissing`
+
+```ts
+import { isMissing } from '@intoto-dev/bibliotheca-graph';
+```
+
+Given a `DataPoint` object, returns whether the data point is considered missing or not. This is a type guard way of being sure of the `MissingDataPoint` interface.
+
+```ts
+function isMissing(dataPoint: DataPoint): boolean;
+```
+
+| Property    | Description         | Type        | Default |
+|-------------|---------------------|-------------|---------|
+| dataPoint * | Data point to check | `DataPoint` |         |
+
+### Helper: `isPredicted`
+
+```ts
+import { isPredicted } from '@intoto-dev/bibliotheca-graph';
+```
+
+Given a `DataPoint` object, returns whether the data point is a prediction or not. This is a type guard way of being sure of the `PredictedDataPoint` interface.
+
+```ts
+function isPredicted(dataPoint: DataPoint): boolean;
+```
+
+| Property    | Description         | Type        | Default |
+|-------------|---------------------|-------------|---------|
+| dataPoint * | Data point to check | `DataPoint` |         |
+
+### Helper: `createYScale`
+
+```ts
+import { createYScale } from '@intoto-dev/bibliotheca-graph';
+```
+
+Creates a `d3` and `visx` compatible scale for the Y-Axis based and the series data and desired height.
+
+```ts
+function createYScale(series: GraphSeries, height: number, padding: number): ScaleLinear<number, number>;
+```
+
+| Property | Description                                                 | Type            | Default |
+|----------|-------------------------------------------------------------|-----------------|---------|
+| series * | Series to create the Y-scale from                           | `GraphSeries[]` |         |
+| height * | Height in pixels of the graph's Y-axis                      | `number`        |         |
+| padding  | Padding in pixels added to the bottom and top of the Y-axis | `number`        | `0`     |
+
+### Helper: `createXScale`
+
+```ts
+import { createXScale } from '@intoto-dev/bibliotheca-graph';
+```
+
+Creates a `d3` and `visx` compatible scale for the X-Axis based on provided dates and the desired width.
+
+```ts
+function createXScale(dates: GraphSeries, width: number): ScaleTime<number, number>;
+```
+
+| Property | Description                                                   | Type     | Default |
+|----------|---------------------------------------------------------------|----------|---------|
+| dates *  | Dates which make up the X-axis. Needs a minimum of two dates. | `Date[]` |         |
+| width *  | Width in pixels of the graph's X-axis                         | `number` |         |
+
+## Helper: `shiftDate`
+
+```ts
+import { shiftDate } from '@intoto-dev/bibliotheca-graph';
+```
+
+Get the date from an ISO 8601 compatible date string and shifts the time so that it will display the same time as stated in the date string instead of the relative time (which is default in browsers).
+
+```ts
+function shiftDate(date: string): string;
+```
+
+| Property | Description                    | Type     | Default |
+|----------|--------------------------------|----------|---------|
+| date *   | Date string in ISO 8601 format | `string` |         |
+
+## React Hook: `useDimensions`
+
+```ts
+import { useDimensions } from '@intoto-dev/bibliotheca-graph';
+```
+
+A React hook which returns a `ref` binding function and a `Dimensions` object containing `{ width: number; height: number }`. Use the `ref` binding function on the element you want to know the dimensions of.
+
+```tsx
+function SomeComponent() {
+  const [ref, dimensions] = useDimensions();
+  
+  return (
+    <html>
+      <body>
+        <main ref={ref}>
+          My size is {dimensions.width} x {dimensions.height} 
+        </main>
+      </body>
+    </html>
+  );
+}
+```
+
+## React Hook: `useSeriesDates`
+
+```ts
+import { useSeriesDates } from '@intoto-dev/bibliotheca-graph';
+```
+
+A React hook which gets and sorts dates which are present in a list of series.
+
+```ts
+function useSeriesDates(series: GraphSeries[]): Date[];
+```
+
+| Property | Description                      | Type            | Default |
+|----------|----------------------------------|-----------------|---------|
+| series * | Series to get all the dates from | `GraphSeries[]` |         |
