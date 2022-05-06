@@ -12,6 +12,7 @@ Check out the components in action at [https://intoto-bibliotheca.netlify.app/](
 
 - [`<Graph />`](https://github.com/intoto-io/bibliotheca/tree/master/packages/graph)
 - [`<InfoTooltip />`](https://github.com/intoto-io/bibliotheca/tree/master/packages/info-tooltip)
+- [`<Profile />`](https://github.com/intoto-io/bibliotheca/tree/master/packages/profile)
 
 ## List of utilities
 
