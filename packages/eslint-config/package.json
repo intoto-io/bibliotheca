@@ -1,0 +1,38 @@
+{
+  "name": "@intoto-dev/eslint-config-intoto",
+  "version": "0.10.1",
+  "description": "Sharable eslint-config based on what is used at Intoto",
+  "dependencies": {
+    "@typescript-eslint/parser": "^5.1.0",
+    "babel-eslint": "^10.1.0",
+    "eslint-config-airbnb": "^19.0.2"
+  },
+  "peerDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.1.0",
+    "eslint": ">= 8",
+    "eslint-import-resolver-typescript": "^2.3.0",
+    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-jest": "^26.1.5",
+    "eslint-plugin-jsx-a11y": "^6.5.1",
+    "eslint-plugin-react": "^7.27.1",
+    "eslint-plugin-react-hooks": "^4.3.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/intoto-io/bibliotheca.git"
+  },
+  "keywords": [
+    "eslint",
+    "eslintconfig",
+    "config",
+    "linting",
+    "lint",
+    "intoto"
+  ],
+  "author": "Intoto AS",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/intoto-io/bibliotheca/issues"
+  },
+  "homepage": "https://github.com/intoto-io/bibliotheca#readme"
+}
