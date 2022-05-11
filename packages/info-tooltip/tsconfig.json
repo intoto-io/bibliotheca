@@ -2,8 +2,6 @@
   "extends": "../../tsconfig.json",
   "include": [
     "**/*.ts",
-    "**/*.tsx",
-    "node_modules/@intoto-dev/**/*.ts",
-    "node_modules/@intoto-dev/**/*.tsx"
+    "**/*.tsx"
   ]
 }
