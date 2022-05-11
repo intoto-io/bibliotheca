@@ -1,6 +1,6 @@
 # Intoto Bibliotheca
 
-A collection of React components created to visualise river data.
+A collection of React components created to visualise river data. Mainly used for the [Intoto Studio](https://beta.intoto.io) project.
 
 Fully written in TypeScript for typing convenience, usable in non-TypeScript projects.
 
@@ -12,6 +12,7 @@ Check out the components in action at [https://intoto-bibliotheca.netlify.app/](
 
 - [`<Graph />`](https://github.com/intoto-io/bibliotheca/tree/master/packages/graph)
 - [`<InfoTooltip />`](https://github.com/intoto-io/bibliotheca/tree/master/packages/info-tooltip)
+- [`<Profile />`](https://github.com/intoto-io/bibliotheca/tree/master/packages/profile)
 
 ## List of utilities
 
