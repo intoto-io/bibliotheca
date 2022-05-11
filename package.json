@@ -13,7 +13,8 @@
     "./packages/utils-is-unique-date",
     "./packages/graph",
     "./packages/utils-observation-helpers",
-    "./packages/data-player"
+    "./packages/data-player",
+    "./packages/eslint-config"
   ],
   "scripts": {
     "clean": "rimraf packages/**/lib",
