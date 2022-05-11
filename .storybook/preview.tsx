@@ -1,5 +1,5 @@
 import { ThemeProvider as MUIThemeProvider } from '@mui/system';
-import { ThemeProvider as Emotion10ThemeProvider } from 'emotion-theming';
+import { ThemeProvider as Emotion10ThemeProvider } from '@emotion/react';
 
 import MuiTheme from './MuiTheme';
 
