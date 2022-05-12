@@ -1,5 +1,4 @@
 import {
-  FunctionComponent,
   MouseEvent,
   useMemo,
   useState,
@@ -82,7 +81,7 @@ const bisectDate = bisector((d: DataPoint, x: Date) => {
   return 0;
 }).right;
 
-const Graph: FunctionComponent<GraphProps> = function Graph({
+function Graph({
   series: rawSeries,
   t,
   height = 200,
@@ -96,7 +95,7 @@ const Graph: FunctionComponent<GraphProps> = function Graph({
   meanLevel,
   meanLevelStrokeColor = '#b7323f',
   onTooltipValueChange,
-}) {
+}: GraphProps) {
   const [ref, dimensions] = useDimensions();
   const series = useMemo(() => shiftSeriesDates(rawSeries), [rawSeries]);
 

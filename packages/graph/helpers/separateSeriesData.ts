@@ -38,5 +38,17 @@ export function separateSeriesDataOnPredicted(data: DataPoint[]): DataPoint[][] 
 }
 
 export function separateSeriesDataOnMissingAndPredicted(data: DataPoint[]): DataPoint[][] {
-  return separateSeriesData(data, (p) => isPredicted(p) || isMissing(p));
+  // make it so that missing and predicted are in separate lists not touching each other
+  const plotData = data.map((p, index) => {
+    if (data[index - 1] && isMissing(p) && isPredicted(data[index - 1])) {
+      return {
+        ...p,
+        missing: false,
+      };
+    }
+
+    return p;
+  });
+
+  return separateSeriesData(plotData, (p) => isMissing(p) || isPredicted(p));
 }
