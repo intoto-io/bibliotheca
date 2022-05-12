@@ -562,6 +562,6 @@ function Graph({
       )}
     </div>
   );
-};
+}
 
 export default Graph;
