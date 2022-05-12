@@ -19,6 +19,7 @@ interface SplitLineProps {
   color: string;
   curve?: CurveFactory;
   area?: boolean;
+  strokeWidth?: number;
 }
 
 const SplitLine: FunctionComponent<SplitLineProps> = function SplitLine({
@@ -29,6 +30,7 @@ const SplitLine: FunctionComponent<SplitLineProps> = function SplitLine({
   yScale,
   curve = curveNatural,
   area = false,
+  strokeWidth = 1.8,
 }) {
   const flatData = useMemo(
     () => seriesData
@@ -125,9 +127,8 @@ const SplitLine: FunctionComponent<SplitLineProps> = function SplitLine({
             x={(datum) => xScale(new Date(datum.date))}
             y={(datum) => yScale(datum.value)}
             stroke={color}
-            strokeWidth={1.8}
-            strokeDasharray="5, 8"
-            strokeOpacity={1}
+            strokeWidth={strokeWidth * (2 / 3)}
+            strokeOpacity={0.75}
           />
         </g>
       )}
@@ -162,7 +163,7 @@ const SplitLine: FunctionComponent<SplitLineProps> = function SplitLine({
             x={(datum) => xScale(new Date(datum.date))}
             y={(datum) => yScale(datum.value)}
             stroke={color}
-            strokeWidth={1.8}
+            strokeWidth={strokeWidth}
             strokeDasharray="2, 4"
             strokeOpacity={1}
           />
@@ -198,7 +199,7 @@ const SplitLine: FunctionComponent<SplitLineProps> = function SplitLine({
           x={(datum) => xScale(new Date(datum.date))}
           y={(datum) => yScale(datum.value)}
           stroke={color}
-          strokeWidth={1.8}
+          strokeWidth={strokeWidth}
           strokeOpacity={1}
         />
       </g>
