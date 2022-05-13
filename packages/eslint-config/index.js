@@ -13,6 +13,7 @@ module.exports = {
         code: 100,
       },
     ],
+    'max-classes-per-file': 'off',
     'prefer-promise-reject-errors': [
       'off',
     ],
