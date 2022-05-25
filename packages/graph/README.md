@@ -222,6 +222,22 @@ function shiftDate(date: string): string;
 |----------|--------------------------------|----------|---------|
 | date *   | Date string in ISO 8601 format | `string` |         |
 
+## Helper: `getTimezoneOffset`
+
+```ts
+import { getTimezoneOffset } from '@intoto-dev/bibliotheca-graph';
+```
+
+Gets the timezone offset (same as [`Date.getTimezoneOffset()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTimezoneOffset)) given an ISO 8601 compatible date string. The result is the amount of minutes the offset is from UTC.
+
+```ts
+function getTimezoneOffset(date: string): number;
+```
+
+| Property | Description                    | Type     | Default |
+|----------|--------------------------------|----------|---------|
+| date *   | Date string in ISO 8601 format | `string` |         |
+
 ## React Hook: `useDimensions`
 
 ```ts
