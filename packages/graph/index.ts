@@ -4,6 +4,7 @@ import {
   createYScale,
   createXScale,
   shiftDate,
+  getTimezoneOffset,
 } from './helpers';
 import Graph from './Graph';
 import { DataPoint, GraphSeries } from './types';
@@ -20,6 +21,7 @@ export {
   createYScale,
   createXScale,
   shiftDate,
+  getTimezoneOffset,
 
   // hooks
   useDimensions,

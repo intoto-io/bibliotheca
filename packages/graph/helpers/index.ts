@@ -1,6 +1,6 @@
 import { isMissing, isPredicted } from './dataPoint';
 import { createXScale, createYScale } from './createScales';
-import { shiftDate } from './dateShift';
+import { shiftDate, getTimezoneOffset } from './dateShift';
 
 export {
   isMissing,
@@ -8,4 +8,5 @@ export {
   createXScale,
   createYScale,
   shiftDate,
+  getTimezoneOffset,
 };
