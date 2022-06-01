@@ -24,24 +24,23 @@ import { Line as LineVisx } from '@visx/shape';
 import { AxisRight, AxisTop } from '@visx/axis';
 import { GridColumns, GridRows } from '@visx/grid';
 import { localPoint } from '@visx/event';
-import { defaultStyles } from '@visx/tooltip';
 
 import tickFormat from './helpers/tickFormat';
 import colorByIndex from './helpers/colorByIndex';
 import locales from './helpers/locales';
-import { valueInThreshold } from './helpers/hasValueInThreshold';
-import { isMissing, isPredicted } from './helpers/dataPoint';
+import { isPredicted } from './helpers/dataPoint';
 import { createXScale, createYScale } from './helpers/createScales';
 import { shiftSeriesDates } from './helpers/dateShift';
-import { DataPoint, GraphSeries } from './types';
+import { DataPoint, GraphSeries, TooltipValues } from './types';
 
 import AxisLeft from './components/AxisLeft';
 import Line from './components/Line';
 import Bars from './components/Bars';
 import Legend from './components/Legend';
+import Navigation from './components/Navigation';
+import Tooltip from './components/Tooltip';
 import useSeriesDates from './hooks/useSeriesDates';
 import useDimensions from './hooks/useDimensions';
-import Navigation from './components/Navigation';
 
 export interface GraphProps {
   series: GraphSeries[];
@@ -57,14 +56,6 @@ export interface GraphProps {
   meanLevelStrokeColor?: string;
   tooltip?: boolean;
   onTooltipValueChange?: (value: number | null) => void;
-}
-
-interface TooltipValues {
-  values: DataPoint[];
-  x: number;
-  y: number;
-  tx: number;
-  ty: number;
 }
 
 const bisectDate = bisector((d: DataPoint, x: Date) => {
@@ -133,7 +124,6 @@ function Graph({
   }, [dates, navigation, range]);
 
   const dateFormat = lang === 'nb' ? 'cccccc. d. LLL' : 'ccc, d. LLL';
-  const dateFormatWithTime = 'Pp';
 
   const padding = 30;
 
@@ -222,69 +212,13 @@ function Graph({
             {tickFormat(series[0], currentPoint.value)}
           </Box>
         )}
-        {tooltipValues && tooltipValues?.values && tooltipValues.values[0] && (
-          <Box
-            ref={tooltipRef}
-            className="GraphTooltip"
-            sx={{
-              position: 'absolute',
-              transform: 'translateY(-50%)',
-              fontSize: '0.6em',
-              zIndex: 10,
-            }}
-            style={{
-              ...defaultStyles,
-              top: tooltipValues.ty,
-              left: tooltipValues.tx,
-            }}
-          >
-            <table>
-              <tbody>
-                <tr key="date">
-                  <td colSpan={2}>
-                    {format(new Date(tooltipValues.values[0].date), dateFormatWithTime, { locale })}
-                  </td>
-                </tr>
-                {series.map((plot, index) => {
-                  const color = typeof plot.threshold !== 'undefined' && valueInThreshold(
-                    tooltipValues.values[index].value,
-                    plot.threshold,
-                    plot.thresholdDirection,
-                  ) ? plot.thresholdColor : plot.color || colorByIndex(index);
-
-                  if (!tooltipValues.values[index]) {
-                    return null;
-                  }
-
-                  return (
-                    <tr key={plot.key}>
-                      <Box
-                        component="td"
-                        sx={{
-                          whiteSpace: 'nowrap',
-                          color,
-                        }}
-                      >
-                        {`${plot.name}:`}
-                      </Box>
-                      <Box
-                        component="td"
-                        sx={{
-                          whiteSpace: 'nowrap',
-                          color,
-                        }}
-                      >
-                        {isMissing(tooltipValues.values[index])
-                          ? t('missing')
-                          : tickFormat(plot, tooltipValues.values[index].value)}
-                      </Box>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </Box>
-        )}
+        <Tooltip
+          tooltipRef={tooltipRef}
+          tooltipValues={tooltipValues}
+          series={series}
+          locale={locale}
+          missingText={t('missing')}
+        />
         <Box
           sx={{
             flexShrink: 0,

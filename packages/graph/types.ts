@@ -23,6 +23,14 @@ export type SeriesType = 'line' | 'bar';
 
 export type ThresholdDirection = 'up' | 'down';
 
+export interface TooltipValues {
+  values: DataPoint[];
+  x: number;
+  y: number;
+  tx: number;
+  ty: number;
+}
+
 export interface GraphSeries {
   key: string;
   data: DataPoint[];
