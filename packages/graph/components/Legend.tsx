@@ -162,12 +162,12 @@ const Legend: FunctionComponent<LegendProps> = function Legend({
                   <Box
                     sx={{
                       ...LegendColor,
-                      borderColor: color,
                       opacity: plot.type === 'bar' ? 0.5 : 1,
                       ...(plot.type !== 'bar' ? {
                         borderColor: 'inherit',
                         borderStyle: 'dashed',
                       } : {}),
+                      borderColor: color,
                     }}
                   />
                 </Box>
