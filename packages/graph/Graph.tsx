@@ -126,6 +126,7 @@ function Graph({
   const dateFormat = lang === 'nb' ? 'cccccc. d. LLL' : 'ccc, d. LLL';
 
   const padding = 30;
+  const paddingRight = 50;
 
   const heightWithPadding = (inputHeight: number) => inputHeight + (padding * 2);
 
@@ -134,7 +135,7 @@ function Graph({
 
   const graphDataWidth = useMemo(() => dimensions.width, [dimensions.width]);
 
-  const totalWidth = graphDataWidth - labelWidth - padding;
+  const totalWidth = graphDataWidth - labelWidth - paddingRight;
   const chartTotalHeight = heightWithPadding(height);
 
   const xScale = createXScale(rangeDates.length >= 2 ? rangeDates : dates, totalWidth);
@@ -198,9 +199,10 @@ function Graph({
               whiteSpace: 'nowrap',
               zIndex: 10,
               backgroundColor: '#fff',
-              padding: '3px 5px',
+              p: 1,
               borderRadius: '4px',
-              fontSize: '0.8em',
+              fontSize: '1.5rem',
+              color: series[0].color || colorByIndex(0),
               boxShadow: '3px 3px 6px rgba(0, 0, 0, 0.3)',
             }}
             style={{
@@ -440,7 +442,7 @@ function Graph({
             meanLevelStrokeColor={meanLevelStrokeColor}
             locale={locale}
             currentPoint={showCurrent ? currentPoint : undefined}
-            padding={padding}
+            paddingRight={paddingRight}
             translations={{
               updated_at: t('updated_at'),
               missing: t('missing'),

@@ -66,10 +66,11 @@ function Tooltip({
 
           return (
             <Box
+              key={plot.key}
               sx={{
                 whiteSpace: 'nowrap',
                 margin: '0 8px',
-                '&:first-child': {
+                '&:first-of-type': {
                   marginLeft: 0,
                 },
                 '&:last-child': {

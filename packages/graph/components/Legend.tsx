@@ -36,7 +36,7 @@ interface LegendProps {
   series: GraphSeries[];
   meanLevel?: number;
   currentPoint?: DataPoint;
-  padding: number;
+  paddingRight: number;
   meanLevelStrokeColor: string;
   locale: Locale;
   translations: {
@@ -54,7 +54,7 @@ const Legend: FunctionComponent<LegendProps> = function Legend({
   meanLevelStrokeColor,
   translations,
   locale,
-  padding,
+  paddingRight,
   currentPoint,
 }) {
   const showLegend = series.every((plot) => !!plot.name);
@@ -84,7 +84,7 @@ const Legend: FunctionComponent<LegendProps> = function Legend({
         marginTop: '-5px',
         justifyContent: 'flex-end',
         flexDirection: !stacked ? 'row' : 'column',
-        paddingRight: `${padding}px`,
+        paddingRight: `${paddingRight}px`,
       }}
     >
       {currentPoint && (
