@@ -43,7 +43,7 @@ const SplitLine: FunctionComponent<SplitLineProps> = function SplitLine({
   );
   const areaProps = {
     fill: color,
-    fillOpacity: 0.15,
+    fillOpacity: 0.075,
   };
 
   const hasMissingData = flatData.some(isMissing);
