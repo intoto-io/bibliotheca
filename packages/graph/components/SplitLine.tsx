@@ -164,7 +164,7 @@ const SplitLine: FunctionComponent<SplitLineProps> = function SplitLine({
             y={(datum) => yScale(datum.value)}
             stroke={color}
             strokeWidth={strokeWidth}
-            strokeDasharray="2, 4"
+            strokeDasharray="3, 9"
             strokeOpacity={1}
           />
         </g>
