@@ -43,7 +43,7 @@ const SplitLine: FunctionComponent<SplitLineProps> = function SplitLine({
   );
   const areaProps = {
     fill: color,
-    fillOpacity: 0.15,
+    fillOpacity: 0.075,
   };
 
   const hasMissingData = flatData.some(isMissing);
@@ -164,7 +164,7 @@ const SplitLine: FunctionComponent<SplitLineProps> = function SplitLine({
             y={(datum) => yScale(datum.value)}
             stroke={color}
             strokeWidth={strokeWidth}
-            strokeDasharray="2, 4"
+            strokeDasharray="3, 9"
             strokeOpacity={1}
           />
         </g>
