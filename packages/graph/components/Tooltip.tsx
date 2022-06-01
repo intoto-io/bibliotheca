@@ -2,6 +2,7 @@ import { RefObject } from 'react';
 import { format } from 'date-fns';
 
 import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 
 import { defaultStyles } from '@visx/tooltip';
 
@@ -35,62 +36,71 @@ function Tooltip({
       ref={tooltipRef}
       className="GraphTooltip"
       sx={{
+        ...defaultStyles,
         position: 'absolute',
         transform: 'translateY(-50%)',
-        fontSize: '0.6em',
         zIndex: 10,
+        px: 2,
+        py: 1.5,
       }}
       style={{
-        ...defaultStyles,
         top: tooltipValues.ty,
         left: tooltipValues.tx,
       }}
     >
-      <table>
-        <tbody>
-          <tr key="date">
-            <td colSpan={2}>
-              {format(new Date(tooltipValues.values[0].date), 'Pp', { locale })}
-            </td>
-          </tr>
-          {series.map((plot, index) => {
-            const color = typeof plot.threshold !== 'undefined' && valueInThreshold(
-              tooltipValues.values[index].value,
-              plot.threshold,
-              plot.thresholdDirection,
-            ) ? plot.thresholdColor : plot.color || colorByIndex(index);
+      <Box
+        sx={{
+          display: 'flex',
+        }}
+      >
+        {series.map((plot, index) => {
+          const color = typeof plot.threshold !== 'undefined' && valueInThreshold(
+            tooltipValues.values[index].value,
+            plot.threshold,
+            plot.thresholdDirection,
+          ) ? plot.thresholdColor : plot.color || colorByIndex(index);
 
-            if (!tooltipValues.values[index]) {
-              return null;
-            }
+          if (!tooltipValues.values[index]) {
+            return null;
+          }
 
-            return (
-              <tr key={plot.key}>
-                <Box
-                  component="td"
-                  sx={{
-                    whiteSpace: 'nowrap',
-                    color,
-                  }}
-                >
-                  {`${plot.name}:`}
-                </Box>
-                <Box
-                  component="td"
-                  sx={{
-                    whiteSpace: 'nowrap',
-                    color,
-                  }}
-                >
-                  {isMissing(tooltipValues.values[index])
-                    ? missingText
-                    : tickFormat(plot, tooltipValues.values[index].value)}
-                </Box>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+          return (
+            <Box
+              sx={{
+                whiteSpace: 'nowrap',
+                margin: '0 8px',
+                '&:first-child': {
+                  marginLeft: 0,
+                },
+                '&:last-child': {
+                  marginRight: 0,
+                },
+              }}
+            >
+              <Typography variant="subtitle2">
+                {`${plot.name}`}
+              </Typography>
+              <Box
+                sx={{
+                  color,
+                  marginTop: '6px',
+                  fontSize: isMissing(tooltipValues.values[index]) ? undefined : '1.5rem',
+                  lineHeight: '1.3rem',
+                }}
+              >
+                {isMissing(tooltipValues.values[index])
+                  ? missingText
+                  : tickFormat(plot, tooltipValues.values[index].value)}
+              </Box>
+            </Box>
+          );
+        })}
+      </Box>
+      <Box sx={{ marginTop: '12px' }}>
+        <Typography variant="caption" sx={{ fontStyle: 'italic' }}>
+          {format(new Date(tooltipValues.values[0].date), 'Pp', { locale })}
+        </Typography>
+      </Box>
     </Box>
   );
 }

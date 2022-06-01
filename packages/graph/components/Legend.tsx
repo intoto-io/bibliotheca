@@ -3,6 +3,7 @@ import { FunctionComponent, useEffect, useState } from 'react';
 import formatDistanceToNowStrict from 'date-fns/formatDistanceToNowStrict';
 
 import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 
 import { isMissing, isPredicted } from '../helpers/dataPoint';
 import hasValueInThreshold from '../helpers/hasValueInThreshold';
@@ -77,7 +78,6 @@ const Legend: FunctionComponent<LegendProps> = function Legend({
       sx={{
         display: 'flex',
         direction: 'ltr',
-        fontSize: '0.75em',
         alignItems: 'flex-end',
         zIndex: 1,
         transform: 'translateY(-100%)',
@@ -96,8 +96,10 @@ const Legend: FunctionComponent<LegendProps> = function Legend({
             fontStyle: 'italic',
           }}
         >
-          {translations.updated_at
-            .replace('{time}', formatDistanceToNowStrict(updatedAt, { locale }))}
+          <Typography variant="caption">
+            {translations.updated_at
+              .replace('{time}', formatDistanceToNowStrict(updatedAt, { locale }))}
+          </Typography>
         </Box>
       )}
       {typeof meanLevel !== 'undefined' && (
@@ -114,7 +116,9 @@ const Legend: FunctionComponent<LegendProps> = function Legend({
             }}
           />
           <Box sx={{ display: 'flex' }}>
-            <div>{translations.meanLevel}</div>
+            <Typography variant="caption">
+              {translations.meanLevel}
+            </Typography>
           </Box>
         </Box>
       )}
@@ -148,9 +152,9 @@ const Legend: FunctionComponent<LegendProps> = function Legend({
                   />
                 )}
               </Box>
-              <div>
+              <Typography variant="caption">
                 {plot.name}
-              </div>
+              </Typography>
             </Box>
             {hasMissingData && (
               <Box sx={LegendItem}>
@@ -167,7 +171,9 @@ const Legend: FunctionComponent<LegendProps> = function Legend({
                     }}
                   />
                 </Box>
-                <div>{translations.missing}</div>
+                <Typography variant="caption">
+                  {translations.missing}
+                </Typography>
               </Box>
             )}
             {hasPredictedData && (
@@ -195,7 +201,9 @@ const Legend: FunctionComponent<LegendProps> = function Legend({
                     />
                   )}
                 </Box>
-                <div>{translations.predicted}</div>
+                <Typography variant="caption">
+                  {translations.predicted}
+                </Typography>
               </Box>
             )}
           </Box>
