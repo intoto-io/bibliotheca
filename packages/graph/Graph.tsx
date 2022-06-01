@@ -126,7 +126,7 @@ function Graph({
   const dateFormat = lang === 'nb' ? 'cccccc. d. LLL' : 'ccc, d. LLL';
 
   const padding = 30;
-  const paddingRight = 50;
+  const paddingRight = 45;
 
   const heightWithPadding = (inputHeight: number) => inputHeight + (padding * 2);
 
@@ -195,7 +195,7 @@ function Graph({
           <Box
             sx={{
               position: 'absolute',
-              transform: ' translateY(-50%) translateX(5px)',
+              transform: ' translateY(-125%) translateX(-50%)',
               whiteSpace: 'nowrap',
               zIndex: 10,
               backgroundColor: '#fff',
