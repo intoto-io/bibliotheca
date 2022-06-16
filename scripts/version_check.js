@@ -33,7 +33,7 @@ rootPackage.workspaces.forEach((p) => {
 console.log('------------------------');
 if (conflict) {
   readline.question(
-    `Some version conflicts found. Change all to ${rootPackage.version}? Y/n`,
+    `Some version conflicts found. Change all to ${rootPackage.version}? Y/n: `,
     (a) => {
       readline.close();
 
