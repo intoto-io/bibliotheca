@@ -32,6 +32,7 @@ const LegendColors = {
 };
 
 interface LegendProps {
+  isCondensed?: boolean;
   stacked: boolean;
   series: GraphSeries[];
   meanLevel?: number;
@@ -56,6 +57,7 @@ const Legend: FunctionComponent<LegendProps> = function Legend({
   locale,
   paddingRight,
   currentPoint,
+  isCondensed = false,
 }) {
   const showLegend = series.every((plot) => !!plot.name);
   const [, setTime] = useState<number>(0);
@@ -80,14 +82,14 @@ const Legend: FunctionComponent<LegendProps> = function Legend({
         direction: 'ltr',
         alignItems: 'flex-end',
         zIndex: 1,
-        transform: 'translateY(-100%)',
-        marginTop: '-5px',
+        transform: isCondensed ? '' : 'translateY(-100%)',
+        marginTop: isCondensed ? '-20px' : '-5px',
         justifyContent: 'flex-end',
-        flexDirection: !stacked ? 'row' : 'column',
+        flexDirection: !stacked && !isCondensed ? 'row' : 'column',
         paddingRight: `${paddingRight}px`,
       }}
     >
-      {currentPoint && (
+      {currentPoint && !isCondensed && (
         <Box
           sx={{
             ...LegendItem,
@@ -134,7 +136,14 @@ const Legend: FunctionComponent<LegendProps> = function Legend({
         const color = plot.color || colorByIndex(index);
 
         return (
-          <Box key={plot.key} sx={{ display: 'flex' }}>
+          <Box
+            key={plot.key}
+            sx={{
+              display: 'flex',
+              flexDirection: isCondensed ? 'column' : 'row',
+              alignItems: 'flex-end',
+            }}
+          >
             <Box sx={LegendItem}>
               <Box sx={LegendColors}>
                 <Box

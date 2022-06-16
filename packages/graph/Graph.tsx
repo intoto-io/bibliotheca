@@ -88,6 +88,7 @@ function Graph({
   onTooltipValueChange,
 }: GraphProps) {
   const [ref, dimensions] = useDimensions();
+  const isCondensed = dimensions.width < 500;
   const series = useMemo(() => shiftSeriesDates(rawSeries), [rawSeries]);
 
   useEffect(() => {
@@ -437,6 +438,7 @@ function Graph({
             })}
           </Box>
           <Legend
+            isCondensed={isCondensed}
             stacked={stacked}
             series={series}
             meanLevel={meanLevel}
