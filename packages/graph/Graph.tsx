@@ -319,6 +319,7 @@ function Graph({
                     <AxisTop
                       top={padding}
                       scale={xScale}
+                      numTicks={isCondensed ? 4 : undefined}
                       tickFormat={(tick) => {
                         const date = tick.valueOf();
 
