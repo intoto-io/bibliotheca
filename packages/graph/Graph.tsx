@@ -111,7 +111,7 @@ function Graph({
 
   const dates = useSeriesDates(series);
 
-  const initialNavStart = dates[Math.ceil(dates.length / 10)];
+  const initialNavStart = dates[Math.ceil(dates.length / 3)];
   const initialNavEnd = dates[0];
   const [range, setRange] = useState<[number, number]>([+initialNavStart, +initialNavEnd]);
 
@@ -365,6 +365,7 @@ function Graph({
                         xScale={xScale}
                         yScale={yScales[ri]}
                         index={ri}
+                        navigation={navigation}
                       />
                     );
                   })}

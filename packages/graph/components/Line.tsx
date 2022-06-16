@@ -16,6 +16,7 @@ interface LineProps {
   xScale: ScaleTime<number, number>;
   yScale: ScaleLinear<number, number>;
   index?: number;
+  navigation?: boolean;
 }
 
 const Line: FunctionComponent<LineProps> = function Line({
@@ -24,6 +25,7 @@ const Line: FunctionComponent<LineProps> = function Line({
   xScale,
   yScale,
   index = 0,
+  navigation = false,
 }) {
   const seriesData = separateSeriesDataOnMissingAndPredicted(plot.data);
 
@@ -61,7 +63,7 @@ const Line: FunctionComponent<LineProps> = function Line({
         </g>
       )}
       <g
-        clipPath={typeof plot.threshold !== 'undefined' && hasThresholdData
+        clipPath={(typeof plot.threshold !== 'undefined' && hasThresholdData) || navigation
           ? `url(#${plot.key}_main_clip)`
           : undefined}
       >
