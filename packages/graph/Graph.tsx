@@ -88,6 +88,7 @@ function Graph({
   onTooltipValueChange,
 }: GraphProps) {
   const [ref, dimensions] = useDimensions();
+  const isCondensed = dimensions.width < 500;
   const series = useMemo(() => shiftSeriesDates(rawSeries), [rawSeries]);
 
   useEffect(() => {
@@ -126,7 +127,7 @@ function Graph({
   const dateFormat = lang === 'nb' ? 'cccccc. d. LLL' : 'ccc, d. LLL';
 
   const padding = 30;
-  const paddingRight = 45;
+  const paddingRight = isCondensed ? 20 : 45;
 
   const heightWithPadding = (inputHeight: number) => inputHeight + (padding * 2);
 
@@ -201,7 +202,7 @@ function Graph({
               backgroundColor: '#fff',
               p: 1,
               borderRadius: '4px',
-              fontSize: '1.5rem',
+              fontSize: isCondensed ? '0.8rem' : '1.5rem',
               color: series[0].color || colorByIndex(0),
               boxShadow: '3px 3px 6px rgba(0, 0, 0, 0.3)',
             }}
@@ -318,6 +319,7 @@ function Graph({
                     <AxisTop
                       top={padding}
                       scale={xScale}
+                      numTicks={isCondensed ? 4 : undefined}
                       tickFormat={(tick) => {
                         const date = tick.valueOf();
 
@@ -437,6 +439,7 @@ function Graph({
             })}
           </Box>
           <Legend
+            isCondensed={isCondensed}
             stacked={stacked}
             series={series}
             meanLevel={meanLevel}
