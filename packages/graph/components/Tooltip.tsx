@@ -54,13 +54,14 @@ function Tooltip({
         }}
       >
         {series.map((plot, index) => {
+          const point = tooltipValues.values[index];
           const color = typeof plot.threshold !== 'undefined' && valueInThreshold(
             tooltipValues.values[index].value,
             plot.threshold,
             plot.thresholdDirection,
           ) ? plot.thresholdColor : plot.color || colorByIndex(index);
 
-          if (!tooltipValues.values[index]) {
+          if (!point) {
             return null;
           }
 
@@ -85,14 +86,36 @@ function Tooltip({
                 sx={{
                   color,
                   marginTop: '6px',
-                  fontSize: isMissing(tooltipValues.values[index]) ? undefined : '1.5rem',
+                  fontSize: isMissing(point) ? undefined : '1.5rem',
                   lineHeight: '1.3rem',
                 }}
               >
-                {isMissing(tooltipValues.values[index])
+                {isMissing(point)
                   ? missingText
-                  : tickFormat(plot, tooltipValues.values[index].value)}
+                  : tickFormat(plot, point.value)}
               </Box>
+              {point.change && Object.values(point.change).length > 0 && (
+                <Box sx={{ mt: 1 }}>
+                  <table>
+                    <tr>
+                      <td style={{ padding: '0 4px 2px 0' }}>
+                        1h:
+                      </td>
+                      <td>
+                        {tickFormat(plot, point.change['1h'])}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style={{ paddingRight: 4 }}>
+                        24h:
+                      </td>
+                      <td>
+                        {tickFormat(plot, point.change['24h'])}
+                      </td>
+                    </tr>
+                  </table>
+                </Box>
+              )}
             </Box>
           );
         })}

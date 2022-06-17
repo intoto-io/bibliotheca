@@ -5,6 +5,10 @@ export interface BaseDataPoint {
   date: string;
   minValue?: number;
   maxValue?: number;
+  change?: {
+    '1h': number;
+    '24h': number;
+  },
 }
 
 export interface MissingDataPoint extends BaseDataPoint {
