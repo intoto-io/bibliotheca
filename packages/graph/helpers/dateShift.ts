@@ -23,12 +23,12 @@ export function getTimezoneOffset(date: string): number {
   return ((hours * 60) + minutes) * (isPositive ? -1 : 1);
 }
 
-export function shiftDate(date: string): string {
+export function shiftDate(date: string, direction: 1 | -1 = 1): string {
   const offset = getTimezoneOffset(date);
 
   const localOffset = new Date(date).getTimezoneOffset();
 
-  const shift = localOffset - offset;
+  const shift = localOffset - (offset * direction);
 
   return addMinutes(new Date(date), shift).toISOString();
 }
