@@ -52,6 +52,7 @@ export interface GraphSeries {
   barOpacity?: number;
   unit?: string;
   formatValue?: (value: number) => number | string;
+  formatChange?: (value: number) => number | string;
   curve?: CurveFactory;
   area?: boolean;
   bottom?: number;

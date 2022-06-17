@@ -25,7 +25,7 @@ import { AxisRight, AxisTop } from '@visx/axis';
 import { GridColumns, GridRows } from '@visx/grid';
 import { localPoint } from '@visx/event';
 
-import tickFormat from './helpers/tickFormat';
+import { tickFormat } from './helpers/formatValues';
 import colorByIndex from './helpers/colorByIndex';
 import locales from './helpers/locales';
 import { isPredicted } from './helpers/dataPoint';
@@ -221,6 +221,8 @@ function Graph({
           series={series}
           locale={locale}
           missingText={t('missing')}
+          change1hText={t('1h')}
+          change24hText={t('24h')}
         />
         <Box
           sx={{

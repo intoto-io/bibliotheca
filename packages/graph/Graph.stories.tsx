@@ -36,6 +36,10 @@ const Template: Story<GraphProps> = function Template(args) {
             return 'Missing data';
           case 'mean_level':
             return 'Mean-level';
+          case '1h':
+            return '1h:';
+          case '24h':
+            return '24h:';
           default:
             return 'Prediction';
         }
@@ -436,6 +440,7 @@ const twentyfourPrediction: GraphSeries[] = [{
   bottom: 0,
   data: oneDayPredictionHourly,
   formatValue: (value: number) => `${value} m`,
+  formatChange: (value: number) => `${value * 100} cm`,
 }];
 
 export const TwentyFourHoursAndPrediction = Template.bind({});

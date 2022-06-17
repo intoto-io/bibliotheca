@@ -3,7 +3,7 @@ import { ScaleLinear } from 'd3-scale';
 
 import { AxisLeft as AxisLeftVisX } from '@visx/axis';
 
-import tickFormat from '../helpers/tickFormat';
+import { tickFormat } from '../helpers/formatValues';
 import { GraphSeries } from '../types';
 
 interface AxisLeftProps {
