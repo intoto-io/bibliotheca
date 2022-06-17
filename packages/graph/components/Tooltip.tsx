@@ -1,4 +1,4 @@
-import { RefObject } from 'react';
+import { createElement, RefObject } from 'react';
 import { format } from 'date-fns';
 
 import Box from '@mui/material/Box';
@@ -54,13 +54,14 @@ function Tooltip({
         }}
       >
         {series.map((plot, index) => {
+          const point = tooltipValues.values[index];
           const color = typeof plot.threshold !== 'undefined' && valueInThreshold(
             tooltipValues.values[index].value,
             plot.threshold,
             plot.thresholdDirection,
           ) ? plot.thresholdColor : plot.color || colorByIndex(index);
 
-          if (!tooltipValues.values[index]) {
+          if (!point) {
             return null;
           }
 
@@ -85,14 +86,15 @@ function Tooltip({
                 sx={{
                   color,
                   marginTop: '6px',
-                  fontSize: isMissing(tooltipValues.values[index]) ? undefined : '1.5rem',
+                  fontSize: isMissing(point) ? undefined : '1.5rem',
                   lineHeight: '1.3rem',
                 }}
               >
-                {isMissing(tooltipValues.values[index])
+                {isMissing(point)
                   ? missingText
-                  : tickFormat(plot, tooltipValues.values[index].value)}
+                  : tickFormat(plot, point.value)}
               </Box>
+              {plot.tooltipExtra && createElement(plot.tooltipExtra, { point })}
             </Box>
           );
         })}

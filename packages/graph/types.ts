@@ -1,10 +1,15 @@
 import { CurveFactory } from 'd3-shape';
+import { ComponentClass, FunctionComponent } from 'react';
 
 export interface BaseDataPoint {
   value: number;
   date: string;
   minValue?: number;
   maxValue?: number;
+  change?: {
+    '1h': number;
+    '24h': number;
+  },
 }
 
 export interface MissingDataPoint extends BaseDataPoint {
@@ -48,6 +53,7 @@ export interface GraphSeries {
   barOpacity?: number;
   unit?: string;
   formatValue?: (value: number) => number | string;
+  tooltipExtra?: FunctionComponent<{ point: DataPoint }> | ComponentClass<{ point: DataPoint }>;
   curve?: CurveFactory;
   area?: boolean;
   bottom?: number;
