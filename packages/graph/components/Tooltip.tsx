@@ -1,4 +1,4 @@
-import { RefObject } from 'react';
+import { createElement, RefObject } from 'react';
 import { format } from 'date-fns';
 
 import Box from '@mui/material/Box';
@@ -10,7 +10,7 @@ import { GraphSeries, TooltipValues } from '../types';
 import { valueInThreshold } from '../helpers/hasValueInThreshold';
 import colorByIndex from '../helpers/colorByIndex';
 import { isMissing } from '../helpers';
-import { tickFormat, changeFormat } from '../helpers/formatValues';
+import tickFormat from '../helpers/tickFormat';
 
 interface TooltipProps {
   tooltipRef: RefObject<HTMLDivElement>;
@@ -18,8 +18,6 @@ interface TooltipProps {
   locale: Locale;
   series: GraphSeries[];
   missingText: string;
-  change1hText: string;
-  change24hText: string;
 }
 
 function Tooltip({
@@ -28,8 +26,6 @@ function Tooltip({
   locale,
   series,
   missingText,
-  change1hText,
-  change24hText,
 }: TooltipProps) {
   if (!tooltipValues || !tooltipValues?.values || !tooltipValues.values[0]) {
     return null;
@@ -98,25 +94,7 @@ function Tooltip({
                   ? missingText
                   : tickFormat(plot, point.value)}
               </Box>
-              {point.change && Object.values(point.change).length > 0 && (
-                <Box sx={{ mt: 2 }}>
-                  <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                    Water level change
-                  </Typography>
-                  <Box sx={{ display: 'flex' }}>
-                    <Box sx={{ flex: 1 }}>
-                      <Typography variant="body2">
-                        {`${change1hText} ${changeFormat(plot, point.change['1h'])}`}
-                      </Typography>
-                    </Box>
-                    <Box sx={{ flex: 1 }}>
-                      <Typography variant="body2">
-                        {`${change24hText} ${changeFormat(plot, point.change['24h'])}`}
-                      </Typography>
-                    </Box>
-                  </Box>
-                </Box>
-              )}
+              {plot.tooltipExtra && createElement(plot.tooltipExtra, { point })}
             </Box>
           );
         })}

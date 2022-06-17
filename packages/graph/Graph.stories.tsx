@@ -12,7 +12,7 @@ import extremeJumps from './mocks/extremeJumps.json';
 import highRes from './mocks/highRes.json';
 import oneDayPredictionHourly from './mocks/oneDayPredictionHourly.json';
 
-import { GraphSeries, SeriesType } from './types';
+import { DataPoint, GraphSeries, SeriesType } from './types';
 
 const dates = generateDays(14);
 const lineWithGapsData = randomLineData(dates, true);
@@ -36,10 +36,6 @@ const Template: Story<GraphProps> = function Template(args) {
             return 'Missing data';
           case 'mean_level':
             return 'Mean-level';
-          case '1h':
-            return '1h:';
-          case '24h':
-            return '24h:';
           default:
             return 'Prediction';
         }
@@ -440,7 +436,17 @@ const twentyfourPrediction: GraphSeries[] = [{
   bottom: 0,
   data: oneDayPredictionHourly,
   formatValue: (value: number) => `${value} m`,
-  formatChange: (value: number) => `${value * 100} cm`,
+  tooltipExtra: function TooltipExtra({ point }: { point: DataPoint }) {
+    if (!point.change) {
+      return null;
+    }
+
+    return (
+      <div style={{ marginTop: 12 }}>
+        {`1h: ${point.change['1h']} cm, 24h: ${point.change['24h']} cm`}
+      </div>
+    );
+  },
 }];
 
 export const TwentyFourHoursAndPrediction = Template.bind({});
