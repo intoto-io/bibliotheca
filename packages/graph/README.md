@@ -216,12 +216,13 @@ import { shiftDate } from '@intoto-dev/bibliotheca-graph';
 Get the date from an ISO 8601 compatible date string and shifts the time so that it will display the same time as stated in the date string instead of the relative time (which is default in browsers).
 
 ```ts
-function shiftDate(date: string): string;
+function shiftDate(date: string, direction?: 1 | -1): string;
 ```
 
-| Property | Description                    | Type     | Default |
-|----------|--------------------------------|----------|---------|
-| date *   | Date string in ISO 8601 format | `string` |         |
+| Property  | Description                                                                                             | Type        | Default |
+|-----------|---------------------------------------------------------------------------------------------------------|-------------|---------|
+| date *    | Date string in ISO 8601 format                                                                          | `string`    |         |
+| direction | The direction the time is shifted to. Pass `-1` to shift the opposite direction of the timezone offset. | `1` or `-1` | `1`     |
 
 ## Helper: `getTimezoneOffset`
 
