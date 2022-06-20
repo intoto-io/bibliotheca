@@ -145,9 +145,10 @@ function Graph({
     () => series.map((plot) => createYScale(
       plot,
       stacked && plot.axisHeight ? plot.axisHeight : height,
+      meanLevel,
       padding,
     )),
-    [height, series, stacked],
+    [height, meanLevel, series, stacked],
   );
 
   const reversedIndex = (index: number) => seriesReversed.length - index - 1;
