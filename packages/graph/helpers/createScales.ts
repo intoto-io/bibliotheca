@@ -10,18 +10,20 @@ import { isPredicted } from './dataPoint';
 export function createYScale(
   plot: GraphSeries,
   height: number,
+  meanLevel?: number,
   padding = 0,
 ): ScaleLinear<number, number> {
   const values = plot.data.map((datum) => datum.value);
   const minValues = plot.data.map((datum) => (isPredicted(datum) ? datum.minValue : datum.value));
   const maxValues = plot.data.map((datum) => (isPredicted(datum) ? datum.maxValue : datum.value));
+  const meanLevelValue = typeof meanLevel === 'undefined' ? values[0] : meanLevel;
 
   const yScaleRange = [padding, height + padding];
 
-  const max = Math.max(...values, ...minValues, ...maxValues);
+  const max = Math.max(...values, ...minValues, ...maxValues, meanLevelValue);
   const min = typeof plot.bottom !== 'undefined'
     ? plot.bottom
-    : Math.min(...values, ...minValues, ...maxValues);
+    : Math.min(...values, ...minValues, ...maxValues, meanLevelValue);
   const domainPadding = (max - min) * 0.2;
   const domainPaddingBottom = typeof plot.bottom !== 'undefined' ? 0 : domainPadding;
 
