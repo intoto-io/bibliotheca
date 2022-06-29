@@ -193,302 +193,306 @@ function Graph({
   return (
     <div>
       <Box sx={{ display: 'flex' }} ref={ref}>
-        {!tooltipValues && showCurrent && currentPoint && (
-          <Box
-            sx={{
-              position: 'absolute',
-              transform: ' translateY(-125%) translateX(-50%)',
-              whiteSpace: 'nowrap',
-              zIndex: 10,
-              backgroundColor: '#fff',
-              p: 1,
-              borderRadius: '4px',
-              fontSize: isCondensed ? '0.8rem' : '1.5rem',
-              color: series[0].color || colorByIndex(0),
-              boxShadow: '3px 3px 6px rgba(0, 0, 0, 0.3)',
-            }}
-            style={{
-              left: xScale(new Date(currentPoint.date))
-                + labelWidth + currentValueOffset.left + window.scrollX,
-              top: yScales[0](currentPoint.value) + currentValueOffset.top + window.scrollY,
-            }}
-          >
-            {tickFormat(series[0], currentPoint.value)}
-          </Box>
-        )}
-        <Tooltip
-          tooltipRef={tooltipRef}
-          tooltipValues={tooltipValues}
-          series={series}
-          locale={locale}
-          missingText={t('missing')}
-        />
-        <Box
-          sx={{
-            flexShrink: 0,
-            flexGrow: 0,
-            textAlign: 'right',
-            display: 'flex',
-            flexDirection: 'column',
-            position: 'relative',
-          }}
-        >
-          {series.map((plot, index) => {
-            if (index > 0 && !stacked) return null;
-
-            const plotHeight = stacked && plot.axisHeight
-              ? heightWithPadding(plot.axisHeight)
-              : chartTotalHeight;
-
-            return (
-              <AxisLeft
-                key={plot.key}
-                plot={series[index]}
-                height={plotHeight}
-                yScale={yScales[index]}
-                defaultLabelWidth={defaultLabelWidth}
-              />
-            );
-          })}
-          {typeof meanLevel !== 'undefined' && (
+        {dimensions.width !== 0 && (
+          <>
+            {!tooltipValues && showCurrent && currentPoint && (
+              <Box
+                sx={{
+                  position: 'absolute',
+                  transform: ' translateY(-125%) translateX(-50%)',
+                  whiteSpace: 'nowrap',
+                  zIndex: 10,
+                  backgroundColor: '#fff',
+                  p: 1,
+                  borderRadius: '4px',
+                  fontSize: isCondensed ? '0.8rem' : '1.5rem',
+                  color: series[0].color || colorByIndex(0),
+                  boxShadow: '3px 3px 6px rgba(0, 0, 0, 0.3)',
+                }}
+                style={{
+                  left: xScale(new Date(currentPoint.date))
+                    + labelWidth + currentValueOffset.left + window.scrollX,
+                  top: yScales[0](currentPoint.value) + currentValueOffset.top + window.scrollY,
+                }}
+              >
+                {tickFormat(series[0], currentPoint.value)}
+              </Box>
+            )}
+            <Tooltip
+              tooltipRef={tooltipRef}
+              tooltipValues={tooltipValues}
+              series={series}
+              locale={locale}
+              missingText={t('missing')}
+            />
             <Box
               sx={{
-                position: 'absolute',
-                right: 0,
-                display: 'block',
-                width: 0,
-                height: 0,
-                borderTop: '5px solid transparent',
-                borderBottom: '5px solid transparent',
-                borderLeft: '5px solid red',
-                transform: 'translateY(-50%)',
-                top: yScales[0](meanLevel),
-                borderLeftColor: meanLevelStrokeColor,
+                flexShrink: 0,
+                flexGrow: 0,
+                textAlign: 'right',
+                display: 'flex',
+                flexDirection: 'column',
+                position: 'relative',
               }}
-            />
-          )}
-        </Box>
-        <Box
-          sx={{
-            flexShrink: 1,
-            flexGrow: 1,
-            position: 'relative',
-          }}
-        >
-          <Box
-            sx={{
-              maxWidth: '100%',
-              overflow: navigation ? 'visible' : 'hidden',
-            }}
-            className="GraphContainer"
-            ref={graphContainerRef}
-            onMouseMove={handleMouseOver}
-            onMouseLeave={clearTooltip}
-          >
-            {series.map((plot, index) => {
-              if (!stacked && index > 0) return null;
+            >
+              {series.map((plot, index) => {
+                if (index > 0 && !stacked) return null;
 
-              const columnsHeight = stacked && plot.axisHeight ? plot.axisHeight : height;
+                const plotHeight = stacked && plot.axisHeight
+                  ? heightWithPadding(plot.axisHeight)
+                  : chartTotalHeight;
 
-              return (
+                return (
+                  <AxisLeft
+                    key={plot.key}
+                    plot={series[index]}
+                    height={plotHeight}
+                    yScale={yScales[index]}
+                    defaultLabelWidth={defaultLabelWidth}
+                  />
+                );
+              })}
+              {typeof meanLevel !== 'undefined' && (
                 <Box
-                  component="svg"
-                  key={`${plot.key}_${stacked ? 'stacked' : 'combined'}`}
-                  width={totalWidth}
-                  height={heightWithPadding(columnsHeight)}
                   sx={{
-                    direction: 'ltr',
+                    position: 'absolute',
+                    right: 0,
                     display: 'block',
-                    position: 'relative',
-                    zIndex: 2,
-                    overflow: 'visible',
+                    width: 0,
+                    height: 0,
+                    borderTop: '5px solid transparent',
+                    borderBottom: '5px solid transparent',
+                    borderLeft: '5px solid red',
+                    transform: 'translateY(-50%)',
+                    top: yScales[0](meanLevel),
+                    borderLeftColor: meanLevelStrokeColor,
                   }}
-                >
-                  <GridRows
-                    scale={yScales[index]}
-                    width={totalWidth}
-                    stroke="#ccc"
-                    strokeOpacity={0.7}
-                  />
-                  <GridColumns
-                    scale={xScale}
-                    height={columnsHeight}
-                    top={padding}
-                    stroke="#ccc"
-                  />
-                  {index === 0 && (
-                    <AxisTop
-                      top={padding}
-                      scale={xScale}
-                      numTicks={isCondensed ? 4 : undefined}
-                      tickFormat={(tick) => {
-                        const date = tick.valueOf();
+                />
+              )}
+            </Box>
+            <Box
+              sx={{
+                flexShrink: 1,
+                flexGrow: 1,
+                position: 'relative',
+              }}
+            >
+              <Box
+                sx={{
+                  maxWidth: '100%',
+                  overflow: navigation ? 'visible' : 'hidden',
+                }}
+                className="GraphContainer"
+                ref={graphContainerRef}
+                onMouseMove={handleMouseOver}
+                onMouseLeave={clearTooltip}
+              >
+                {series.map((plot, index) => {
+                  if (!stacked && index > 0) return null;
 
-                        if (compareDesc(startOfDay(date), date) === 0) {
-                          return format(date, dateFormat, { locale });
+                  const columnsHeight = stacked && plot.axisHeight ? plot.axisHeight : height;
+
+                  return (
+                    <Box
+                      component="svg"
+                      key={`${plot.key}_${stacked ? 'stacked' : 'combined'}`}
+                      width={totalWidth}
+                      height={heightWithPadding(columnsHeight)}
+                      sx={{
+                        direction: 'ltr',
+                        display: 'block',
+                        position: 'relative',
+                        zIndex: 2,
+                        overflow: 'visible',
+                      }}
+                    >
+                      <GridRows
+                        scale={yScales[index]}
+                        width={totalWidth}
+                        stroke="#ccc"
+                        strokeOpacity={0.7}
+                      />
+                      <GridColumns
+                        scale={xScale}
+                        height={columnsHeight}
+                        top={padding}
+                        stroke="#ccc"
+                      />
+                      {index === 0 && (
+                        <AxisTop
+                          top={padding}
+                          scale={xScale}
+                          numTicks={isCondensed ? 4 : undefined}
+                          tickFormat={(tick) => {
+                            const date = tick.valueOf();
+
+                            if (compareDesc(startOfDay(date), date) === 0) {
+                              return format(date, dateFormat, { locale });
+                            }
+
+                            return format(date, 'p', { locale });
+                          }}
+                        />
+                      )}
+                      {seriesReversed.map((innerPlot, i) => {
+                        const ri = reversedIndex(i);
+
+                        if (stacked && index !== ri) return null;
+
+                        const { type } = innerPlot;
+
+                        const plotHeight = stacked && plot.axisHeight
+                          ? plot.axisHeight + padding
+                          : height + padding;
+
+                        if (type === 'bar') {
+                          return (
+                            <Bars
+                              key={`${innerPlot.key}_${plot.key}`}
+                              plot={innerPlot}
+                              barWidth={innerPlot.barWidth}
+                              barPadding={typeof innerPlot.barPadding !== 'undefined'
+                                ? innerPlot.barPadding : 4}
+                              xScale={xScale}
+                              yScale={yScales[ri]}
+                              height={plotHeight}
+                              index={ri}
+                              lastDate={dates[0]}
+                            />
+                          );
                         }
 
-                        return format(date, 'p', { locale });
-                      }}
-                    />
-                  )}
-                  {seriesReversed.map((innerPlot, i) => {
-                    const ri = reversedIndex(i);
-
-                    if (stacked && index !== ri) return null;
-
-                    const { type } = innerPlot;
-
-                    const plotHeight = stacked && plot.axisHeight
-                      ? plot.axisHeight + padding
-                      : height + padding;
-
-                    if (type === 'bar') {
-                      return (
-                        <Bars
-                          key={`${innerPlot.key}_${plot.key}`}
-                          plot={innerPlot}
-                          barWidth={innerPlot.barWidth}
-                          barPadding={typeof innerPlot.barPadding !== 'undefined'
-                            ? innerPlot.barPadding : 4}
-                          xScale={xScale}
-                          yScale={yScales[ri]}
-                          height={plotHeight}
-                          index={ri}
-                          lastDate={dates[0]}
-                        />
-                      );
-                    }
-
-                    return (
-                      <Line
-                        key={`${innerPlot.key}_${plot.key}`}
-                        keyRef={`${innerPlot.key}_${plot.key}`}
-                        plot={innerPlot}
-                        xScale={xScale}
-                        yScale={yScales[ri]}
-                        index={ri}
-                        navigation={navigation}
-                      />
-                    );
-                  })}
-                  {tooltipValues && tooltipValues.values[0] && (
-                    <>
-                      <LineVisx
-                        from={{ x: xScale(new Date(tooltipValues.values[0].date)), y: padding }}
-                        to={{
-                          x: xScale(new Date(tooltipValues.values[0].date)),
-                          y: columnsHeight + padding,
-                        }}
-                        stroke={plot.color || colorByIndex(index)}
-                        strokeWidth={1}
-                        strokeOpacity={0.8}
-                        pointerEvents="none"
-                        strokeDasharray="5,5"
-                      />
-                      {tooltipValues.values.map((v, i) => (
+                        return (
+                          <Line
+                            key={`${innerPlot.key}_${plot.key}`}
+                            keyRef={`${innerPlot.key}_${plot.key}`}
+                            plot={innerPlot}
+                            xScale={xScale}
+                            yScale={yScales[ri]}
+                            index={ri}
+                            navigation={navigation}
+                          />
+                        );
+                      })}
+                      {tooltipValues && tooltipValues.values[0] && (
+                        <>
+                          <LineVisx
+                            from={{ x: xScale(new Date(tooltipValues.values[0].date)), y: padding }}
+                            to={{
+                              x: xScale(new Date(tooltipValues.values[0].date)),
+                              y: columnsHeight + padding,
+                            }}
+                            stroke={plot.color || colorByIndex(index)}
+                            strokeWidth={1}
+                            strokeOpacity={0.8}
+                            pointerEvents="none"
+                            strokeDasharray="5,5"
+                          />
+                          {tooltipValues.values.map((v, i) => (
+                            <circle
+                              key={`circle_${v.value}_${v.date}`}
+                              cx={xScale(new Date(v.date))}
+                              cy={yScales[i](v.value)}
+                              r={4}
+                              fill={plot.color || colorByIndex(index)}
+                              stroke="white"
+                              strokeWidth={2}
+                              pointerEvents="none"
+                            />
+                          ))}
+                        </>
+                      )}
+                      {!tooltipValues && showCurrent && currentPoint && (
                         <circle
-                          key={`circle_${v.value}_${v.date}`}
-                          cx={xScale(new Date(v.date))}
-                          cy={yScales[i](v.value)}
+                          cx={xScale(new Date(currentPoint.date))}
+                          cy={yScales[0](currentPoint.value)}
                           r={4}
                           fill={plot.color || colorByIndex(index)}
                           stroke="white"
                           strokeWidth={2}
                           pointerEvents="none"
                         />
-                      ))}
-                    </>
-                  )}
-                  {!tooltipValues && showCurrent && currentPoint && (
-                    <circle
-                      cx={xScale(new Date(currentPoint.date))}
-                      cy={yScales[0](currentPoint.value)}
-                      r={4}
-                      fill={plot.color || colorByIndex(index)}
-                      stroke="white"
-                      strokeWidth={2}
-                      pointerEvents="none"
-                    />
-                  )}
-                  {now && (
-                    <LineVisx
-                      from={{ x: xScale(now), y: padding }}
-                      to={{ x: xScale(now), y: columnsHeight + padding }}
-                      stroke="#000"
-                      strokeWidth={1}
-                      strokeOpacity={0.5}
-                      pointerEvents="none"
-                      strokeDasharray="8,8"
-                    />
-                  )}
-                  {typeof meanLevel !== 'undefined' && (
-                    <LineVisx
-                      from={{ x: xScale(rangeDates[0]), y: yScales[0](meanLevel) }}
-                      to={{
-                        x: xScale(rangeDates[rangeDates.length - 1]),
-                        y: yScales[0](meanLevel),
-                      }}
-                      stroke={meanLevelStrokeColor}
-                      strokeWidth={1.5}
-                      pointerEvents="none"
-                      strokeDasharray="5,3"
-                    />
-                  )}
-                </Box>
-              );
-            })}
-          </Box>
-          <Legend
-            isCondensed={isCondensed}
-            stacked={stacked}
-            series={series}
-            meanLevel={meanLevel}
-            meanLevelStrokeColor={meanLevelStrokeColor}
-            locale={locale}
-            currentPoint={showCurrent ? currentPoint : undefined}
-            paddingRight={paddingRight}
-            translations={{
-              updated_at: t('updated_at'),
-              missing: t('missing'),
-              predicted: t('predicted'),
-              meanLevel: t('mean_level'),
-            }}
-          />
-        </Box>
-        {series.length > 1 && (
-          <Box
-            sx={{
-              flexShrink: 0,
-              flexGrow: 0,
-              textAlign: 'right',
-            }}
-          >
-            {series.map((plot, index) => (stacked || index === 0 ? null : (
-              <svg
-                key={plot.key}
-                width={plot.labelWidth || defaultLabelWidth}
-                height={chartTotalHeight}
+                      )}
+                      {now && (
+                        <LineVisx
+                          from={{ x: xScale(now), y: padding }}
+                          to={{ x: xScale(now), y: columnsHeight + padding }}
+                          stroke="#000"
+                          strokeWidth={1}
+                          strokeOpacity={0.5}
+                          pointerEvents="none"
+                          strokeDasharray="8,8"
+                        />
+                      )}
+                      {typeof meanLevel !== 'undefined' && (
+                        <LineVisx
+                          from={{ x: xScale(rangeDates[0]), y: yScales[0](meanLevel) }}
+                          to={{
+                            x: xScale(rangeDates[rangeDates.length - 1]),
+                            y: yScales[0](meanLevel),
+                          }}
+                          stroke={meanLevelStrokeColor}
+                          strokeWidth={1.5}
+                          pointerEvents="none"
+                          strokeDasharray="5,3"
+                        />
+                      )}
+                    </Box>
+                  );
+                })}
+              </Box>
+              <Legend
+                isCondensed={isCondensed}
+                stacked={stacked}
+                series={series}
+                meanLevel={meanLevel}
+                meanLevelStrokeColor={meanLevelStrokeColor}
+                locale={locale}
+                currentPoint={showCurrent ? currentPoint : undefined}
+                paddingRight={paddingRight}
+                translations={{
+                  updated_at: t('updated_at'),
+                  missing: t('missing'),
+                  predicted: t('predicted'),
+                  meanLevel: t('mean_level'),
+                }}
+              />
+            </Box>
+            {series.length > 1 && (
+              <Box
+                sx={{
+                  flexShrink: 0,
+                  flexGrow: 0,
+                  textAlign: 'right',
+                }}
               >
-                <AxisRight
-                  scale={yScales[index]}
-                  tickFormat={(tick) => tickFormat(plot, tick.valueOf())}
-                  stroke={plot.color || colorByIndex(index)}
-                  tickStroke={plot.color || colorByIndex(index)}
-                  tickLabelProps={() => ({
-                    fill: plot.color || colorByIndex(index),
-                    fontSize: 10,
-                    x: 10,
-                    textAnchor: 'start',
-                    verticalAnchor: 'middle',
-                  })}
-                />
-              </svg>
-            )))}
-          </Box>
+                {series.map((plot, index) => (stacked || index === 0 ? null : (
+                  <svg
+                    key={plot.key}
+                    width={plot.labelWidth || defaultLabelWidth}
+                    height={chartTotalHeight}
+                  >
+                    <AxisRight
+                      scale={yScales[index]}
+                      tickFormat={(tick) => tickFormat(plot, tick.valueOf())}
+                      stroke={plot.color || colorByIndex(index)}
+                      tickStroke={plot.color || colorByIndex(index)}
+                      tickLabelProps={() => ({
+                        fill: plot.color || colorByIndex(index),
+                        fontSize: 10,
+                        x: 10,
+                        textAnchor: 'start',
+                        verticalAnchor: 'middle',
+                      })}
+                    />
+                  </svg>
+                )))}
+              </Box>
+            )}
+          </>
         )}
       </Box>
-      {navigation && (
+      {navigation && dimensions.width !== 0 && (
         <div>
           <Navigation
             dates={dates}
