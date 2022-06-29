@@ -3,8 +3,8 @@
   "version": "0.17.1",
   "description": "Component library for water data visualisation. By Intoto",
   "engines": {
-    "node": "^16.13.1",
-    "npm": "^8.1.2"
+    "node": "^16.14.2",
+    "npm": "^8.5.0"
   },
   "private": true,
   "workspaces": [
