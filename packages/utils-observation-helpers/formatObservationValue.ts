@@ -1,6 +1,11 @@
 import formatNumber from './formatNumber';
 
-function formatObservationValue(value: number | null, locale = 'nb', decimals = 2): string {
+function formatObservationValue(
+  value: number | null,
+  locale = 'nb',
+  decimals = 2,
+  enableRoundingZeros = true,
+): string {
   if (value === null) {
     return '';
   }
@@ -8,7 +13,7 @@ function formatObservationValue(value: number | null, locale = 'nb', decimals = 
   const parsedValue = value.toFixed(decimals);
 
   return formatNumber(
-    parsedValue.match(/\.0$/) ? parseFloat(parsedValue) : parsedValue,
+    enableRoundingZeros ? parseFloat(parsedValue) : parsedValue,
     locale,
   );
 }
