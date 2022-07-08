@@ -5,7 +5,12 @@ function formatObservationValue(value: number | null, locale = 'nb', decimals = 
     return '';
   }
 
-  return formatNumber(value.toFixed(decimals), locale);
+  const parsedValue = value.toFixed(decimals);
+
+  return formatNumber(
+    parsedValue.match(/\.0$/) ? parseFloat(parsedValue) : parsedValue,
+    locale,
+  );
 }
 
 export default formatObservationValue;
