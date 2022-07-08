@@ -1,6 +1,6 @@
 {
   "name": "@intoto-dev/bibliotheca",
-  "version": "0.17.3",
+  "version": "0.17.4",
   "description": "Component library for water data visualisation. By Intoto",
   "engines": {
     "node": "^16.14.2",
