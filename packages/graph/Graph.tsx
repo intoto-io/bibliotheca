@@ -31,7 +31,12 @@ import locales from './helpers/locales';
 import { isPredicted } from './helpers/dataPoint';
 import { createXScale, createYScale } from './helpers/createScales';
 import { shiftSeriesDates } from './helpers/dateShift';
-import { DataPoint, GraphSeries, TooltipValues } from './types';
+import {
+  DataPoint,
+  GraphLine,
+  GraphSeries,
+  TooltipValues,
+} from './types';
 
 import AxisLeft from './components/AxisLeft';
 import Line from './components/Line';
@@ -41,6 +46,7 @@ import Navigation from './components/Navigation';
 import Tooltip from './components/Tooltip';
 import useSeriesDates from './hooks/useSeriesDates';
 import useDimensions from './hooks/useDimensions';
+import { isHorizontalLine } from './helpers/lineTypes';
 
 export interface GraphProps {
   series: GraphSeries[];
@@ -50,10 +56,11 @@ export interface GraphProps {
   navigation?: boolean;
   lang?: 'nb' | 'en';
   locale?: Locale;
-  now?: Date;
   showCurrent?: boolean;
-  meanLevel?: number;
-  meanLevelStrokeColor?: string;
+  lines?: GraphLine[];
+
+  now?: Date;
+
   tooltip?: boolean;
   onTooltipValueChange?: (value: number | null) => void;
 }
@@ -82,9 +89,8 @@ function Graph({
   showCurrent = false,
   lang = 'en',
   locale = enUS,
+  lines = [],
   now,
-  meanLevel,
-  meanLevelStrokeColor = '#b7323f',
   onTooltipValueChange,
 }: GraphProps) {
   const [ref, dimensions] = useDimensions();
@@ -145,10 +151,12 @@ function Graph({
     () => series.map((plot) => createYScale(
       plot,
       stacked && plot.axisHeight ? plot.axisHeight : height,
-      meanLevel,
+      lines
+        .filter((line) => isHorizontalLine(line))
+        .map((line) => (isHorizontalLine(line) ? line.value : 0)),
       padding,
     )),
-    [height, meanLevel, series, stacked],
+    [height, lines, series, stacked],
   );
 
   const reversedIndex = (index: number) => seriesReversed.length - index - 1;
@@ -252,23 +260,29 @@ function Graph({
                   />
                 );
               })}
-              {typeof meanLevel !== 'undefined' && (
-                <Box
-                  sx={{
-                    position: 'absolute',
-                    right: 0,
-                    display: 'block',
-                    width: 0,
-                    height: 0,
-                    borderTop: '5px solid transparent',
-                    borderBottom: '5px solid transparent',
-                    borderLeft: '5px solid red',
-                    transform: 'translateY(-50%)',
-                    top: yScales[0](meanLevel),
-                    borderLeftColor: meanLevelStrokeColor,
-                  }}
-                />
-              )}
+              {lines.map((line) => {
+                if (!line.indicator) {
+                  return null;
+                }
+
+                return (
+                  <Box
+                    sx={{
+                      position: 'absolute',
+                      right: 0,
+                      display: 'block',
+                      width: 0,
+                      height: 0,
+                      borderTop: '5px solid transparent',
+                      borderBottom: '5px solid transparent',
+                      borderLeft: '5px solid red',
+                      transform: 'translateY(-50%)',
+                      top: isHorizontalLine(line) ? yScales[0](line.value) : 0,
+                      borderLeftColor: line.color,
+                    }}
+                  />
+                );
+              })}
             </Box>
             <Box
               sx={{
@@ -424,19 +438,33 @@ function Graph({
                           strokeDasharray="8,8"
                         />
                       )}
-                      {typeof meanLevel !== 'undefined' && (
+                      {lines.map((line) => (
                         <LineVisx
-                          from={{ x: xScale(rangeDates[0]), y: yScales[0](meanLevel) }}
-                          to={{
-                            x: xScale(rangeDates[rangeDates.length - 1]),
-                            y: yScales[0](meanLevel),
-                          }}
-                          stroke={meanLevelStrokeColor}
-                          strokeWidth={1.5}
+                          key={line.name}
+                          from={
+                            isHorizontalLine(line) ? {
+                              x: xScale(rangeDates[0]),
+                              y: yScales[0](line.value),
+                            } : {
+                              x: xScale(line.date),
+                              y: padding,
+                            }
+                          }
+                          to={
+                            isHorizontalLine(line) ? {
+                              x: xScale(rangeDates[rangeDates.length - 1]),
+                              y: yScales[0](line.value),
+                            } : {
+                              x: xScale(line.date),
+                              y: columnsHeight + padding,
+                            }
+                          }
+                          stroke={line.color}
+                          strokeWidth={line.width || 1.5}
                           pointerEvents="none"
-                          strokeDasharray="5,3"
+                          strokeDasharray={line.dasharray || '5,3'}
                         />
-                      )}
+                      ))}
                     </Box>
                   );
                 })}
@@ -445,16 +473,14 @@ function Graph({
                 isCondensed={isCondensed}
                 stacked={stacked}
                 series={series}
-                meanLevel={meanLevel}
-                meanLevelStrokeColor={meanLevelStrokeColor}
                 locale={locale}
                 currentPoint={showCurrent ? currentPoint : undefined}
                 paddingRight={paddingRight}
+                lines={lines}
                 translations={{
                   updated_at: t('updated_at'),
                   missing: t('missing'),
                   predicted: t('predicted'),
-                  meanLevel: t('mean_level'),
                 }}
               />
             </Box>

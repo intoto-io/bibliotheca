@@ -7,7 +7,7 @@ import {
   getTimezoneOffset,
 } from './helpers';
 import Graph from './Graph';
-import { DataPoint, GraphSeries } from './types';
+import { DataPoint, GraphSeries, GraphLine } from './types';
 import useDimensions from './hooks/useDimensions';
 import useSeriesDates from './hooks/useSeriesDates';
 
@@ -31,4 +31,5 @@ export {
 export type {
   DataPoint,
   GraphSeries,
+  GraphLine,
 };

@@ -390,7 +390,12 @@ export const SimpleLineWithMeanLevel = Template.bind({});
 SimpleLineWithMeanLevel.args = {
   series: singleLine,
   tooltip: true,
-  meanLevel: 8.5,
+  lines: [{
+    name: 'Mean-level',
+    color: '#b7323f',
+    value: 8.5,
+    indicator: true,
+  }],
 };
 
 const singleLineWithArea: GraphSeries[] = [{
@@ -408,7 +413,12 @@ export const SimpleLineWithAreaMeanCurrent = Template.bind({});
 SimpleLineWithAreaMeanCurrent.args = {
   series: singleLineWithArea,
   tooltip: true,
-  meanLevel: 8.5,
+  lines: [{
+    name: 'Mean-level',
+    color: '#b7323f',
+    value: 8.5,
+    indicator: true,
+  }],
   showCurrent: true,
 };
 
@@ -454,7 +464,12 @@ export const TwentyFourHoursAndPrediction = Template.bind({});
 TwentyFourHoursAndPrediction.args = {
   series: twentyfourPrediction,
   tooltip: true,
-  meanLevel: 6.5,
+  lines: [{
+    name: 'Mean-level',
+    color: '#b7323f',
+    value: 6.5,
+    indicator: true,
+  }],
   showCurrent: true,
   now: new Date('2021-05-19T12:00:00.000Z'),
 };
