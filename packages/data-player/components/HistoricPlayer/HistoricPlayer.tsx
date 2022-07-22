@@ -40,7 +40,6 @@ const HistoricPlayer: FunctionComponent = function HistoricPlayer() {
         series={series}
         t={(t: string) => t}
         tooltip
-        now={new Date(now)}
         onTooltipValueChange={setWaterLevel}
       />
       <Player
