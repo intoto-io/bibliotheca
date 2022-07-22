@@ -58,3 +58,22 @@ export interface GraphSeries {
   area?: boolean;
   bottom?: number;
 }
+
+interface BaseGraphLine {
+  name: string;
+  color: string;
+  width?: number;
+  dasharray?: string;
+  opacity?: number;
+  indicator?: boolean;
+}
+
+export interface VerticalLine extends BaseGraphLine {
+  date: Date;
+}
+
+export interface HorizontalLine extends BaseGraphLine {
+  value: number;
+}
+
+export type GraphLine = VerticalLine | HorizontalLine;

@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography';
 import { isMissing, isPredicted } from '../helpers/dataPoint';
 import hasValueInThreshold from '../helpers/hasValueInThreshold';
 import colorByIndex from '../helpers/colorByIndex';
-import { DataPoint, GraphSeries } from '../types';
+import { DataPoint, GraphLine, GraphSeries } from '../types';
 
 const LegendItem = {
   marginLeft: 1,
@@ -35,29 +35,26 @@ interface LegendProps {
   isCondensed?: boolean;
   stacked: boolean;
   series: GraphSeries[];
-  meanLevel?: number;
   currentPoint?: DataPoint;
   paddingRight: number;
-  meanLevelStrokeColor: string;
   locale: Locale;
   translations: {
     updated_at: string;
     missing: string;
     predicted: string;
-    meanLevel: string;
   };
+  lines?: GraphLine[];
 }
 
 const Legend: FunctionComponent<LegendProps> = function Legend({
   stacked,
   series,
-  meanLevel,
-  meanLevelStrokeColor,
   translations,
   locale,
   paddingRight,
   currentPoint,
   isCondensed = false,
+  lines = [],
 }) {
   const showLegend = series.every((plot) => !!plot.name);
   const [, setTime] = useState<number>(0);
@@ -104,26 +101,32 @@ const Legend: FunctionComponent<LegendProps> = function Legend({
           </Typography>
         </Box>
       )}
-      {typeof meanLevel !== 'undefined' && (
-        <Box sx={LegendItem}>
-          <Box
-            sx={{
-              height: 0,
-              width: 0,
-              borderTop: '5px solid transparent',
-              borderBottom: '5px solid transparent',
-              borderLeft: '5px solid red',
-              marginRight: '6px',
-              borderLeftColor: meanLevelStrokeColor,
-            }}
-          />
-          <Box sx={{ display: 'flex' }}>
-            <Typography variant="caption">
-              {translations.meanLevel}
-            </Typography>
+      {lines.map((line) => {
+        if (!line.indicator) {
+          return null;
+        }
+
+        return (
+          <Box sx={LegendItem}>
+            <Box
+              sx={{
+                height: 0,
+                width: 0,
+                borderTop: '5px solid transparent',
+                borderBottom: '5px solid transparent',
+                borderLeft: '5px solid red',
+                marginRight: '6px',
+                borderLeftColor: line.color,
+              }}
+            />
+            <Box sx={{ display: 'flex' }}>
+              <Typography variant="caption">
+                {line.name}
+              </Typography>
+            </Box>
           </Box>
-        </Box>
-      )}
+        );
+      })}
       {series.map((plot, index) => {
         const hasThresholdData = hasValueInThreshold(
           plot.data,
