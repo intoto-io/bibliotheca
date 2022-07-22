@@ -58,9 +58,6 @@ export interface GraphProps {
   locale?: Locale;
   showCurrent?: boolean;
   lines?: GraphLine[];
-
-  now?: Date;
-
   tooltip?: boolean;
   onTooltipValueChange?: (value: number | null) => void;
 }
@@ -90,7 +87,6 @@ function Graph({
   lang = 'en',
   locale = enUS,
   lines = [],
-  now,
   onTooltipValueChange,
 }: GraphProps) {
   const [ref, dimensions] = useDimensions();
@@ -260,29 +256,6 @@ function Graph({
                   />
                 );
               })}
-              {lines.map((line) => {
-                if (!line.indicator) {
-                  return null;
-                }
-
-                return (
-                  <Box
-                    sx={{
-                      position: 'absolute',
-                      right: 0,
-                      display: 'block',
-                      width: 0,
-                      height: 0,
-                      borderTop: '5px solid transparent',
-                      borderBottom: '5px solid transparent',
-                      borderLeft: '5px solid red',
-                      transform: 'translateY(-50%)',
-                      top: isHorizontalLine(line) ? yScales[0](line.value) : 0,
-                      borderLeftColor: line.color,
-                    }}
-                  />
-                );
-              })}
             </Box>
             <Box
               sx={{
@@ -291,6 +264,39 @@ function Graph({
                 position: 'relative',
               }}
             >
+              {lines.map((line) => {
+                if (!line.indicator) {
+                  return null;
+                }
+
+                const arrowProps = isHorizontalLine(line)
+                  ? {
+                    borderTop: '5px solid transparent',
+                    borderBottom: '5px solid transparent',
+                    borderLeft: `5px solid ${line.color}`,
+                  } : {
+                    borderLeft: '5px solid transparent',
+                    borderRight: '5px solid transparent',
+                    borderTop: `5px solid ${line.color}`,
+                  };
+
+                return (
+                  <Box
+                    sx={{
+                      ...arrowProps,
+                      position: 'absolute',
+                      display: 'block',
+                      width: 0,
+                      height: 0,
+                      transform: isHorizontalLine(line)
+                        ? 'translate(-100%, -50%)' : 'translate(-50%, -100%)',
+                      left: isHorizontalLine(line) ? 0 : xScale(line.date),
+                      top: isHorizontalLine(line) ? yScales[0](line.value) : padding,
+                      opacity: line.opacity,
+                    }}
+                  />
+                );
+              })}
               <Box
                 sx={{
                   maxWidth: '100%',
@@ -425,17 +431,6 @@ function Graph({
                           stroke="white"
                           strokeWidth={2}
                           pointerEvents="none"
-                        />
-                      )}
-                      {now && (
-                        <LineVisx
-                          from={{ x: xScale(now), y: padding }}
-                          to={{ x: xScale(now), y: columnsHeight + padding }}
-                          stroke="#000"
-                          strokeWidth={1}
-                          strokeOpacity={0.5}
-                          pointerEvents="none"
-                          strokeDasharray="8,8"
                         />
                       )}
                       {lines.map((line) => (
