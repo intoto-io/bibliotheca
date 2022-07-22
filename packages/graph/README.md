@@ -88,21 +88,19 @@ This includes all possible translation keys and an example of how `{time}` is us
 import { Graph } from '@intoto-dev/bibliotheca-graph';
 ```
 
-| Property             | Description                                                                                                            | Type                      | Default      |
-|----------------------|------------------------------------------------------------------------------------------------------------------------|---------------------------|--------------|
-| series *             | List of series to be displayed in the graph.                                                                           | `GraphSeries[]`           |              |
-| t *                  | Translation function.                                                                                                  | `(key: string) => string` |              |
-| height               | Height of the graph in pixels.                                                                                         | `number`                  | `200`        |
-| tooltip              | Whether to show a tooltip when hovering over a point.                                                                  | `boolean`                 | `true`       |
-| stacked              | Whether to display the series in a stacked manner. Default is merged into a single Y-axis (multiple lines in a graph). | `boolean`                 | `false`      |
-| navigation           | Whether to display the navigation bar. This allows zooming of large data sets.                                         | `boolean`                 | `false`      |
-| lang                 | Language to used for the graph. This is mainly for date formatting.                                                    | `'en'` or `'nb'`          | `en`         |
-| locale               | The [`date-fns` locale](https://date-fns.org/v2.28.0/docs/Locale) to use for date formatting.                          | `Locale`                  | `en-US`      |
-| now                  | The current time. This is used to relatively show data. Most use-cases do not need this.                               | `Date`                    | `new Date()` |
-| showCurrent          | Draws a line at the current time and shows the current value of the first series at that point.                        | `boolean`                 | `false`      |
-| meanLevel            | The value of the mean level. This is used to draw a line at the mean level.                                            | `number`                  |              |
-| meanLevelStrokeColor | The color of the mean level line.                                                                                      | `string`                  | `'#b7323f'`  |
-| onTooltipValueChange | Callback for when the tooltip value changes. Used for external communication.                                          | `(value: number) => void` |              |
+| Property             | Description                                                                                                            | Type                      | Default |
+|----------------------|------------------------------------------------------------------------------------------------------------------------|---------------------------|---------|
+| series *             | List of series to be displayed in the graph.                                                                           | `GraphSeries[]`           |         |
+| t *                  | Translation function.                                                                                                  | `(key: string) => string` |         |
+| height               | Height of the graph in pixels.                                                                                         | `number`                  | `200`   |
+| tooltip              | Whether to show a tooltip when hovering over a point.                                                                  | `boolean`                 | `true`  |
+| stacked              | Whether to display the series in a stacked manner. Default is merged into a single Y-axis (multiple lines in a graph). | `boolean`                 | `false` |
+| navigation           | Whether to display the navigation bar. This allows zooming of large data sets.                                         | `boolean`                 | `false` |
+| lang                 | Language to used for the graph. This is mainly for date formatting.                                                    | `'en'` or `'nb'`          | `en`    |
+| locale               | The [`date-fns` locale](https://date-fns.org/v2.28.0/docs/Locale) to use for date formatting.                          | `Locale`                  | `en-US` |
+| showCurrent          | Draws a line at the current time and shows the current value of the first series at that point.                        | `boolean`                 | `false` |
+| lines                | A list of extra lines to be drawn in the graph. Useful for mean-level and "now" (helpers available)                    | `GraphLine[]`             | `[]`    |
+| onTooltipValueChange | Callback for when the tooltip value changes. Used for external communication.                                          | `(value: number) => void` |         |
 
 ### Type: `GraphSeries`
 
@@ -139,6 +137,30 @@ import { Graph } from '@intoto-dev/bibliotheca-graph';
 | prediction | Whether the data point is a prediction                                    | `boolean` | `false` |
 | minValue   | When the data point is a prediction, this is the smallest predicted value | `number`  |         |
 | maxValue   | When the data point is a prediction, this is the largest predicted value  | `number`  |         |
+
+### Type: `GraphLine`
+
+A `GraphLine` is either a `HorizontalLine` or a `VerticalLine`.
+
+### Type: `HorizontalLine`
+
+| Property  | Description                                                                                             | Type      | Default |
+|-----------|---------------------------------------------------------------------------------------------------------|-----------|---------|
+| name *    | Name of the line. Also the name which will be displayed in the legend                                   | `string`  |         |
+| color *   | The color of the line                                                                                   | `string`  |         |
+| value *   | The value on the Y-axis where the line needs to be drawn                                                | `number`  |         |
+| width     | Stroke width of the line                                                                                | `number`  | `1`     |
+| dasharray | Stroke dash array of the line                                                                           | `string`  | `'5,3'` |
+| opacity   | Stroke opacity                                                                                          | `number`  | `1`     |
+| indicator | Whether to show the name of the line in the legend, also show a small indication arrow head on the axis | `boolean` | `false` |
+
+### Type: `VerticalLine`
+
+Same properties as `HorizontalLine` but with `value` and `date` swapped.
+
+| Property  | Description                                             | Type   | Default |
+|-----------|---------------------------------------------------------|--------|---------|
+| date *    | The date on the X-axis where the line needs to be drawn | `Date` |         |
 
 ### Helper: `isMissing`
 
@@ -239,6 +261,39 @@ function getTimezoneOffset(date: string): number;
 | Property | Description                    | Type     | Default |
 |----------|--------------------------------|----------|---------|
 | date *   | Date string in ISO 8601 format | `string` |         |
+
+## Helper: `createMeanLevelLine`
+
+```ts
+import { createMeanLevelLine } from '@intoto-dev/bibliotheca-graph';
+```
+
+Creates a `HorizontalLine` which is a line which is drawn at the mean level of the series. Creates an object to use in the `lines` property.
+
+```ts
+function createMeanLevelLine(name: string, value: number): HorizontalLine;
+```
+
+| Property | Description                                             | Type     | Default |
+|----------|---------------------------------------------------------|----------|---------|
+| name *   | Name of the line which will also be used in the legend. | `string` |         |
+| value *  | The mean level in mASL.                                 | `number` |         |
+
+## Helper: `createMeanLevelLine`
+
+```ts
+import { createNowLine } from '@intoto-dev/bibliotheca-graph';
+```
+
+Creates a `VerticalLine` which is a line which is drawn at the given date. Creates an object to use in the `lines` property.
+
+```ts
+function createNowLine(date: Date): VerticalLine;
+```
+
+| Property | Description                                  | Type     | Default |
+|----------|----------------------------------------------|----------|---------|
+| date *   | The date where the 'now' line will be drawn. | `Date`   |         |
 
 ## React Hook: `useDimensions`
 

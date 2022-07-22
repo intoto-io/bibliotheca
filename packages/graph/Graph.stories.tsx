@@ -3,6 +3,7 @@ import { Story, Meta } from '@storybook/react/types-6-0';
 
 import Graph, { GraphProps } from './Graph';
 import { generateDays, randomLineData } from './helpers/createData';
+import { createMeanLevelLine } from './helpers';
 
 import singleLineData from './mocks/singleLine.json';
 import singleLineCutOffData from './mocks/singleLineCutOff.json';
@@ -34,8 +35,6 @@ const Template: Story<GraphProps> = function Template(args) {
             return 'Updated {time} ago';
           case 'missing':
             return 'Missing data';
-          case 'mean_level':
-            return 'Mean-level';
           default:
             return 'Prediction';
         }
@@ -408,12 +407,7 @@ export const SimpleLineWithMeanLevel = Template.bind({});
 SimpleLineWithMeanLevel.args = {
   series: singleLine,
   tooltip: true,
-  lines: [{
-    name: 'Mean-level',
-    color: '#b7323f',
-    value: 8.5,
-    indicator: true,
-  }],
+  lines: [createMeanLevelLine('Mean-level', 8.5)],
 };
 
 const singleLineWithArea: GraphSeries[] = [{
@@ -431,12 +425,7 @@ export const SimpleLineWithAreaMeanCurrent = Template.bind({});
 SimpleLineWithAreaMeanCurrent.args = {
   series: singleLineWithArea,
   tooltip: true,
-  lines: [{
-    name: 'Mean-level',
-    color: '#b7323f',
-    value: 8.5,
-    indicator: true,
-  }],
+  lines: [createMeanLevelLine('Mean-level', 8.5)],
   showCurrent: true,
 };
 
@@ -483,12 +472,8 @@ TwentyFourHoursAndPrediction.args = {
   series: twentyfourPrediction,
   tooltip: true,
   lines: [
+    createMeanLevelLine('Mean-level', 8.5),
     {
-      name: 'Mean-level',
-      color: '#b7323f',
-      value: 6.5,
-      indicator: true,
-    }, {
       name: 'now',
       date: new Date('2021-05-19T10:00:00.000Z'),
       color: '#000',
