@@ -5,6 +5,8 @@ import {
   createXScale,
   shiftDate,
   getTimezoneOffset,
+  createMeanLevelLine,
+  createNowLine,
 } from './helpers';
 import Graph from './Graph';
 import { DataPoint, GraphSeries, GraphLine } from './types';
@@ -22,6 +24,8 @@ export {
   createXScale,
   shiftDate,
   getTimezoneOffset,
+  createMeanLevelLine,
+  createNowLine,
 
   // hooks
   useDimensions,
