@@ -282,6 +282,7 @@ function Graph({
 
                 return (
                   <Box
+                    key={`line_${line.name}`}
                     sx={{
                       ...arrowProps,
                       position: 'absolute',
