@@ -107,7 +107,7 @@ const Legend: FunctionComponent<LegendProps> = function Legend({
         }
 
         return (
-          <Box sx={LegendItem}>
+          <Box sx={LegendItem} key={line.name}>
             <Box
               sx={{
                 height: 0,
