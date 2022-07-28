@@ -277,7 +277,7 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
             <linearGradient id="ground-gradient" x1="0" x2="0" y1="0" y2="1">
               <stop stopColor={groundFill} stopOpacity={1} offset="0%" />
               <stop stopColor={groundFill} stopOpacity={0.9} offset="5%" />
-              <stop stopColor={groundFill} stopOpacity={0.1} offset="100%" />
+              <stop stopColor={groundFill} stopOpacity={0.2} offset="100%" />
             </linearGradient>
           </defs>
         )}
