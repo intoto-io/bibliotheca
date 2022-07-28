@@ -65,6 +65,8 @@ import Profile from '@intoto-dev/bibliotheca-profile';
 | waterStrokeColor  | Hexadecimal color of the stroke of the water.                                                  | `string`                          | `'#0633ff'`    |
 | waterFill         | Hexadecimal color of the fill of the water.                                                    | `string`                          | `'#99ccff'`    |
 | groundFill        | Hexadecimal color of the fill of the ground.                                                   | `string`                          | `'#b4967d'`    |
+| groundGradient    | Whether or not to render the ground fill as a gradient                                         | `boolean`                         | `true`         |
+| groundStroke      | Whether or not to the ground fill has as a stroke                                              | `boolean`                         | `false`        |
 
 ### Type: `ProfilePoint`
 
