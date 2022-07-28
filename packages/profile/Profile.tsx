@@ -61,6 +61,8 @@ export interface ProfileProps {
   meanLevel?: number;
   axis?: boolean;
   width?: number;
+  groundStroke?: boolean;
+  groundGradient?: boolean;
   groundFill?: string;
   strokeColor?: string;
   strokeWidth?: number;
@@ -92,6 +94,8 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
   bridgeStrokeWidth = 2,
   axis = false,
   width = 600,
+  groundStroke = false,
+  groundGradient = true,
   strokeColor = 'black',
   strokeWidth = 1.5,
   waterStrokeColor = '#0633ff',
@@ -268,6 +272,31 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
         height={totalHeight}
         viewBox={`0 0 ${totalWidth} ${totalHeight}`}
       >
+        {groundGradient && (
+          <defs>
+            <linearGradient id="ground-gradient" x1="0" x2="0" y1="0" y2="1">
+              <stop stopColor={groundFill} stopOpacity={1} offset="0%" />
+              <stop stopColor={groundFill} stopOpacity={0.9} offset="5%" />
+              <stop stopColor={groundFill} stopOpacity={0.1} offset="100%" />
+            </linearGradient>
+          </defs>
+        )}
+        <mask id="ground-mask" maskUnits="userSpaceOnUse">
+          <rect x="0" y="0" width={totalWidth} height={totalHeight} fill="white" />
+          <path
+            d={[bankPath].join(' ')}
+            fill="black"
+            stroke="white"
+            strokeWidth={strokeWidth}
+          />
+        </mask>
+        <path
+          id="ground"
+          d={[bankPath].join(' ')}
+          stroke={strokeColor}
+          strokeWidth={groundStroke ? strokeWidth : 0}
+          fill={groundGradient ? 'url(#ground-gradient)' : groundFill}
+        />
         {typeof currentWaterLevel !== 'undefined' && (
           <>
             <defs>
@@ -282,16 +311,10 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
               stroke={waterStrokeColor}
               strokeWidth={strokeWidth}
               fill="url(#water-gradient)"
+              mask="url(#ground-mask)"
             />
           </>
         )}
-        <path
-          id="ground"
-          d={[bankPath].join(' ')}
-          stroke={strokeColor}
-          strokeWidth={strokeWidth}
-          fill={groundFill}
-        />
         {typeof bridgeLevel !== 'undefined' && (
           <>
             <path
