@@ -5,6 +5,7 @@ import {
   useRef,
   useCallback,
   useEffect,
+  useLayoutEffect,
 } from 'react';
 import { UseTranslationResponse } from 'react-i18next';
 /* eslint-disable import/no-duplicates */ // needed to prevent eslint bug
@@ -100,6 +101,7 @@ function Graph({
 
   const graphContainerRef = useRef<HTMLDivElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
+  const currentValueRef = useRef<HTMLDivElement>(null);
   const [tooltipValues, setTooltipValues] = useState<TooltipValues | undefined>();
 
   const clearTooltip = useCallback(() => {
@@ -194,6 +196,19 @@ function Graph({
   const currentValueOffset = ref.current?.getBoundingClientRect() || { top: 0, left: 0 };
   const currentPoint = series[0].data.find((d) => !isPredicted(d));
 
+  useLayoutEffect(() => {
+    if (currentValueRef.current) {
+      const rect = currentValueRef.current.getBoundingClientRect();
+
+      if (window.innerWidth < rect.right) {
+        // popup is out of viewport, move it to the left
+        const rightMargin = 12;
+        const left = rect.left - (rect.right - window.innerWidth) - rightMargin + (rect.width / 2);
+        currentValueRef.current.style.left = `${left}px`;
+      }
+    }
+  });
+
   return (
     <div>
       <Box sx={{ display: 'flex' }} ref={ref}>
@@ -201,6 +216,7 @@ function Graph({
           <>
             {!tooltipValues && showCurrent && currentPoint && (
               <Box
+                ref={currentValueRef}
                 sx={{
                   position: 'absolute',
                   transform: ' translateY(-125%) translateX(-50%)',
