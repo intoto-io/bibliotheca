@@ -1,6 +1,6 @@
 {
   "name": "@intoto-dev/bibliotheca-info-tooltip",
-  "version": "0.19.3",
+  "version": "0.20.0",
   "description": "Explain how to install etc",
   "main": "lib/index.js",
   "module": "lib/index.js",
