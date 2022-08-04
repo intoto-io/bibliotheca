@@ -1,6 +1,6 @@
 {
   "name": "@intoto-dev/bibliotheca-location-tooltip",
-  "version": "0.20.0",
+  "version": "0.21.0",
   "description": "",
   "main": "lib/index.js",
   "module": "lib/index.js",
