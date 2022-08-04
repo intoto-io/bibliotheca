@@ -3,11 +3,6 @@ import { format } from 'date-fns';
 
 import TooltipLib from '@intoto-dev/bibliotheca-location-tooltip';
 
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-
-import { defaultStyles } from '@visx/tooltip';
-
 import { GraphSeries, TooltipValues } from '../types';
 import { valueInThreshold } from '../helpers/hasValueInThreshold';
 import colorByIndex from '../helpers/colorByIndex';
