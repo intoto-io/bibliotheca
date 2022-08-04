@@ -2,6 +2,7 @@ import {
   cloneElement,
   ReactElement,
   RefObject,
+  useMemo,
 } from 'react';
 
 import Box from '@mui/material/Box';
@@ -13,18 +14,15 @@ const defaultStyles = {
   color: '#666666',
   borderRadius: '3px',
   fontSize: '14px',
-  boxShadow: '0 1px 2px rgba(33,33,33,0.2)',
+  filter: 'drop-shadow(0 1px 2px rgba(33,33,33,0.2))',
   lineHeight: '1em',
   pointerEvents: 'none',
 };
 
-interface TooltipProps {
-  tooltipRef?: RefObject<HTMLDivElement>;
+export interface TooltipProps {
   position: {
     x: number;
     y: number;
-    tx: number;
-    ty: number;
   };
   values: {
     name: string;
@@ -33,6 +31,9 @@ interface TooltipProps {
     isSmall?: boolean;
     extraContent?: ReactElement | null;
   }[];
+  tooltipRef?: RefObject<HTMLDivElement>;
+  anchor?: 'top' | 'bottom' | 'left' | 'right';
+  withPointer?: boolean;
   bottomText?: string;
 }
 
@@ -41,23 +42,89 @@ function Tooltip({
   position,
   values,
   bottomText,
+  anchor = 'left',
+  withPointer,
 }: TooltipProps) {
+  const [extraStyles, triangleStyles] = useMemo(() => {
+    switch (anchor) {
+      case 'top':
+        return [{
+          transform: 'translate(-50%, -100%)',
+          marginTop: '-15px',
+        }, {
+          left: '50%',
+          bottom: 0,
+          transform: 'translate(-50%, 100%)',
+          borderLeft: '10px solid transparent',
+          borderRight: '10px solid transparent',
+          borderTop: '15px solid #fff',
+        }];
+      case 'bottom':
+        return [{
+          transform: 'translate(-50%, 0)',
+          marginTop: '15px',
+        }, {
+          left: '50%',
+          top: 0,
+          transform: 'translate(-50%, -100%)',
+          borderLeft: '10px solid transparent',
+          borderRight: '10px solid transparent',
+          borderBottom: '15px solid #fff',
+        }];
+      case 'right':
+        return [{
+          transform: 'translate(-100%, -50%)',
+          marginLeft: '-15px',
+        }, {
+          right: 0,
+          top: '50%',
+          transform: 'translate(100%, -50%)',
+          borderLeft: '15px solid #fff',
+          borderTop: '10px solid transparent',
+          borderBottom: '10px solid transparent',
+        }];
+      case 'left':
+      default:
+        return [{
+          transform: 'translate(0, -50%)',
+          marginLeft: '15px',
+        }, {
+          left: 0,
+          top: '50%',
+          transform: 'translate(-100%, -50%)',
+          borderRight: '15px solid #fff',
+          borderTop: '10px solid transparent',
+          borderBottom: '10px solid transparent',
+        }];
+    }
+  }, [anchor]);
+
   return (
     <Box
       ref={tooltipRef}
       className="GraphTooltip"
       sx={{
         ...defaultStyles,
-        transform: 'translateY(-50%)',
         zIndex: 10,
         px: 2,
         py: 1.5,
       }}
       style={{
-        top: position.ty,
-        left: position.tx,
+        ...extraStyles,
+        top: position.y,
+        left: position.x,
       }}
     >
+      {withPointer && (
+        <Box
+          sx={{
+            position: 'absolute',
+            width: 0,
+            height: 0,
+            ...triangleStyles,
+          }}
+        />
+      )}
       <Box
         sx={{
           display: 'flex',

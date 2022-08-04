@@ -55,7 +55,7 @@ function Tooltip({
   return (
     <TooltipLib
       tooltipRef={tooltipRef}
-      position={tooltipValues}
+      position={{ x: tooltipValues.tx, y: tooltipValues.ty }}
       values={values}
       bottomText={format(new Date(tooltipValues.values[0].date), 'Pp', { locale })}
     />
