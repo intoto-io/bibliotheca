@@ -26,6 +26,7 @@
     "access": "public"
   },
   "dependencies": {
+    "@intoto-dev/bibliotheca-location-tooltip": "^0.19.3",
     "@intoto-dev/utils-is-unique-date": "^0.19.3",
     "@mui/material": "^5.2.5",
     "@types/react": "^18.0.8",
@@ -40,7 +41,6 @@
     "@visx/scale": "^2.1.0",
     "@visx/shape": "^2.1.1",
     "@visx/threshold": "^2.1.1",
-    "@visx/tooltip": "^2.1.0",
     "classnames": "^2.3.1",
     "d3-array": "^3.1.6",
     "d3-scale": "^4.0.1",

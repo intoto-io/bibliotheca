@@ -7,6 +7,8 @@ import {
   getTimezoneOffset,
   createMeanLevelLine,
   createNowLine,
+  valueInThreshold,
+  colorByIndex,
 } from './helpers';
 import Graph from './Graph';
 import { DataPoint, GraphSeries, GraphLine } from './types';
@@ -26,6 +28,8 @@ export {
   getTimezoneOffset,
   createMeanLevelLine,
   createNowLine,
+  valueInThreshold,
+  colorByIndex,
 
   // hooks
   useDimensions,

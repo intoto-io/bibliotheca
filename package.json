@@ -8,6 +8,7 @@
   },
   "private": true,
   "workspaces": [
+    "./packages/location-tooltip",
     "./packages/info-tooltip",
     "./packages/profile",
     "./packages/utils-is-unique-date",
