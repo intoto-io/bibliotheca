@@ -26,6 +26,7 @@
     "access": "public"
   },
   "dependencies": {
+    "@intoto-dev/bibliotheca-location-tooltip": "^0.19.3",
     "@intoto-dev/utils-is-unique-date": "^0.19.3",
     "@mui/material": "^5.2.5",
     "@types/react": "^18.0.8",
