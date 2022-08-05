@@ -50,7 +50,7 @@ function Tooltip({
       case 'top':
         return [{
           transform: 'translate(-50%, -100%)',
-          marginTop: '-15px',
+          marginTop: withPointer ? '-15px' : 0,
         }, {
           left: '50%',
           bottom: 0,
@@ -62,7 +62,7 @@ function Tooltip({
       case 'bottom':
         return [{
           transform: 'translate(-50%, 0)',
-          marginTop: '15px',
+          marginTop: withPointer ? '15px' : 0,
         }, {
           left: '50%',
           top: 0,
@@ -74,7 +74,7 @@ function Tooltip({
       case 'right':
         return [{
           transform: 'translate(-100%, -50%)',
-          marginLeft: '-15px',
+          marginLeft: withPointer ? '-15px' : 0,
         }, {
           right: 0,
           top: '50%',
@@ -87,7 +87,7 @@ function Tooltip({
       default:
         return [{
           transform: 'translate(0, -50%)',
-          marginLeft: '15px',
+          marginLeft: withPointer ? '15px' : 0,
         }, {
           left: 0,
           top: '50%',
@@ -97,7 +97,7 @@ function Tooltip({
           borderBottom: '10px solid transparent',
         }];
     }
-  }, [anchor]);
+  }, [anchor, withPointer]);
 
   return (
     <Box
