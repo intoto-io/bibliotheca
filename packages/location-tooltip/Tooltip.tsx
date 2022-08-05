@@ -16,7 +16,6 @@ const defaultStyles = {
   fontSize: '14px',
   filter: 'drop-shadow(0 1px 2px rgba(33,33,33,0.2))',
   lineHeight: '1em',
-  pointerEvents: 'none',
 };
 
 export interface TooltipProps {
