@@ -1,5 +1,6 @@
 import {
   MouseEvent,
+  TouchEvent,
   useMemo,
   useState,
   useRef,
@@ -159,7 +160,13 @@ function Graph({
 
   const reversedIndex = (index: number) => seriesReversed.length - index - 1;
 
-  const handleMouseOver = useCallback((event: MouseEvent<HTMLDivElement>) => {
+  const handleTooltip = useCallback((
+    event: TouchEvent<HTMLDivElement> | MouseEvent<HTMLDivElement>,
+    clientX: number,
+    clientY: number,
+    offsetX = 10,
+    offsetY = 0,
+  ) => {
     // ignore when not using tooltip
     if (!tooltip) return;
 
@@ -169,13 +176,13 @@ function Graph({
       const date = xScale.invert(coords.x);
       const values = series.map((plot) => plot.data[bisectDate(plot.data, date)]);
 
-      let xOffset = 10;
+      let xOffset = offsetX;
 
-      if (graphContainerRef.current && tooltipRef.current) {
+      if (graphContainerRef.current && tooltipRef.current && offsetX !== 0) {
         const graphContainerBounds = graphContainerRef.current.getBoundingClientRect();
         const tooltipBox = tooltipRef.current.getBoundingClientRect();
 
-        if (event.clientX + tooltipBox.width + xOffset > graphContainerBounds.right) {
+        if (clientX + tooltipBox.width + xOffset > graphContainerBounds.right) {
           xOffset = (tooltipBox.width + xOffset) * -1;
         }
       }
@@ -187,11 +194,19 @@ function Graph({
       setTooltipValues({
         ...coords,
         values,
-        tx: event.clientX + xOffset,
-        ty: event.clientY + window.scrollY,
+        tx: clientX + xOffset,
+        ty: clientY + window.scrollY + offsetY,
       });
     }
   }, [onTooltipValueChange, series, tooltip, xScale]);
+
+  const handleTouchMove = useCallback((event: TouchEvent<HTMLDivElement>) => {
+    handleTooltip(event, event.touches[0].clientX, event.touches[0].clientY, 0, -30);
+  }, [handleTooltip]);
+
+  const handleMouseOver = useCallback((event: MouseEvent<HTMLDivElement>) => {
+    handleTooltip(event, event.clientX, event.clientY);
+  }, [handleTooltip]);
 
   const currentValueOffset = ref.current?.getBoundingClientRect() || { top: 0, left: 0 };
   const currentPoint = series[0].data.find((d) => !isPredicted(d));
@@ -244,6 +259,7 @@ function Graph({
               series={series}
               locale={locale}
               missingText={t('missing')}
+              isCondensed={isCondensed}
             />
             <Box
               sx={{
@@ -318,9 +334,11 @@ function Graph({
                 sx={{
                   maxWidth: '100%',
                   overflow: navigation ? 'visible' : 'hidden',
+                  touchAction: 'none',
                 }}
                 className="GraphContainer"
                 ref={graphContainerRef}
+                onTouchMove={handleTouchMove}
                 onMouseMove={handleMouseOver}
                 onMouseLeave={clearTooltip}
               >
