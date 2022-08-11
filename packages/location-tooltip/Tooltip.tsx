@@ -171,8 +171,8 @@ function Tooltip({
           );
         })}
       </Box>
-      {!isCompact && bottomText && (
-        <Box sx={{ marginTop: 2 }}>
+      {bottomText && (
+        <Box sx={{ marginTop: isCompact ? 1 : 2 }}>
           <Typography variant="caption" sx={{ fontStyle: 'italic' }}>
             {bottomText}
           </Typography>

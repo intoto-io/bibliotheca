@@ -59,7 +59,9 @@ function Tooltip({
       tooltipRef={tooltipRef}
       position={{ x: tooltipValues.tx, y: tooltipValues.ty }}
       values={values}
-      bottomText={format(new Date(tooltipValues.values[0].date), 'Pp', { locale })}
+      bottomText={
+        format(new Date(tooltipValues.values[0].date), isCondensed ? 'p' : 'Pp', { locale })
+      }
       allowInteraction={false}
       isCompact={isCondensed}
     />
