@@ -64,6 +64,7 @@ function Tooltip({
       }
       allowInteraction={false}
       isCompact={isCondensed}
+      anchor={isCondensed ? 'top' : 'left'}
     />
   );
 }
