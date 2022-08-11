@@ -34,6 +34,7 @@ export interface TooltipProps {
   anchor?: 'top' | 'bottom' | 'left' | 'right';
   withPointer?: boolean;
   bottomText?: string;
+  allowInteraction?: boolean;
 }
 
 function Tooltip({
@@ -43,6 +44,7 @@ function Tooltip({
   bottomText,
   anchor = 'left',
   withPointer,
+  allowInteraction = true,
 }: TooltipProps) {
   const [extraStyles, triangleStyles] = useMemo(() => {
     switch (anchor) {
@@ -110,6 +112,7 @@ function Tooltip({
       }}
       style={{
         ...extraStyles,
+        pointerEvents: allowInteraction ? 'auto' : 'none',
         top: position.y,
         left: position.x,
       }}
