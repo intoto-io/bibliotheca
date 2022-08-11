@@ -15,6 +15,7 @@ interface TooltipProps {
   locale: Locale;
   series: GraphSeries[];
   missingText: string;
+  isCondensed: boolean;
 }
 
 function Tooltip({
@@ -23,6 +24,7 @@ function Tooltip({
   locale,
   series,
   missingText,
+  isCondensed,
 }: TooltipProps) {
   if (!tooltipValues || !tooltipValues?.values || !tooltipValues.values[0]) {
     return null;
@@ -59,6 +61,7 @@ function Tooltip({
       values={values}
       bottomText={format(new Date(tooltipValues.values[0].date), 'Pp', { locale })}
       allowInteraction={false}
+      isCompact={isCondensed}
     />
   );
 }

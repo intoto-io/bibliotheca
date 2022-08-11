@@ -35,6 +35,7 @@ export interface TooltipProps {
   withPointer?: boolean;
   bottomText?: string;
   allowInteraction?: boolean;
+  isCompact?: boolean;
 }
 
 function Tooltip({
@@ -45,6 +46,7 @@ function Tooltip({
   anchor = 'left',
   withPointer,
   allowInteraction = true,
+  isCompact = false,
 }: TooltipProps) {
   const [extraStyles, triangleStyles] = useMemo(() => {
     switch (anchor) {
@@ -107,7 +109,7 @@ function Tooltip({
       sx={{
         ...defaultStyles,
         zIndex: 10,
-        px: 2,
+        px: isCompact ? 1.5 : 2,
         py: 1.5,
       }}
       style={{
@@ -149,14 +151,16 @@ function Tooltip({
                 },
               }}
             >
-              <Typography variant="subtitle2">
-                {`${item.name}`}
-              </Typography>
+              {!isCompact && (
+                <Typography variant="subtitle2">
+                  {`${item.name}`}
+                </Typography>
+              )}
               <Box
                 sx={{
                   color,
-                  marginTop: '6px',
-                  fontSize: item.isSmall ? undefined : '1.5rem',
+                  marginTop: isCompact ? 0 : 1,
+                  fontSize: item.isSmall ? '1rem' : '1.5rem',
                   lineHeight: '1.3rem',
                 }}
               >
@@ -167,8 +171,8 @@ function Tooltip({
           );
         })}
       </Box>
-      {bottomText && (
-        <Box sx={{ marginTop: '12px' }}>
+      {!isCompact && bottomText && (
+        <Box sx={{ marginTop: 2 }}>
           <Typography variant="caption" sx={{ fontStyle: 'italic' }}>
             {bottomText}
           </Typography>

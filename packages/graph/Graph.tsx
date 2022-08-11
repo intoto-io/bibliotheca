@@ -244,6 +244,7 @@ function Graph({
               series={series}
               locale={locale}
               missingText={t('missing')}
+              isCondensed={isCondensed}
             />
             <Box
               sx={{

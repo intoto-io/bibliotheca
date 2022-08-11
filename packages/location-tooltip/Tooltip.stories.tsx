@@ -95,3 +95,16 @@ WithPointer.args = {
   anchor: 'top',
   withPointer: true,
 };
+
+export const CompactContent = Template.bind({});
+
+CompactContent.args = {
+  ...Default.args,
+  anchor: 'right',
+  values: [{
+    name: 'Some title',
+    value: '42 cm',
+  }],
+  bottomText: 'Some bottom text',
+  isCompact: true,
+};
