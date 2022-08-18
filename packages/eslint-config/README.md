@@ -17,3 +17,17 @@ Then we can use the config in our project by adding the following to our eslint 
   "extends": ["@intoto-dev/eslint-config-intoto"]  
 }
 ```
+
+## React Usage
+
+Does your project contain React? Then you can use the following to add the react plugin to your eslint config:
+
+```json
+{
+  "extends": [
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
+    "@intoto-dev/eslint-config-intoto"
+  ]
+}
+```
