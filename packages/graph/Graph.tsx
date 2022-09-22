@@ -30,7 +30,7 @@ import { localPoint } from '@visx/event';
 import tickFormat from './helpers/tickFormat';
 import colorByIndex from './helpers/colorByIndex';
 import locales from './helpers/locales';
-import { isPredicted } from './helpers/dataPoint';
+import { isMissing, isPredicted } from './helpers/dataPoint';
 import { createXScale, createYScale } from './helpers/createScales';
 import { shiftSeriesDates } from './helpers/dateShift';
 import {
@@ -209,7 +209,7 @@ function Graph({
   }, [handleTooltip]);
 
   const currentValueOffset = ref.current?.getBoundingClientRect() || { top: 0, left: 0 };
-  const currentPoint = series[0].data.find((d) => !isPredicted(d));
+  const currentPoint = series[0].data.find((d) => !isPredicted(d) && !isMissing(d));
 
   useLayoutEffect(() => {
     if (currentValueRef.current) {
