@@ -64,3 +64,11 @@ WithWaterLevelAndBridgeAndAxisAndMean.args = {
   axis: true,
   meanLevel: 3.415,
 };
+
+export const WithoutProfile = Template.bind({});
+
+WithoutProfile.args = {
+  currentWaterLevel: 4.2,
+  axis: true,
+  meanLevel: 3.415,
+};

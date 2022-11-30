@@ -53,7 +53,8 @@ const LegendIconMean = styled('span')({
 });
 
 export interface ProfileProps {
-  profile: RiverProfile;
+  profile?: RiverProfile;
+  riverWidth?: number;
   currentWaterLevel?: number;
   bridgeLevel?: number;
   bridgeHeight?: number;
@@ -86,7 +87,8 @@ const findHighestPoint = (items: RiverProfile): ProfilePoint => items.reduce((a,
 }, { x: 0, msl: 0 });
 
 const Profile: FunctionComponent<ProfileProps> = function Profile({
-  profile,
+  profile: riverProfile,
+  riverWidth: rw = 10,
   currentWaterLevel,
   meanLevel,
   bridgeLevel,
@@ -107,6 +109,15 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
   meanLabel = 'Mean-level',
   formatDistance = (d: number) => `${(d / 100).toFixed(1)} m`,
 }) {
+  const profile: RiverProfile = riverProfile || [
+    { x: 0, msl: currentWaterLevel || 0 },
+    { x: 0, msl: 0 },
+    { x: rw, msl: 0 },
+    { x: rw, msl: currentWaterLevel || 0 },
+  ];
+  const hasBank = !!riverProfile;
+  const riverCurve = hasBank ? curveBasis : curveLinearClosed;
+
   const axisRightRef = useRef<SVGGElement>(null);
 
   const maxMSLRiver = Math.max(...profile.map((p) => p.msl));
@@ -241,7 +252,7 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
       return maxWaterPoint < linePoint ? linePoint : maxWaterPoint;
     })
     .y0(() => maxWaterPoint)
-    .curve(curveBasis);
+    .curve(riverCurve);
   const waterAreaPath = waterArea(profile);
 
   const indicatorSize = 5;
@@ -281,22 +292,26 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
             </linearGradient>
           </defs>
         )}
-        <mask id="ground-mask" maskUnits="userSpaceOnUse">
-          <rect x="0" y="0" width={totalWidth} height={totalHeight} fill="white" />
-          <path
-            d={[bankPath].join(' ')}
-            fill="black"
-            stroke="white"
-            strokeWidth={strokeWidth}
-          />
-        </mask>
-        <path
-          id="ground"
-          d={[bankPath].join(' ')}
-          stroke={strokeColor}
-          strokeWidth={groundStroke ? strokeWidth : 0}
-          fill={groundGradient ? 'url(#ground-gradient)' : groundFill}
-        />
+        {hasBank && (
+          <>
+            <mask id="ground-mask" maskUnits="userSpaceOnUse">
+              <rect x="0" y="0" width={totalWidth} height={totalHeight} fill="white" />
+              <path
+                d={[bankPath].join(' ')}
+                fill="black"
+                stroke="white"
+                strokeWidth={strokeWidth}
+              />
+            </mask>
+            <path
+              id="ground"
+              d={[bankPath].join(' ')}
+              stroke={strokeColor}
+              strokeWidth={groundStroke ? strokeWidth : 0}
+              fill={groundGradient ? 'url(#ground-gradient)' : groundFill}
+            />
+          </>
+        )}
         {typeof currentWaterLevel !== 'undefined' && (
           <>
             <defs>
