@@ -69,6 +69,37 @@ export const WithoutProfile = Template.bind({});
 
 WithoutProfile.args = {
   currentWaterLevel: 4.2,
+  minWaterLevel: 1.4,
   axis: true,
   meanLevel: 3.415,
+};
+
+export const WithoutProfileWithWalls = Template.bind({});
+
+WithoutProfileWithWalls.args = {
+  currentWaterLevel: 4.2,
+  minWaterLevel: 1.4,
+  axis: true,
+  meanLevel: 3.415,
+  riverWidth: 20,
+  shapes: [
+    {
+      strokeWidth: 1,
+      points: [
+        { x: 0, y: 6 },
+        { x: 3, y: 6 },
+        { x: 3, y: 1.4 },
+        { x: 0, y: 1.4 },
+      ],
+    },
+    {
+      strokeWidth: 1,
+      points: [
+        { x: 17, y: 6 },
+        { x: 20, y: 6 },
+        { x: 20, y: 1.4 },
+        { x: 17, y: 1.4 },
+      ],
+    },
+  ],
 };

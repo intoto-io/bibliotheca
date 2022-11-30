@@ -20,7 +20,7 @@ import findIntersections from './helpers/findIntersections';
 import calcWaterVolume from './helpers/calcWaterVolume';
 import bridgeLine from './helpers/bridgeLine';
 
-import { ProfilePoint, RiverProfile } from './types';
+import { ProfilePoint, ProfileShape, RiverProfile } from './types';
 
 const StyledSection = styled('section')({
   display: 'flex',
@@ -55,6 +55,8 @@ const LegendIconMean = styled('span')({
 export interface ProfileProps {
   profile?: RiverProfile;
   riverWidth?: number;
+  shapes?: ProfileShape[];
+  minWaterLevel?: number;
   currentWaterLevel?: number;
   bridgeLevel?: number;
   bridgeHeight?: number;
@@ -79,16 +81,18 @@ export interface ProfileProps {
 const closedLine = line().curve(curveLinearClosed);
 
 const findHighestPoint = (items: RiverProfile): ProfilePoint => items.reduce((a, b) => {
-  if (b.msl > a.msl) {
+  if (b.y > a.y) {
     return b;
   }
 
   return a;
-}, { x: 0, msl: 0 });
+}, { x: 0, y: 0 });
 
 const Profile: FunctionComponent<ProfileProps> = function Profile({
   profile: riverProfile,
   riverWidth: rw = 10,
+  minWaterLevel = 0,
+  shapes = [],
   currentWaterLevel,
   meanLevel,
   bridgeLevel,
@@ -109,22 +113,27 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
   meanLabel = 'Mean-level',
   formatDistance = (d: number) => `${(d / 100).toFixed(1)} m`,
 }) {
+  console.log(shapes);
+
   const profile: RiverProfile = riverProfile || [
-    { x: 0, msl: currentWaterLevel || 0 },
-    { x: 0, msl: 0 },
-    { x: rw, msl: 0 },
-    { x: rw, msl: currentWaterLevel || 0 },
+    { x: 0, y: currentWaterLevel || minWaterLevel },
+    { x: 0, y: minWaterLevel },
+    { x: rw, y: minWaterLevel },
+    { x: rw, y: currentWaterLevel || minWaterLevel },
   ];
   const hasBank = !!riverProfile;
   const riverCurve = hasBank ? curveBasis : curveLinearClosed;
 
   const axisRightRef = useRef<SVGGElement>(null);
 
-  const maxMSLRiver = Math.max(...profile.map((p) => p.msl));
+  const maxMSLRiver = Math.max(
+    ...profile.map((p) => p.y),
+    ...shapes.map((s) => s.points.map((p) => p.y)).flat(),
+  );
   const maxMSL = typeof bridgeLevel !== 'undefined'
     ? Math.max(maxMSLRiver, bridgeLevel + bridgeHeight)
     : maxMSLRiver;
-  const minMSL = Math.min(...profile.map((p) => p.msl));
+  const minMSL = Math.min(...profile.map((p) => p.y));
 
   const maxWaterXL = useMemo(() => findHighestPoint(profile
     .slice(0, Math.round(profile.length / 2))), [profile]);
@@ -164,7 +173,7 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
   );
   const yScaleProfile = (msl: number): number => yScale(msl) + padding;
   const profilePointX = (d: ProfilePoint): number => xScaleProfile(d.x);
-  const profilePointY = (d: ProfilePoint): number => yScaleProfile(d.msl);
+  const profilePointY = (d: ProfilePoint): number => yScaleProfile(d.y);
 
   const xScaleWater = useMemo(() => {
     const leftX = intersections ? intersections[0].x : 0;
@@ -195,9 +204,9 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
 
   const bankPath = bankLine(profile);
 
-  const waterLeft = typeof currentWaterLevel !== 'undefined' && currentWaterLevel > maxWaterXL.msl
+  const waterLeft = typeof currentWaterLevel !== 'undefined' && currentWaterLevel > maxWaterXL.y
     ? xScaleProfile(profile[0].x) : xScaleProfile(maxWaterXL.x);
-  const waterRight = typeof currentWaterLevel !== 'undefined' && currentWaterLevel > maxWaterXR.msl
+  const waterRight = typeof currentWaterLevel !== 'undefined' && currentWaterLevel > maxWaterXR.y
     ? xScaleProfile(profile[profile.length - 1].x) : xScaleProfile(maxWaterXR.x);
 
   const [bridgePath, bridgeSupportPath] = bridgeLine(
@@ -301,6 +310,7 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
                 fill="black"
                 stroke="white"
                 strokeWidth={strokeWidth}
+                vectorEffect="non-scaling-stroke"
               />
             </mask>
             <path
@@ -309,6 +319,7 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
               stroke={strokeColor}
               strokeWidth={groundStroke ? strokeWidth : 0}
               fill={groundGradient ? 'url(#ground-gradient)' : groundFill}
+              vectorEffect="non-scaling-stroke"
             />
           </>
         )}
@@ -327,9 +338,19 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
               strokeWidth={strokeWidth}
               fill="url(#water-gradient)"
               mask="url(#ground-mask)"
+              vectorEffect="non-scaling-stroke"
             />
           </>
         )}
+        {shapes.map((shape) => (
+          <polygon
+            fill={shape.fill || '#ccc'}
+            stroke={shape.strokeColor || '#000'}
+            strokeWidth={shape.strokeWidth || 1.5}
+            key={`shape_p${shape.points.join('')}`}
+            points={shape.points.map((p) => `${profilePointX(p)}, ${profilePointY(p)}`).join(' ')}
+          />
+        ))}
         {typeof bridgeLevel !== 'undefined' && (
           <>
             <path
@@ -339,6 +360,7 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
               strokeWidth={bridgeStrokeWidth}
               strokeOpacity={0.5}
               fill="transparent"
+              vectorEffect="non-scaling-stroke"
             />
             <path
               id="bridge"
@@ -346,6 +368,7 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
               stroke={bridgeStrokeColor}
               strokeWidth={bridgeStrokeWidth}
               fill="transparent"
+              vectorEffect="non-scaling-stroke"
             />
           </>
         )}
@@ -360,11 +383,13 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
               stroke={meanStrokeColor}
               strokeWidth={strokeWidth}
               strokeDasharray="5, 3"
+              vectorEffect="non-scaling-stroke"
             />
             <path
               id="mean-indicator"
               d={[meanIndicatorPath].join(' ')}
               fill={meanStrokeColor}
+              vectorEffect="non-scaling-stroke"
             />
           </g>
         )}
@@ -394,6 +419,7 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
                   stroke={strokeColor}
                   strokeWidth={strokeWidth}
                   fillOpacity={0}
+                  vectorEffect="non-scaling-stroke"
                 />
                 <text
                   textAnchor="middle"
