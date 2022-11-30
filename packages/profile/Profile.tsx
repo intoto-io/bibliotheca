@@ -113,8 +113,6 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
   meanLabel = 'Mean-level',
   formatDistance = (d: number) => `${(d / 100).toFixed(1)} m`,
 }) {
-  console.log(shapes);
-
   const profile: RiverProfile = riverProfile || [
     { x: 0, y: currentWaterLevel || minWaterLevel },
     { x: 0, y: minWaterLevel },
@@ -342,15 +340,23 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
             />
           </>
         )}
-        {shapes.map((shape) => (
-          <polygon
-            fill={shape.fill || '#ccc'}
-            stroke={shape.strokeColor || '#000'}
-            strokeWidth={shape.strokeWidth || 1.5}
-            key={`shape_p${shape.points.join('')}`}
-            points={shape.points.map((p) => `${profilePointX(p)}, ${profilePointY(p)}`).join(' ')}
-          />
-        ))}
+        {shapes.map((shape) => {
+          if (shape.type === 'polygon') {
+            return (
+              <polygon
+                fill={shape.fill || '#ccc'}
+                stroke={shape.strokeColor || '#000'}
+                strokeWidth={shape.strokeWidth || 1.5}
+                key={`shape_p${shape.points.join('')}`}
+                points={
+                  shape.points.map((p) => `${profilePointX(p)}, ${profilePointY(p)}`).join(' ')
+                }
+              />
+            );
+          }
+
+          return null;
+        })}
         {typeof bridgeLevel !== 'undefined' && (
           <>
             <path

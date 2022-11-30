@@ -3,11 +3,14 @@ export interface ProfilePoint {
   y: number;
 }
 
-export interface ProfileShape {
+export interface PolygonShape {
+  type: 'polygon',
   fill?: string;
   strokeWidth?: number;
   strokeColor?: string;
   points: ProfilePoint[];
 }
+
+export type ProfileShape = PolygonShape;
 
 export type RiverProfile = ProfilePoint[];
