@@ -84,6 +84,7 @@ WithoutProfileWithWalls.args = {
   riverWidth: 20,
   shapes: [
     {
+      type: 'polygon',
       strokeWidth: 1,
       points: [
         { x: 0, y: 6 },
@@ -93,12 +94,45 @@ WithoutProfileWithWalls.args = {
       ],
     },
     {
+      type: 'polygon',
       strokeWidth: 1,
       points: [
         { x: 17, y: 6 },
         { x: 20, y: 6 },
         { x: 20, y: 1.4 },
         { x: 17, y: 1.4 },
+      ],
+    },
+  ],
+};
+
+export const WithoutProfileWithSlopes = Template.bind({});
+
+WithoutProfileWithSlopes.args = {
+  currentWaterLevel: 4.2,
+  minWaterLevel: 1.4,
+  axis: true,
+  meanLevel: 3.415,
+  riverWidth: 20,
+  shapes: [
+    {
+      type: 'polygon',
+      strokeWidth: 1,
+      points: [
+        { x: 0, y: 6 },
+        { x: 1, y: 6 },
+        { x: 4, y: 1.4 },
+        { x: 0, y: 1.4 },
+      ],
+    },
+    {
+      type: 'polygon',
+      strokeWidth: 1,
+      points: [
+        { x: 19, y: 6 },
+        { x: 20, y: 6 },
+        { x: 20, y: 1.4 },
+        { x: 16, y: 1.4 },
       ],
     },
   ],
