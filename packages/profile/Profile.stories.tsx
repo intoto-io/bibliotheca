@@ -110,7 +110,6 @@ export const WithoutProfileWithSlopes = Template.bind({});
 
 WithoutProfileWithSlopes.args = {
   currentWaterLevel: 4.2,
-  minWaterLevel: 1.4,
   axis: true,
   meanLevel: 3.415,
   riverWidth: 20,
@@ -164,6 +163,47 @@ NoBottomWithWall.args = {
         { x: 3, y: 6 },
         { x: 3, y: 1.4 },
       ],
+    },
+  ],
+};
+
+export const Harbour = Template.bind({});
+
+Harbour.args = {
+  currentWaterLevel: 4.2,
+  axis: true,
+  meanLevel: 3.415,
+  riverWidth: 20,
+  shapes: [
+    {
+      type: 'polygon',
+      strokeWidth: 0,
+      points: [
+        { x: 0, y: 6 },
+        { x: 4, y: 6 },
+        { x: 4, y: 5 },
+        { x: 3, y: 5 },
+        { x: 3, y: 1.4 },
+        { x: 0, y: 1.4 },
+      ],
+    },
+    {
+      type: 'path',
+      strokeWidth: 1.5,
+      points: [
+        { x: 0, y: 6 },
+        { x: 4, y: 6 },
+        { x: 4, y: 5 },
+        { x: 3, y: 5 },
+        { x: 3, y: 1.4 },
+      ],
+    },
+    {
+      type: 'icon',
+      name: 'harbour',
+      points: [{ x: 2.8, y: 7.1, }],
+      width: 1.36,
+      height: 1,
     },
   ],
 };

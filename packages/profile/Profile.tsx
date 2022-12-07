@@ -20,6 +20,8 @@ import findIntersections from './helpers/findIntersections';
 import calcWaterVolume from './helpers/calcWaterVolume';
 import bridgeLine from './helpers/bridgeLine';
 
+import Icon from './shapes/Icon';
+
 import { ProfilePoint, ProfileShape, RiverProfile } from './types';
 
 const StyledSection = styled('section')({
@@ -119,7 +121,7 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
     }
 
     if (typeof minWaterLevel === 'undefined') {
-      return Math.min(...shapes.map((s) => Math.min(...s.points.map((p) => p.y))));
+      return Math.min(...shapes.map((s) => Math.min(...(s.points).map((p) => p.y))));
     }
 
     return minWaterLevel;
@@ -398,6 +400,18 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
                   const action = i === 0 ? 'M' : 'L';
                   return `${action}${profilePointX(p)},${profilePointY(p)}`;
                 }).join(' ')}
+              />
+            );
+          }
+
+          if (shape.type === 'icon') {
+            return (
+              <Icon
+                name={shape.name}
+                width={xScale(shape.width)}
+                height={xScale(shape.height)}
+                transform={`translate(${xScale(shape.points[0].x)}, ${yScaleProfile(shape.points[0].y)})`}
+                key={`path_icon_${shape.name}_${shape.points.map((p) => `[${p.x},${p.y}]`).join('')}`}
               />
             );
           }
