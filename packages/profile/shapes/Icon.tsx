@@ -6,7 +6,12 @@ interface IconComponentProps extends IconProps {
   name: IconType;
 }
 
-function Icon({ width, height, transform, name }: IconComponentProps) {
+function Icon({
+  width,
+  height,
+  transform,
+  name,
+}: IconComponentProps) {
   if (name === 'harbour') {
     return <Harbour width={width} height={height} transform={transform} />;
   }

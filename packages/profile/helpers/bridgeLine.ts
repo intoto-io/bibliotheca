@@ -17,8 +17,6 @@ function bridgeLine(
   const triangles = Math.floor(totalWidth / triangleWidth);
   const triangleWidthFitted = totalWidth / triangles;
 
-  console.log(totalWidth, triangleWidth, triangles, triangleWidthFitted);
-
   const tw = triangleWidthFitted / 2;
 
   const points: [number, number][] = [

@@ -70,7 +70,6 @@ export const WithWaterLevelAndBridgeAndAxisAndMean = Template.bind({});
 WithWaterLevelAndBridgeAndAxisAndMean.args = {
   profile: amotbrua,
   currentWaterLevel: 4.2,
-  bridgeLevel: 9.8,
   axis: true,
   meanLevel: 3.415,
   shapes: [{
@@ -222,7 +221,7 @@ Harbour.args = {
     {
       type: 'icon',
       name: 'harbour',
-      points: [{ x: 2.8, y: 7.1, }],
+      points: [{ x: 2.8, y: 7.1 }],
       width: 1.36,
       height: 1,
     },

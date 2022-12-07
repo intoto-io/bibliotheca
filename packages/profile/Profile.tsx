@@ -70,7 +70,6 @@ export interface ProfileProps {
   strokeWidth?: number;
   waterStrokeColor?: string;
   meanStrokeColor?: string;
-  bridgeStrokeColor?: string;
   waterFill?: string;
   mslLabel?: string;
   meanLabel?: string;
@@ -387,8 +386,12 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
                 name={shape.name}
                 width={xScale(shape.width)}
                 height={xScale(shape.height)}
-                transform={`translate(${xScale(shape.points[0].x)}, ${yScaleProfile(shape.points[0].y)})`}
-                key={`path_icon_${shape.name}_${shape.points.map((p) => `[${p.x},${p.y}]`).join('')}`}
+                transform={
+                  `translate(${xScale(shape.points[0].x)}, ${yScaleProfile(shape.points[0].y)})`
+                }
+                key={
+                  `path_icon_${shape.name}_${shape.points.map((p) => `[${p.x},${p.y}]`).join('')}`
+                }
               />
             );
           }
