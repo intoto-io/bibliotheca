@@ -1,4 +1,4 @@
-import { IconProps } from '../types';
+import { IconProps } from '../../types';
 
 function Harbour({ width, height, transform }: IconProps) {
   return (

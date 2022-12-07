@@ -37,7 +37,17 @@ export const WithWaterLevelAndBridge = Template.bind({});
 WithWaterLevelAndBridge.args = {
   profile: amotbrua,
   currentWaterLevel: 7,
-  bridgeLevel: 12,
+  shapes: [{
+    type: 'bridge',
+    bridgeHeight: 1.2,
+    bridgeBottom: 2.3,
+    points: [
+      { x: 0, y: 12 },
+      { x: 5, y: 12 },
+      { x: 42.64, y: 12 },
+      { x: 46.64, y: 12 },
+    ],
+  }],
 };
 
 export const WithOverflowingWaterLevel = Template.bind({});
@@ -63,6 +73,17 @@ WithWaterLevelAndBridgeAndAxisAndMean.args = {
   bridgeLevel: 9.8,
   axis: true,
   meanLevel: 3.415,
+  shapes: [{
+    type: 'bridge',
+    bridgeHeight: 1.2,
+    bridgeBottom: 0.5,
+    points: [
+      { x: 0, y: 9.8 },
+      { x: 5, y: 9.8 },
+      { x: 42.64, y: 9.8 },
+      { x: 46.64, y: 9.8 },
+    ],
+  }],
 };
 
 export const WithoutProfile = Template.bind({});

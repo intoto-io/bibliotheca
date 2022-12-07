@@ -1,6 +1,6 @@
 import { IconProps, IconType } from '../types';
 
-import Harbour from './harbour';
+import Harbour from './icons/Harbour';
 
 interface IconComponentProps extends IconProps {
   name: IconType;

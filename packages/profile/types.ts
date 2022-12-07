@@ -30,7 +30,18 @@ export interface IconShape {
   height: number;
 }
 
-export type ProfileShape = PolygonShape | PathShape | IconShape;
+export interface BridgeShape {
+  type: 'bridge',
+  fill?: string;
+  bridgeHeight: number;
+  bridgeBottom: number;
+  bridgeStrokeWidth?: number;
+  bridgeStrokeColor?: string;
+  bridgeBottomColor?: string;
+  points: ProfilePoint[];
+}
+
+export type ProfileShape = PolygonShape | PathShape | IconShape | BridgeShape;
 
 export type RiverProfile = ProfilePoint[];
 

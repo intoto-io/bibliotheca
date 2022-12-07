@@ -18,9 +18,9 @@ import styled from '@mui/styled-engine';
 
 import findIntersections from './helpers/findIntersections';
 import calcWaterVolume from './helpers/calcWaterVolume';
-import bridgeLine from './helpers/bridgeLine';
 
 import Icon from './shapes/Icon';
+import Bridge from './shapes/Bridge';
 
 import { ProfilePoint, ProfileShape, RiverProfile } from './types';
 
@@ -60,9 +60,6 @@ export interface ProfileProps {
   shapes?: ProfileShape[];
   minWaterLevel?: number;
   currentWaterLevel?: number;
-  bridgeLevel?: number;
-  bridgeHeight?: number;
-  bridgeStrokeWidth?: number;
   meanLevel?: number;
   axis?: boolean;
   width?: number;
@@ -97,9 +94,6 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
   shapes = [],
   currentWaterLevel,
   meanLevel,
-  bridgeLevel,
-  bridgeHeight = 1.2,
-  bridgeStrokeWidth = 2,
   axis = false,
   width = 600,
   groundStroke = false,
@@ -108,7 +102,6 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
   strokeWidth = 1.5,
   waterStrokeColor = '#0633ff',
   meanStrokeColor = '#b7323f',
-  bridgeStrokeColor = 'black',
   waterFill = '#99ccff',
   groundFill = '#b4967d',
   mslLabel = 'MASL',
@@ -138,13 +131,12 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
 
   const axisRightRef = useRef<SVGGElement>(null);
 
-  const maxMSLRiver = Math.max(
+  const maxMSL = Math.max(
     ...profile.map((p) => p.y),
-    ...shapes.map((s) => s.points.map((p) => p.y)).flat(),
+    ...shapes.map(
+      (s) => s.points.map((p) => p.y + (s.type === 'bridge' ? s.bridgeHeight : 0)),
+    ).flat(),
   );
-  const maxMSL = typeof bridgeLevel !== 'undefined'
-    ? Math.max(maxMSLRiver, bridgeLevel + bridgeHeight)
-    : maxMSLRiver;
   const minMSL = Math.min(...profile.map((p) => p.y));
 
   const maxWaterXL = useMemo(() => findHighestPoint(profile
@@ -211,27 +203,12 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
     .y1(() => yScaleProfile(minMSL) + bankPadding)
     .curve(curveBasis);
 
-  const firstPoint = profile[0];
-  const lastPoint = profile[profile.length - 1];
-
   const bankPath = bankLine(profile);
 
   const waterLeft = typeof currentWaterLevel !== 'undefined' && currentWaterLevel > maxWaterXL.y
     ? xScaleProfile(profile[0].x) : xScaleProfile(maxWaterXL.x);
   const waterRight = typeof currentWaterLevel !== 'undefined' && currentWaterLevel > maxWaterXR.y
     ? xScaleProfile(profile[profile.length - 1].x) : xScaleProfile(maxWaterXR.x);
-
-  const [bridgePath, bridgeSupportPath] = bridgeLine(
-    xScaleProfile,
-    yScaleProfile,
-    firstPoint,
-    lastPoint,
-    bridgeLevel,
-    bridgeHeight,
-  );
-
-  const bridgePathLine = line()(bridgePath);
-  const bridgeSupportPathLine = line()(bridgeSupportPath);
 
   const waterRulerPath = line()(
     typeof currentWaterLevel !== 'undefined' ? [
@@ -379,10 +356,10 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
                 fill={shape.fill || '#ccc'}
                 stroke={shape.strokeColor || '#000'}
                 strokeWidth={typeof shape.strokeWidth === 'undefined' ? 1.5 : shape.strokeWidth}
-                key={`polygon_p${shape.points.map((p) => `[${p.x},${p.y}]`).join('')}`}
+                key={`polygon_${shape.points.map((p) => `[${p.x},${p.y}]`).join('')}`}
                 vectorEffect="non-scaling-stroke"
                 points={
-                  shape.points.map((p) => `${profilePointX(p)}, ${profilePointY(p)}`).join(' ')
+                  shape.points.map((p) => `${profilePointX(p)},${profilePointY(p)}`).join(' ')
                 }
               />
             );
@@ -394,7 +371,7 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
                 fill={shape.fill || 'transparent'}
                 stroke={shape.strokeColor || '#000'}
                 strokeWidth={typeof shape.strokeWidth === 'undefined' ? 1.5 : shape.strokeWidth}
-                key={`path_p${shape.points.map((p) => `[${p.x},${p.y}]`).join('')}`}
+                key={`path_${shape.points.map((p) => `[${p.x},${p.y}]`).join('')}`}
                 vectorEffect="non-scaling-stroke"
                 d={shape.points.map((p, i) => {
                   const action = i === 0 ? 'M' : 'L';
@@ -416,29 +393,19 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
             );
           }
 
+          if (shape.type === 'bridge') {
+            return (
+              <Bridge
+                shape={shape}
+                xScale={xScaleProfile}
+                yScale={yScaleProfile}
+                key={`path_bridge_${shape.points.map((p) => `[${p.x},${p.y}]`).join('')}`}
+              />
+            );
+          }
+
           return null;
         })}
-        {typeof bridgeLevel !== 'undefined' && (
-          <>
-            <path
-              id="bridge-support"
-              d={[bridgeSupportPathLine].join(' ')}
-              stroke={bridgeStrokeColor}
-              strokeWidth={bridgeStrokeWidth}
-              strokeOpacity={0.5}
-              fill="transparent"
-              vectorEffect="non-scaling-stroke"
-            />
-            <path
-              id="bridge"
-              d={[bridgePathLine].join(' ')}
-              stroke={bridgeStrokeColor}
-              strokeWidth={bridgeStrokeWidth}
-              fill="transparent"
-              vectorEffect="non-scaling-stroke"
-            />
-          </>
-        )}
         {typeof meanLevel !== 'undefined' && (
           <g>
             <line
