@@ -137,3 +137,33 @@ WithoutProfileWithSlopes.args = {
     },
   ],
 };
+
+export const NoBottomWithWall = Template.bind({});
+
+NoBottomWithWall.args = {
+  currentWaterLevel: 4.2,
+  axis: true,
+  meanLevel: 3.415,
+  riverWidth: 20,
+  shapes: [
+    {
+      type: 'polygon',
+      strokeWidth: 0,
+      points: [
+        { x: 0, y: 6 },
+        { x: 3, y: 6 },
+        { x: 3, y: 1.4 },
+        { x: 0, y: 1.4 },
+      ],
+    },
+    {
+      type: 'path',
+      strokeWidth: 1.5,
+      points: [
+        { x: 0, y: 6 },
+        { x: 3, y: 6 },
+        { x: 3, y: 1.4 },
+      ],
+    },
+  ],
+};

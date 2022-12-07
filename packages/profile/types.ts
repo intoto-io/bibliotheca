@@ -11,6 +11,14 @@ export interface PolygonShape {
   points: ProfilePoint[];
 }
 
-export type ProfileShape = PolygonShape;
+export interface PathShape {
+  type: 'path',
+  fill?: string;
+  strokeWidth?: number;
+  strokeColor?: string;
+  points: ProfilePoint[];
+}
+
+export type ProfileShape = PolygonShape | PathShape;
 
 export type RiverProfile = ProfilePoint[];

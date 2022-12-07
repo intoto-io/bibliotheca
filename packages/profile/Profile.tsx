@@ -91,7 +91,7 @@ const findHighestPoint = (items: RiverProfile): ProfilePoint => items.reduce((a,
 const Profile: FunctionComponent<ProfileProps> = function Profile({
   profile: riverProfile,
   riverWidth: rw = 10,
-  minWaterLevel = 0,
+  minWaterLevel,
   shapes = [],
   currentWaterLevel,
   meanLevel,
@@ -113,11 +113,23 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
   meanLabel = 'Mean-level',
   formatDistance = (d: number) => `${(d / 100).toFixed(1)} m`,
 }) {
+  const minWater = useMemo(() => {
+    if (riverProfile) {
+      return minWaterLevel || 0;
+    }
+
+    if (typeof minWaterLevel === 'undefined') {
+      return Math.min(...shapes.map((s) => Math.min(...s.points.map((p) => p.y))));
+    }
+
+    return minWaterLevel;
+  }, [riverProfile, minWaterLevel]);
+
   const profile: RiverProfile = riverProfile || [
-    { x: 0, y: currentWaterLevel || minWaterLevel },
-    { x: 0, y: minWaterLevel },
-    { x: rw, y: minWaterLevel },
-    { x: rw, y: currentWaterLevel || minWaterLevel },
+    { x: 0, y: currentWaterLevel || minWater },
+    { x: 0, y: minWater },
+    { x: rw, y: minWater },
+    { x: rw, y: currentWaterLevel || minWater },
   ];
   const hasBank = !!riverProfile;
   const riverCurve = hasBank ? curveBasis : curveLinearClosed;
@@ -283,6 +295,9 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
     typeof meanLevel !== 'undefined',
   ].some(Boolean);
 
+  const hasInfiniteWater = typeof riverProfile === 'undefined'
+    && typeof minWaterLevel === 'undefined';
+
   return (
     <StyledSection style={{ width: totalWidth }}>
       <svg
@@ -326,18 +341,33 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
             <defs>
               <linearGradient id="water-gradient" x1="0" x2="0" y1="0" y2="1">
                 <stop stopColor={waterFill} stopOpacity={1} offset="0%" />
-                <stop stopColor={waterFill} stopOpacity={0.6} offset="100%" />
+                <stop
+                  stopColor={waterFill}
+                  stopOpacity={hasInfiniteWater ? 0.2 : 0.5}
+                  offset="100%"
+                />
               </linearGradient>
             </defs>
             <path
               id="water"
               d={[waterAreaPath].join(' ')}
               stroke={waterStrokeColor}
-              strokeWidth={strokeWidth}
+              strokeWidth={hasInfiniteWater ? 0 : strokeWidth}
               fill="url(#water-gradient)"
               mask="url(#ground-mask)"
               vectorEffect="non-scaling-stroke"
             />
+            {hasInfiniteWater && (
+              <path
+                stroke={waterStrokeColor}
+                strokeWidth={strokeWidth}
+                vectorEffect="non-scaling-stroke"
+                d={`
+                M${xScaleProfile(0)},${yScaleProfile(currentWaterLevel)} 
+                L${xScaleProfile(rw)},${yScaleProfile(currentWaterLevel)}
+                `}
+              />
+            )}
           </>
         )}
         {shapes.map((shape) => {
@@ -346,11 +376,28 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
               <polygon
                 fill={shape.fill || '#ccc'}
                 stroke={shape.strokeColor || '#000'}
-                strokeWidth={shape.strokeWidth || 1.5}
-                key={`shape_p${shape.points.join('')}`}
+                strokeWidth={typeof shape.strokeWidth === 'undefined' ? 1.5 : shape.strokeWidth}
+                key={`polygon_p${shape.points.map((p) => `[${p.x},${p.y}]`).join('')}`}
+                vectorEffect="non-scaling-stroke"
                 points={
                   shape.points.map((p) => `${profilePointX(p)}, ${profilePointY(p)}`).join(' ')
                 }
+              />
+            );
+          }
+
+          if (shape.type === 'path') {
+            return (
+              <path
+                fill={shape.fill || 'transparent'}
+                stroke={shape.strokeColor || '#000'}
+                strokeWidth={typeof shape.strokeWidth === 'undefined' ? 1.5 : shape.strokeWidth}
+                key={`path_p${shape.points.map((p) => `[${p.x},${p.y}]`).join('')}`}
+                vectorEffect="non-scaling-stroke"
+                d={shape.points.map((p, i) => {
+                  const action = i === 0 ? 'M' : 'L';
+                  return `${action}${profilePointX(p)},${profilePointY(p)}`;
+                }).join(' ')}
               />
             );
           }
