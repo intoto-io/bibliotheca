@@ -283,6 +283,15 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
         height={totalHeight}
         viewBox={`0 0 ${totalWidth} ${totalHeight}`}
       >
+        <style>
+          {`
+          .text {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 
+              'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+            font-size: 12px;
+          }
+          `}
+        </style>
         {groundGradient && (
           <defs>
             <linearGradient id="ground-gradient" x1="0" x2="0" y1="0" y2="1">
@@ -412,7 +421,7 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
         {levels.map((l) => {
           const fillColor = l.strokeColor || '#000';
 
-          const points = [
+          const indicatorPoints = [
             [xScaleProfile(riverWidth) + axisOffset, yScaleProfile(l.y)],
             [
               xScaleProfile(riverWidth) + axisOffset + indicatorSize,
@@ -421,6 +430,30 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
             [
               xScaleProfile(riverWidth) + axisOffset + indicatorSize,
               yScaleProfile(l.y) - indicatorSize,
+            ],
+          ].map((p) => p.join(',')).join(' ');
+
+          const heightTopPoints = [
+            [(xScaleProfile(riverWidth / 2)) - indicatorSize, yScaleProfile(l.y) + indicatorSize],
+            [
+              xScaleProfile(riverWidth / 2),
+              yScaleProfile(l.y),
+            ],
+            [(xScaleProfile(riverWidth / 2)) + indicatorSize, yScaleProfile(l.y) + indicatorSize],
+          ].map((p) => p.join(',')).join(' ');
+
+          const heightBottomPoints = [
+            [
+              (xScaleProfile(riverWidth / 2)) - indicatorSize,
+              yScaleProfile(currentWaterLevel || 0) - indicatorSize,
+            ],
+            [
+              xScaleProfile(riverWidth / 2),
+              yScaleProfile(currentWaterLevel || 0),
+            ],
+            [
+              (xScaleProfile(riverWidth / 2)) + indicatorSize,
+              yScaleProfile(currentWaterLevel || 0) - indicatorSize,
             ],
           ].map((p) => p.join(',')).join(' ');
 
@@ -442,8 +475,46 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
                   <polygon
                     id={`level_indicator_${l.name}`}
                     fill={fillColor}
-                    points={points}
+                    points={indicatorPoints}
                   />
+                </>
+              )}
+              {l.showRelationToWaterLevel && typeof currentWaterLevel !== 'undefined' && (
+                <>
+                  <polygon
+                    fill={fillColor}
+                    points={heightTopPoints}
+                  />
+                  <line
+                    stroke={fillColor}
+                    x1={xScaleProfile(riverWidth / 2)}
+                    x2={xScaleProfile(riverWidth / 2)}
+                    y1={yScaleProfile(l.y) + 2}
+                    y2={yScaleProfile(l.y - (Math.abs(l.y - currentWaterLevel) / 2)) - 8}
+                    strokeWidth={1.5}
+                    vectorEffect="non-scaling-stroke"
+                  />
+                  <polygon
+                    fill={fillColor}
+                    points={heightBottomPoints}
+                  />
+                  <line
+                    stroke={fillColor}
+                    x1={xScaleProfile(riverWidth / 2)}
+                    x2={xScaleProfile(riverWidth / 2)}
+                    y1={yScaleProfile(currentWaterLevel) - 2}
+                    y2={yScaleProfile(l.y - (Math.abs(l.y - currentWaterLevel) / 2)) + 8}
+                    strokeWidth={1.5}
+                    vectorEffect="non-scaling-stroke"
+                  />
+                  <text
+                    className="text"
+                    textAnchor="middle"
+                    x={xScaleProfile(riverWidth / 2)}
+                    y={yScaleProfile(l.y - (Math.abs(l.y - currentWaterLevel) / 2)) + 5}
+                  >
+                    {formatDistance(Math.abs(l.y - currentWaterLevel) * 100)}
+                  </text>
                 </>
               )}
             </g>

@@ -195,10 +195,10 @@ Harbour.args = {
   meanLevel: 3.415,
   levels: [
     {
-      name: 'Harbour',
+      name: 'Harbour docks',
       y: 6,
       strokeColor: '#000',
-      hideLine: true,
+      showRelationToWaterLevel: true,
     },
   ],
   riverWidth: 20,
