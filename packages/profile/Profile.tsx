@@ -22,7 +22,12 @@ import calcWaterVolume from './helpers/calcWaterVolume';
 import Icon from './shapes/Icon';
 import Bridge from './shapes/Bridge';
 
-import { ProfilePoint, ProfileShape, RiverProfile } from './types';
+import {
+  LevelIndicator,
+  ProfilePoint,
+  ProfileShape,
+  RiverProfile,
+} from './types';
 
 const StyledSection = styled('section')({
   display: 'flex',
@@ -60,7 +65,6 @@ export interface ProfileProps {
   shapes?: ProfileShape[];
   minWaterLevel?: number;
   currentWaterLevel?: number;
-  meanLevel?: number;
   axis?: boolean;
   width?: number;
   groundStroke?: boolean;
@@ -69,14 +73,14 @@ export interface ProfileProps {
   strokeColor?: string;
   strokeWidth?: number;
   waterStrokeColor?: string;
-  meanStrokeColor?: string;
   waterFill?: string;
   mslLabel?: string;
-  meanLabel?: string;
   formatDistance?: (d: number) => string;
+  levels?: LevelIndicator[];
+  meanLevel?: number;
+  meanStrokeColor?: string;
+  meanLabel?: string;
 }
-
-const closedLine = line().curve(curveLinearClosed);
 
 const findHighestPoint = (items: RiverProfile): ProfilePoint => items.reduce((a, b) => {
   if (b.y > a.y) {
@@ -92,7 +96,6 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
   minWaterLevel,
   shapes = [],
   currentWaterLevel,
-  meanLevel,
   axis = false,
   width = 600,
   groundStroke = false,
@@ -100,13 +103,26 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
   strokeColor = 'black',
   strokeWidth = 1.5,
   waterStrokeColor = '#0633ff',
-  meanStrokeColor = '#b7323f',
   waterFill = '#99ccff',
   groundFill = '#b4967d',
   mslLabel = 'MASL',
-  meanLabel = 'Mean-level',
   formatDistance = (d: number) => `${(d / 100).toFixed(1)} m`,
+  meanLevel,
+  meanLabel = 'Mean-level',
+  meanStrokeColor = '#b7323f',
+  levels: inputLevels = [],
 }) {
+  const levels = typeof meanLevel !== 'undefined' ? [
+    {
+      name: meanLabel,
+      y: meanLevel,
+      strokeColor: meanStrokeColor,
+      strokeWidth: 1.5,
+      strokeDasharray: '5,3',
+    },
+    ...inputLevels,
+  ] : inputLevels;
+
   const minWater = useMemo(() => {
     if (riverProfile) {
       return minWaterLevel || 0;
@@ -255,23 +271,7 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
   const indicatorSize = 5;
   const axisOffset = 5;
 
-  const meanIndicatorPath = closedLine(
-    typeof meanLevel !== 'undefined' ? [
-      [xScaleProfile(riverWidth) + axisOffset, yScaleProfile(meanLevel)],
-      [
-        xScaleProfile(riverWidth) + axisOffset + indicatorSize,
-        yScaleProfile(meanLevel) + indicatorSize,
-      ],
-      [
-        xScaleProfile(riverWidth) + axisOffset + indicatorSize,
-        yScaleProfile(meanLevel) - indicatorSize,
-      ],
-    ] : [],
-  );
-
-  const hasLegend = [
-    typeof meanLevel !== 'undefined',
-  ].some(Boolean);
+  const hasLegend = levels.filter((l) => !l.hideLine).length > 0;
 
   const hasInfiniteWater = typeof riverProfile === 'undefined'
     && typeof minWaterLevel === 'undefined';
@@ -283,6 +283,15 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
         height={totalHeight}
         viewBox={`0 0 ${totalWidth} ${totalHeight}`}
       >
+        <style>
+          {`
+          .text {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 
+              'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+            font-size: 12px;
+          }
+          `}
+        </style>
         {groundGradient && (
           <defs>
             <linearGradient id="ground-gradient" x1="0" x2="0" y1="0" y2="1">
@@ -409,27 +418,108 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
 
           return null;
         })}
-        {typeof meanLevel !== 'undefined' && (
-          <g>
-            <line
-              id="mean"
-              x1={xScaleProfile(0)}
-              x2={xScaleProfile(riverWidth)}
-              y1={yScaleProfile(meanLevel)}
-              y2={yScaleProfile(meanLevel)}
-              stroke={meanStrokeColor}
-              strokeWidth={strokeWidth}
-              strokeDasharray="5, 3"
-              vectorEffect="non-scaling-stroke"
-            />
-            <path
-              id="mean-indicator"
-              d={[meanIndicatorPath].join(' ')}
-              fill={meanStrokeColor}
-              vectorEffect="non-scaling-stroke"
-            />
-          </g>
-        )}
+        {levels.map((l) => {
+          const fillColor = l.strokeColor || '#000';
+
+          const indicatorPoints = [
+            [xScaleProfile(riverWidth) + axisOffset, yScaleProfile(l.y)],
+            [
+              xScaleProfile(riverWidth) + axisOffset + indicatorSize,
+              yScaleProfile(l.y) + indicatorSize,
+            ],
+            [
+              xScaleProfile(riverWidth) + axisOffset + indicatorSize,
+              yScaleProfile(l.y) - indicatorSize,
+            ],
+          ].map((p) => p.join(',')).join(' ');
+
+          const heightTopPoints = [
+            [(xScaleProfile(riverWidth / 2)) - indicatorSize, yScaleProfile(l.y) + indicatorSize],
+            [
+              xScaleProfile(riverWidth / 2),
+              yScaleProfile(l.y),
+            ],
+            [(xScaleProfile(riverWidth / 2)) + indicatorSize, yScaleProfile(l.y) + indicatorSize],
+          ].map((p) => p.join(',')).join(' ');
+
+          const heightBottomPoints = [
+            [
+              (xScaleProfile(riverWidth / 2)) - indicatorSize,
+              yScaleProfile(currentWaterLevel || 0) - indicatorSize,
+            ],
+            [
+              xScaleProfile(riverWidth / 2),
+              yScaleProfile(currentWaterLevel || 0),
+            ],
+            [
+              (xScaleProfile(riverWidth / 2)) + indicatorSize,
+              yScaleProfile(currentWaterLevel || 0) - indicatorSize,
+            ],
+          ].map((p) => p.join(',')).join(' ');
+
+          return (
+            <g key={l.name}>
+              {!l.hideLine && (
+                <>
+                  <line
+                    id={`level_${l.name}`}
+                    x1={xScaleProfile(0)}
+                    x2={xScaleProfile(riverWidth)}
+                    y1={yScaleProfile(l.y)}
+                    y2={yScaleProfile(l.y)}
+                    stroke={fillColor}
+                    strokeWidth={typeof l.strokeWidth !== 'undefined' ? l.strokeWidth : 1.5}
+                    strokeDasharray={l.strokeDasharray || '5,3'}
+                    vectorEffect="non-scaling-stroke"
+                  />
+                  <polygon
+                    id={`level_indicator_${l.name}`}
+                    fill={fillColor}
+                    points={indicatorPoints}
+                  />
+                </>
+              )}
+              {l.showRelationToWaterLevel && typeof currentWaterLevel !== 'undefined' && (
+                <>
+                  <polygon
+                    fill={fillColor}
+                    points={heightTopPoints}
+                  />
+                  <line
+                    stroke={fillColor}
+                    x1={xScaleProfile(riverWidth / 2)}
+                    x2={xScaleProfile(riverWidth / 2)}
+                    y1={yScaleProfile(l.y) + 2}
+                    y2={yScaleProfile(l.y - (Math.abs(l.y - currentWaterLevel) / 2)) - 8}
+                    strokeWidth={1.5}
+                    vectorEffect="non-scaling-stroke"
+                  />
+                  <polygon
+                    fill={fillColor}
+                    points={heightBottomPoints}
+                  />
+                  <line
+                    stroke={fillColor}
+                    x1={xScaleProfile(riverWidth / 2)}
+                    x2={xScaleProfile(riverWidth / 2)}
+                    y1={yScaleProfile(currentWaterLevel) - 2}
+                    y2={yScaleProfile(l.y - (Math.abs(l.y - currentWaterLevel) / 2)) + 8}
+                    strokeWidth={1.5}
+                    vectorEffect="non-scaling-stroke"
+                  />
+                  <text
+                    className="text"
+                    textAnchor="middle"
+                    x={xScaleProfile(riverWidth / 2)}
+                    y={yScaleProfile(l.y - (Math.abs(l.y - currentWaterLevel) / 2)) + 5}
+                  >
+                    {formatDistance(Math.abs(l.y - currentWaterLevel) * 100)}
+                  </text>
+                </>
+              )}
+            </g>
+          );
+        })}
         {axis && (
           <g>
             <g
@@ -477,19 +567,19 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
       </svg>
       {hasLegend && (
         <Legend style={{ paddingRight: offsetRight + padding }}>
-          {typeof meanLevel !== 'undefined' && (
-            <LegendItem>
+          {levels.filter((l) => !l.hideLine).map((l) => (
+            <LegendItem key={l.name}>
               <LegendIconMean
                 style={{
-                  borderRightColor: meanStrokeColor,
+                  borderRightColor: l.strokeColor || '#000',
                   borderRightWidth: indicatorSize,
                   borderTopWidth: indicatorSize,
                   borderBottomWidth: indicatorSize,
                 }}
               />
-              {meanLabel}
+              {l.name}
             </LegendItem>
-          )}
+          ))}
         </Legend>
       )}
     </StyledSection>
