@@ -43,6 +43,16 @@ export interface BridgeShape {
 
 export type ProfileShape = PolygonShape | PathShape | IconShape | BridgeShape;
 
+export interface LevelIndicator {
+  name: string;
+  y: number;
+  showRelationToWaterLevel?: boolean;
+  strokeColor?: string;
+  strokeWidth?: number;
+  strokeDasharray?: string;
+  hideLine?: boolean;
+}
+
 export type RiverProfile = ProfilePoint[];
 
 export interface IconProps {

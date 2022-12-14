@@ -193,6 +193,14 @@ Harbour.args = {
   currentWaterLevel: 4.2,
   axis: true,
   meanLevel: 3.415,
+  levels: [
+    {
+      name: 'Harbour',
+      y: 6,
+      strokeColor: '#000',
+      hideLine: true,
+    },
+  ],
   riverWidth: 20,
   shapes: [
     {
