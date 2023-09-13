@@ -1,7 +1,5 @@
-import Tooltip from './Tooltip';
+import Tooltip from "./Tooltip";
 
 export default Tooltip;
 
-export {
-  Tooltip,
-};
+export { Tooltip };

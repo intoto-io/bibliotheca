@@ -1,16 +1,8 @@
-import {
-  addDays,
-  startOfDay,
-  subDays,
-  subHours,
-  subMinutes,
-  isAfter,
-  addHours,
-} from 'date-fns';
+import { addDays, startOfDay, subDays, subHours, subMinutes, isAfter, addHours } from "date-fns";
 
-import { DataPoint } from '../types';
+import { DataPoint } from "../types";
 
-import { createDataPoint, createMissingDataPoint, createPredictedDataPoint } from './dataPoint';
+import { createDataPoint, createMissingDataPoint, createPredictedDataPoint } from "./dataPoint";
 
 function randNumber(min = 0, max = 20, decimals = 0): number {
   const outcome = Math.random() * (max - min) + min;
@@ -32,11 +24,7 @@ function rand(input: number, gap = false, min = 0, max = 20, change = 5): number
   return input - changeAmount;
 }
 
-export const generateDays = (
-  numberOfDays: number,
-  pointsPerDay = 4,
-  futureDays = 0,
-): Date[] => {
+export const generateDays = (numberOfDays: number, pointsPerDay = 4, futureDays = 0): Date[] => {
   const dates = [];
 
   const startingPoint = addDays(startOfDay(new Date()), futureDays);
@@ -60,7 +48,7 @@ export const generateMinutes = (numberOfHours: number): Date[] => {
 
   const now = new Date();
 
-  for (let i = 0; i < (numberOfHours * 60); i += 1) {
+  for (let i = 0; i < numberOfHours * 60; i += 1) {
     const day = subMinutes(now, i);
     dates.push(day);
   }
@@ -68,44 +56,33 @@ export const generateMinutes = (numberOfHours: number): Date[] => {
   return dates;
 };
 
-export const randomLineData = (
-  dates: Date[],
-  gaps = false,
-  min = 0,
-  max = 20,
-  startOffset = 0,
-): DataPoint[] => Array.from(
-  dates,
-  (date): DataPoint => ({
-    value: 0,
-    date: addHours(date, startOffset).toISOString(),
-  }),
-).reduce((acc: DataPoint[], item, index) => {
-  const predicted = isAfter(new Date(item.date), new Date());
-  const missing = index !== 0 && gaps ? Math.random() > 0.9 : false;
-  const value = index === 0 ? randNumber(min, max) : rand(acc[index - 1].value, missing, min, max);
+export const randomLineData = (dates: Date[], gaps = false, min = 0, max = 20, startOffset = 0): DataPoint[] =>
+  Array.from(
+    dates,
+    (date): DataPoint => ({
+      value: 0,
+      date: addHours(date, startOffset).toISOString(),
+    }),
+  ).reduce((acc: DataPoint[], item, index) => {
+    const predicted = isAfter(new Date(item.date), new Date());
+    const missing = index !== 0 && gaps ? Math.random() > 0.9 : false;
+    const value = index === 0 ? randNumber(min, max) : rand(acc[index - 1].value, missing, min, max);
 
-  if (predicted) {
-    return [
-      ...acc,
-      createPredictedDataPoint({
-        ...item,
-        value,
-        minValue: randNumber(value - 3, value - 1),
-        maxValue: randNumber(value + 1, value + 3),
-      }),
-    ];
-  }
+    if (predicted) {
+      return [
+        ...acc,
+        createPredictedDataPoint({
+          ...item,
+          value,
+          minValue: randNumber(value - 3, value - 1),
+          maxValue: randNumber(value + 1, value + 3),
+        }),
+      ];
+    }
 
-  if (missing) {
-    return [
-      ...acc,
-      createMissingDataPoint({ ...item, value }),
-    ];
-  }
+    if (missing) {
+      return [...acc, createMissingDataPoint({ ...item, value })];
+    }
 
-  return [
-    ...acc,
-    createDataPoint({ ...item, value }),
-  ];
-}, []);
+    return [...acc, createDataPoint({ ...item, value })];
+  }, []);

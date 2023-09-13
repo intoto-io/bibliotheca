@@ -22,15 +22,15 @@ The only required property to pass is `profile` which contains a list of points 
 import Profile from '@intoto-dev/bibliotheca-profile';
 
 const profile = [
-  { x: 0, msl: 10 },
-  { x: 2, msl: 8 },
-  { x: 3, msl: 7 },
-  { x: 6, msl: 7 },
-  { x: 7, msl: 8 },
-  { x: 9, msl: 10 },
+  { x: 0, y: 10 },
+  { x: 2, y: 8 },
+  { x: 3, y: 7 },
+  { x: 6, y: 7 },
+  { x: 7, y: 8 },
+  { x: 9, y: 10 },
 ]; // Array of profile points
 
-<Profile profile={profile} />
+<Profile profile={profile} />;
 ```
 
 ## Future Work
@@ -46,8 +46,8 @@ import Profile from '@intoto-dev/bibliotheca-profile';
 ```
 
 | Property          | Description                                                                                    | Type                              | Default        |
-|-------------------|------------------------------------------------------------------------------------------------|-----------------------------------|----------------|
-| profile *         | List of points to draw the cross-section.                                                      | `ProfilePoint[]`                  |                |
+| ----------------- | ---------------------------------------------------------------------------------------------- | --------------------------------- | -------------- |
+| profile \*        | List of points to draw the cross-section.                                                      | `ProfilePoint[]`                  |                |
 | width             | Width of the profile in pixels. Pass the width of a parent container to make it "responsive".  | `number`                          | `600`          |
 | currentWaterLevel | Current water level in meters above sea level.                                                 | `number`                          |                |
 | bridgeLevel       | If you want to add a bridge, pass the meters above sea level here of the bottom of the bridge. | `number`                          |                |
@@ -71,6 +71,6 @@ import Profile from '@intoto-dev/bibliotheca-profile';
 ### Type: `ProfilePoint`
 
 | Property | Description                                          | Type     |
-|----------|------------------------------------------------------|----------|
-| x *      | X-coordinate of the point in meters.                 | `number` |
-| msl *    | Y-coordinate of the point in meters above sea level. | `number` |
+| -------- | ---------------------------------------------------- | -------- |
+| x \*     | X-coordinate of the point in meters.                 | `number` |
+| msl \*   | Y-coordinate of the point in meters above sea level. | `number` |

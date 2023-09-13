@@ -1,29 +1,29 @@
-import { FunctionComponent, useEffect, useState } from 'react';
+import { FunctionComponent, useEffect, useState } from "react";
 
-import formatDistanceToNowStrict from 'date-fns/formatDistanceToNowStrict';
+import formatDistanceToNowStrict from "date-fns/formatDistanceToNowStrict";
 
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 
-import { isMissing, isPredicted } from '../helpers/dataPoint';
-import hasValueInThreshold from '../helpers/hasValueInThreshold';
-import colorByIndex from '../helpers/colorByIndex';
-import { DataPoint, GraphLine, GraphSeries } from '../types';
+import { isMissing, isPredicted } from "../helpers/dataPoint";
+import hasValueInThreshold from "../helpers/hasValueInThreshold";
+import colorByIndex from "../helpers/colorByIndex";
+import { DataPoint, GraphLine, GraphSeries } from "../types";
 
 const LegendItem = {
   marginLeft: 1,
   height: 16,
-  display: 'flex',
-  alignItems: 'center',
+  display: "flex",
+  alignItems: "center",
 };
 
 const LegendColor = {
   height: 0,
   width: 15,
-  marginTop: '3px',
-  marginBottom: '3px',
+  marginTop: "3px",
+  marginBottom: "3px",
   border: 0,
-  borderTop: '3px solid #fff',
+  borderTop: "3px solid #fff",
 };
 
 const LegendColors = {
@@ -75,14 +75,14 @@ const Legend: FunctionComponent<LegendProps> = function Legend({
     <Box
       className="GraphLegend"
       sx={{
-        display: 'flex',
-        direction: 'ltr',
-        alignItems: 'flex-end',
+        display: "flex",
+        direction: "ltr",
+        alignItems: "flex-end",
         zIndex: 1,
-        transform: isCondensed ? '' : 'translateY(-100%)',
-        marginTop: isCondensed ? '-20px' : '-5px',
-        justifyContent: 'flex-end',
-        flexDirection: !stacked && !isCondensed ? 'row' : 'column',
+        transform: isCondensed ? "" : "translateY(-100%)",
+        marginTop: isCondensed ? "-20px" : "-5px",
+        justifyContent: "flex-end",
+        flexDirection: !stacked && !isCondensed ? "row" : "column",
         paddingRight: `${paddingRight}px`,
       }}
     >
@@ -92,12 +92,11 @@ const Legend: FunctionComponent<LegendProps> = function Legend({
             ...LegendItem,
             marginLeft: 0,
             flexGrow: 1,
-            fontStyle: 'italic',
+            fontStyle: "italic",
           }}
         >
           <Typography variant="caption">
-            {translations.updated_at
-              .replace('{time}', formatDistanceToNowStrict(updatedAt, { locale }))}
+            {translations.updated_at.replace("{time}", formatDistanceToNowStrict(updatedAt, { locale }))}
           </Typography>
         </Box>
       )}
@@ -112,27 +111,21 @@ const Legend: FunctionComponent<LegendProps> = function Legend({
               sx={{
                 height: 0,
                 width: 0,
-                borderTop: '5px solid transparent',
-                borderBottom: '5px solid transparent',
-                borderLeft: '5px solid red',
-                marginRight: '6px',
+                borderTop: "5px solid transparent",
+                borderBottom: "5px solid transparent",
+                borderLeft: "5px solid red",
+                marginRight: "6px",
                 borderLeftColor: line.color,
               }}
             />
-            <Box sx={{ display: 'flex' }}>
-              <Typography variant="caption">
-                {line.name}
-              </Typography>
+            <Box sx={{ display: "flex" }}>
+              <Typography variant="caption">{line.name}</Typography>
             </Box>
           </Box>
         );
       })}
       {series.map((plot, index) => {
-        const hasThresholdData = hasValueInThreshold(
-          plot.data,
-          plot.threshold,
-          plot.thresholdDirection,
-        );
+        const hasThresholdData = hasValueInThreshold(plot.data, plot.threshold, plot.thresholdDirection);
         const hasMissingData = plot.data.some(isMissing);
         const hasPredictedData = plot.data.some(isPredicted);
 
@@ -142,9 +135,9 @@ const Legend: FunctionComponent<LegendProps> = function Legend({
           <Box
             key={plot.key}
             sx={{
-              display: 'flex',
-              flexDirection: isCondensed ? 'column' : 'row',
-              alignItems: 'flex-end',
+              display: "flex",
+              flexDirection: isCondensed ? "column" : "row",
+              alignItems: "flex-end",
             }}
           >
             <Box sx={LegendItem}>
@@ -159,14 +152,12 @@ const Legend: FunctionComponent<LegendProps> = function Legend({
                   <Box
                     sx={{
                       ...LegendColor,
-                      borderColor: plot.thresholdColor || '#000',
+                      borderColor: plot.thresholdColor || "#000",
                     }}
                   />
                 )}
               </Box>
-              <Typography variant="caption">
-                {plot.name}
-              </Typography>
+              <Typography variant="caption">{plot.name}</Typography>
             </Box>
             {hasMissingData && (
               <Box sx={LegendItem}>
@@ -174,18 +165,18 @@ const Legend: FunctionComponent<LegendProps> = function Legend({
                   <Box
                     sx={{
                       ...LegendColor,
-                      opacity: plot.type === 'bar' ? 0.5 : 1,
-                      ...(plot.type !== 'bar' ? {
-                        borderColor: 'inherit',
-                        borderStyle: 'dashed',
-                      } : {}),
+                      opacity: plot.type === "bar" ? 0.5 : 1,
+                      ...(plot.type !== "bar"
+                        ? {
+                            borderColor: "inherit",
+                            borderStyle: "dashed",
+                          }
+                        : {}),
                       borderColor: color,
                     }}
                   />
                 </Box>
-                <Typography variant="caption">
-                  {translations.missing}
-                </Typography>
+                <Typography variant="caption">{translations.missing}</Typography>
               </Box>
             )}
             {hasPredictedData && (
@@ -202,20 +193,20 @@ const Legend: FunctionComponent<LegendProps> = function Legend({
                     <Box
                       sx={{
                         ...LegendColor,
-                        borderColor: plot.thresholdColor || '#000',
+                        borderColor: plot.thresholdColor || "#000",
                         opacity: 0.6,
-                        ...(plot.type === 'line' ? {
-                          opacity: 0.5,
-                          margin: 0,
-                          borderTopWidth: 4.5,
-                        } : {}),
+                        ...(plot.type === "line"
+                          ? {
+                              opacity: 0.5,
+                              margin: 0,
+                              borderTopWidth: 4.5,
+                            }
+                          : {}),
                       }}
                     />
                   )}
                 </Box>
-                <Typography variant="caption">
-                  {translations.predicted}
-                </Typography>
+                <Typography variant="caption">{translations.predicted}</Typography>
               </Box>
             )}
           </Box>

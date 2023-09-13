@@ -1,21 +1,13 @@
-import formatNumber from './formatNumber';
+import formatNumber from "./formatNumber";
 
-function formatObservationValue(
-  value: number | null,
-  locale = 'nb',
-  decimals = 2,
-  enableRoundingZeros = true,
-): string {
+function formatObservationValue(value: number | null, locale = "nb", decimals = 2, enableRoundingZeros = true): string {
   if (value === null) {
-    return '';
+    return "";
   }
 
   const parsedValue = value.toFixed(decimals);
 
-  return formatNumber(
-    enableRoundingZeros ? parseFloat(parsedValue) : parsedValue,
-    locale,
-  );
+  return formatNumber(enableRoundingZeros ? parseFloat(parsedValue) : parsedValue, locale);
 }
 
 export default formatObservationValue;

@@ -1,9 +1,4 @@
-import {
-  BaseDataPoint,
-  DataPoint,
-  MissingDataPoint,
-  PredictedDataPoint,
-} from '../types';
+import { BaseDataPoint, DataPoint, MissingDataPoint, PredictedDataPoint } from "../types";
 
 export function createDataPoint(point: BaseDataPoint): BaseDataPoint {
   return point;
@@ -16,9 +11,7 @@ export function createMissingDataPoint(point: BaseDataPoint): MissingDataPoint {
   };
 }
 
-export function createPredictedDataPoint(
-  point: Omit<PredictedDataPoint, 'predicted'>,
-): PredictedDataPoint {
+export function createPredictedDataPoint(point: Omit<PredictedDataPoint, "predicted">): PredictedDataPoint {
   return {
     predicted: true,
     ...point,
@@ -26,9 +19,9 @@ export function createPredictedDataPoint(
 }
 
 export function isMissing(datum: DataPoint): datum is MissingDataPoint {
-  return 'missing' in datum && datum.missing;
+  return "missing" in datum && datum.missing;
 }
 
 export function isPredicted(datum: DataPoint): datum is PredictedDataPoint {
-  return 'predicted' in datum && datum.predicted;
+  return "predicted" in datum && datum.predicted;
 }

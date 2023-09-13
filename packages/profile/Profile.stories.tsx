@@ -1,22 +1,18 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { Story, Meta } from '@storybook/react/types-6-0';
+import { Story, Meta } from "@storybook/react/types-6-0";
 
-import amotbrua from './mocks/amotbrua.json';
-import amotbruaDykes from './mocks/amotbrua_dykes.json';
+import amotbrua from "./mocks/amotbrua.json";
+import amotbruaDykes from "./mocks/amotbrua_dykes.json";
 
-import Profile, { ProfileProps } from './Profile';
+import Profile, { ProfileProps } from "./Profile";
 
 export default {
-  title: 'Components/Profile',
+  title: "Components/Profile",
   component: Profile,
 } as Meta;
 
 const Template: Story<ProfileProps> = function Template(args) {
-  return (
-    <Profile
-      {...args}
-    />
-  );
+  return <Profile {...args} />;
 };
 
 export const Default = Template.bind({});
@@ -37,17 +33,19 @@ export const WithWaterLevelAndBridge = Template.bind({});
 WithWaterLevelAndBridge.args = {
   profile: amotbrua,
   currentWaterLevel: 7,
-  shapes: [{
-    type: 'bridge',
-    bridgeHeight: 1.2,
-    bridgeBottom: 2.3,
-    points: [
-      { x: 0, y: 12 },
-      { x: 5, y: 12 },
-      { x: 42.64, y: 12 },
-      { x: 46.64, y: 12 },
-    ],
-  }],
+  shapes: [
+    {
+      type: "bridge",
+      bridgeHeight: 1.2,
+      bridgeBottom: 2.3,
+      points: [
+        { x: 0, y: 12 },
+        { x: 5, y: 12 },
+        { x: 42.64, y: 12 },
+        { x: 46.64, y: 12 },
+      ],
+    },
+  ],
 };
 
 export const WithOverflowingWaterLevel = Template.bind({});
@@ -72,17 +70,19 @@ WithWaterLevelAndBridgeAndAxisAndMean.args = {
   currentWaterLevel: 4.2,
   axis: true,
   meanLevel: 3.415,
-  shapes: [{
-    type: 'bridge',
-    bridgeHeight: 1.2,
-    bridgeBottom: 0.5,
-    points: [
-      { x: 0, y: 9.8 },
-      { x: 5, y: 9.8 },
-      { x: 42.64, y: 9.8 },
-      { x: 46.64, y: 9.8 },
-    ],
-  }],
+  shapes: [
+    {
+      type: "bridge",
+      bridgeHeight: 1.2,
+      bridgeBottom: 0.5,
+      points: [
+        { x: 0, y: 9.8 },
+        { x: 5, y: 9.8 },
+        { x: 42.64, y: 9.8 },
+        { x: 46.64, y: 9.8 },
+      ],
+    },
+  ],
 };
 
 export const WithoutProfile = Template.bind({});
@@ -104,7 +104,7 @@ WithoutProfileWithWalls.args = {
   riverWidth: 20,
   shapes: [
     {
-      type: 'polygon',
+      type: "polygon",
       strokeWidth: 1,
       points: [
         { x: 0, y: 6 },
@@ -114,7 +114,7 @@ WithoutProfileWithWalls.args = {
       ],
     },
     {
-      type: 'polygon',
+      type: "polygon",
       strokeWidth: 1,
       points: [
         { x: 17, y: 6 },
@@ -135,7 +135,7 @@ WithoutProfileWithSlopes.args = {
   riverWidth: 20,
   shapes: [
     {
-      type: 'polygon',
+      type: "polygon",
       strokeWidth: 1,
       points: [
         { x: 0, y: 6 },
@@ -145,7 +145,7 @@ WithoutProfileWithSlopes.args = {
       ],
     },
     {
-      type: 'polygon',
+      type: "polygon",
       strokeWidth: 1,
       points: [
         { x: 19, y: 6 },
@@ -166,7 +166,7 @@ NoBottomWithWall.args = {
   riverWidth: 20,
   shapes: [
     {
-      type: 'polygon',
+      type: "polygon",
       strokeWidth: 0,
       points: [
         { x: 0, y: 6 },
@@ -176,7 +176,7 @@ NoBottomWithWall.args = {
       ],
     },
     {
-      type: 'path',
+      type: "path",
       strokeWidth: 1.5,
       points: [
         { x: 0, y: 6 },
@@ -195,16 +195,16 @@ Harbour.args = {
   meanLevel: 3.415,
   levels: [
     {
-      name: 'Harbour docks',
+      name: "Harbour docks",
       y: 6,
-      strokeColor: '#000',
+      strokeColor: "#000",
       showRelationToWaterLevel: true,
     },
   ],
   riverWidth: 20,
   shapes: [
     {
-      type: 'polygon',
+      type: "polygon",
       strokeWidth: 0,
       points: [
         { x: 0, y: 6 },
@@ -216,7 +216,7 @@ Harbour.args = {
       ],
     },
     {
-      type: 'path',
+      type: "path",
       strokeWidth: 1.5,
       points: [
         { x: 0, y: 6 },
@@ -227,8 +227,8 @@ Harbour.args = {
       ],
     },
     {
-      type: 'icon',
-      name: 'harbour',
+      type: "icon",
+      name: "harbour",
       points: [{ x: 2.8, y: 7.1 }],
       width: 1.36,
       height: 1,

@@ -1,6 +1,6 @@
-import { addMinutes } from 'date-fns';
+import { addMinutes } from "date-fns";
 
-import { GraphSeries } from '../types';
+import { GraphSeries } from "../types";
 
 const match = /Z$|([+-])[0-2][0-9]:[0-5][0-9]$/;
 
@@ -8,11 +8,11 @@ export function getTimezoneOffset(date: string): number {
   const matches = date.match(match);
 
   // if timezone is UTC
-  if (matches === null || matches[0] === 'Z') {
+  if (matches === null || matches[0] === "Z") {
     return 0;
   }
 
-  const isPositive = matches[1] === '+';
+  const isPositive = matches[1] === "+";
   const hours = parseInt(matches[0].substr(1, 2), 10);
   const minutes = parseInt(matches[0].substr(4, 2), 10);
 
@@ -20,7 +20,7 @@ export function getTimezoneOffset(date: string): number {
     return 0;
   }
 
-  return ((hours * 60) + minutes) * (isPositive ? -1 : 1);
+  return (hours * 60 + minutes) * (isPositive ? -1 : 1);
 }
 
 export function shiftDate(date: string, direction: 1 | -1 = 1): string {
@@ -28,7 +28,7 @@ export function shiftDate(date: string, direction: 1 | -1 = 1): string {
 
   const localOffset = new Date(date).getTimezoneOffset();
 
-  const shift = localOffset - (offset * direction);
+  const shift = localOffset - offset * direction;
 
   return addMinutes(new Date(date), shift).toISOString();
 }

@@ -1,9 +1,9 @@
-import { FunctionComponent, useMemo, useState } from 'react';
-import format from 'date-fns/format';
+import { FunctionComponent, useMemo, useState } from "react";
+import format from "date-fns/format";
 
-import { Grid, IconButton, Slider } from '@mui/material';
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import PauseIcon from '@mui/icons-material/Pause';
+import { Grid, IconButton, Slider } from "@mui/material";
+import PlayArrowIcon from "@mui/icons-material/PlayArrow";
+import PauseIcon from "@mui/icons-material/Pause";
 
 export interface PlayerProps {
   dates: string[];
@@ -18,18 +18,15 @@ const Player: FunctionComponent<PlayerProps> = function Player({
   autoplay = false,
   onUpdateDate,
 }) {
-  const datesSorted = useMemo(
-    () => dates.sort((a, b) => new Date(a).getTime() - new Date(b).getTime()),
-    [dates],
-  );
+  const datesSorted = useMemo(() => dates.sort((a, b) => new Date(a).getTime() - new Date(b).getTime()), [dates]);
   const [isPlaying, setIsPlaying] = useState(autoplay);
   const value = datesSorted.findIndex((date) => date === currentDate);
 
   const play = () => setIsPlaying(true);
   const pause = () => setIsPlaying(false);
 
-  const startLabel = format(new Date(datesSorted[0]), 'P');
-  const finishLabel = format(new Date(datesSorted[datesSorted.length - 1]), 'P');
+  const startLabel = format(new Date(datesSorted[0]), "P");
+  const finishLabel = format(new Date(datesSorted[datesSorted.length - 1]), "P");
 
   return (
     <Grid container alignItems="center" spacing={3}>
@@ -45,10 +42,8 @@ const Player: FunctionComponent<PlayerProps> = function Player({
           </IconButton>
         )}
       </Grid>
-      <Grid item>
-        {startLabel}
-      </Grid>
-      <Grid item style={{ display: 'flex', flexGrow: 1, alignItems: 'center' }}>
+      <Grid item>{startLabel}</Grid>
+      <Grid item style={{ display: "flex", flexGrow: 1, alignItems: "center" }}>
         <Slider
           min={0}
           max={datesSorted.length - 1}
@@ -62,9 +57,7 @@ const Player: FunctionComponent<PlayerProps> = function Player({
           }}
         />
       </Grid>
-      <Grid item>
-        {finishLabel}
-      </Grid>
+      <Grid item>{finishLabel}</Grid>
     </Grid>
   );
 };

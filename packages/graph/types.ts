@@ -1,5 +1,5 @@
-import { CurveFactory } from 'd3-shape';
-import { ComponentClass, FunctionComponent } from 'react';
+import { CurveFactory } from "d3-shape";
+import { ComponentClass, FunctionComponent } from "react";
 
 export interface BaseDataPoint {
   value: number;
@@ -7,9 +7,9 @@ export interface BaseDataPoint {
   minValue?: number;
   maxValue?: number;
   change?: {
-    '1h': number;
-    '24h': number;
-  },
+    "1h": number;
+    "24h": number;
+  };
 }
 
 export interface MissingDataPoint extends BaseDataPoint {
@@ -24,9 +24,9 @@ export interface PredictedDataPoint extends BaseDataPoint {
 
 export type DataPoint = BaseDataPoint | MissingDataPoint | PredictedDataPoint;
 
-export type SeriesType = 'line' | 'bar';
+export type SeriesType = "line" | "bar";
 
-export type ThresholdDirection = 'up' | 'down';
+export type ThresholdDirection = "up" | "down";
 
 export interface TooltipValues {
   values: DataPoint[];

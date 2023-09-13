@@ -1,11 +1,11 @@
-import { ScaleLinear, ScaleTime } from 'd3-scale';
-import { extent } from 'd3-array';
+import { ScaleLinear, ScaleTime } from "d3-scale";
+import { extent } from "d3-array";
 
-import { scaleLinear, scaleTime } from '@visx/scale';
+import { scaleLinear, scaleTime } from "@visx/scale";
 
-import { GraphSeries } from '../types';
+import { GraphSeries } from "../types";
 
-import { isPredicted } from './dataPoint';
+import { isPredicted } from "./dataPoint";
 
 export function createYScale(
   plot: GraphSeries,
@@ -20,17 +20,13 @@ export function createYScale(
   const yScaleRange = [padding, height + padding];
 
   const max = Math.max(...values, ...minValues, ...maxValues, ...extraValues);
-  const min = typeof plot.bottom !== 'undefined'
-    ? plot.bottom
-    : Math.min(...values, ...minValues, ...maxValues, ...extraValues);
+  const min =
+    typeof plot.bottom !== "undefined" ? plot.bottom : Math.min(...values, ...minValues, ...maxValues, ...extraValues);
   const domainPadding = (max - min) * 0.2;
-  const domainPaddingBottom = typeof plot.bottom !== 'undefined' ? 0 : domainPadding;
+  const domainPaddingBottom = typeof plot.bottom !== "undefined" ? 0 : domainPadding;
 
   return scaleLinear({
-    domain: plot.domain || [
-      max + domainPadding,
-      min - domainPaddingBottom,
-    ],
+    domain: plot.domain || [max + domainPadding, min - domainPaddingBottom],
     range: yScaleRange,
     round: true,
   });
@@ -38,7 +34,7 @@ export function createYScale(
 
 export function createXScale(dates: Date[], width = 0): ScaleTime<number, number> {
   if (dates.length < 2) {
-    throw new Error('Too little dates given');
+    throw new Error("Too little dates given");
   }
 
   return scaleTime({

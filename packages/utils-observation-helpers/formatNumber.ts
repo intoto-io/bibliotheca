@@ -1,6 +1,6 @@
 function formatNumber(input: number | string, locale: string): string {
-  if (locale === 'nb') {
-    return input.toString().replace('.', ',');
+  if (locale === "nb") {
+    return input.toString().replace(".", ",");
   }
 
   return input.toString();

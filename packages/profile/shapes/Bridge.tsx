@@ -1,8 +1,8 @@
-import { line } from 'd3-shape';
+import { line } from "d3-shape";
 
-import bridgeLine from '../helpers/bridgeLine';
+import bridgeLine from "../helpers/bridgeLine";
 
-import { BridgeShape } from '../types';
+import { BridgeShape } from "../types";
 
 interface BridgeProps {
   shape: BridgeShape;
@@ -11,12 +11,7 @@ interface BridgeProps {
 }
 
 function Bridge({ shape, xScale, yScale }: BridgeProps) {
-  const {
-    bridgeStrokeWidth = 2,
-    bridgeStrokeColor = '#000',
-    bridgeBottomColor = '#bbb',
-    points,
-  } = shape;
+  const { bridgeStrokeWidth = 2, bridgeStrokeColor = "#000", bridgeBottomColor = "#bbb", points } = shape;
 
   const [bridgePath, bridgeSupportPath] = bridgeLine(
     xScale,
@@ -36,20 +31,24 @@ function Bridge({ shape, xScale, yScale }: BridgeProps) {
         id="bridge-bottom"
         points={[
           ...points.map((p) => `${xScale(p.x)},${yScale(p.y)}`),
-          ...points.slice(0).reverse()
+          ...points
+            .slice(0)
+            .reverse()
             .map((p) => `${xScale(p.x)},${yScale(p.y - shape.bridgeBottom)}`),
-        ].join(' ')}
+        ].join(" ")}
         fill={bridgeBottomColor}
         opacity={1}
         vectorEffect="non-scaling-stroke"
       />
       <path
         id="bridge-way"
-        d={points.map((p, i) => {
-          const letter = i === 0 ? 'M' : 'L';
+        d={points
+          .map((p, i) => {
+            const letter = i === 0 ? "M" : "L";
 
-          return `${letter}${xScale(p.x)},${yScale(p.y)}`;
-        }).join(' ')}
+            return `${letter}${xScale(p.x)},${yScale(p.y)}`;
+          })
+          .join(" ")}
         stroke={bridgeStrokeColor}
         strokeWidth={bridgeStrokeWidth}
         strokeOpacity={1}
@@ -58,7 +57,7 @@ function Bridge({ shape, xScale, yScale }: BridgeProps) {
       />
       <path
         id="bridge-support"
-        d={[bridgeSupportPathLine].join(' ')}
+        d={[bridgeSupportPathLine].join(" ")}
         stroke={bridgeStrokeColor}
         strokeWidth={bridgeStrokeWidth}
         strokeOpacity={1}
@@ -67,7 +66,7 @@ function Bridge({ shape, xScale, yScale }: BridgeProps) {
       />
       <path
         id="bridge"
-        d={[bridgePathLine].join(' ')}
+        d={[bridgePathLine].join(" ")}
         stroke={bridgeStrokeColor}
         strokeWidth={bridgeStrokeWidth}
         fill="transparent"

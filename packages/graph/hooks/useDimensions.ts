@@ -1,9 +1,4 @@
-import {
-  MutableRefObject,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { MutableRefObject, useEffect, useRef, useState } from "react";
 
 interface Dimensions {
   width: number;
@@ -23,9 +18,9 @@ function useDimensions(): [MutableRefObject<HTMLDivElement | null>, Dimensions] 
     }
 
     handleResize();
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
 
-    return () => window.removeEventListener('resize', handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   return [ref, dimensions || { width: 0, height: 0 }];

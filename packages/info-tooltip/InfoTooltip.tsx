@@ -1,8 +1,8 @@
-import { FunctionComponent } from 'react';
+import { FunctionComponent } from "react";
 
-import Tooltip from '@mui/material/Tooltip';
-import IconButton from '@mui/material/IconButton';
-import InfoIcon from '@mui/icons-material/Info';
+import Tooltip from "@mui/material/Tooltip";
+import IconButton from "@mui/material/IconButton";
+import InfoIcon from "@mui/icons-material/Info";
 
 export interface InfoTooltipProps {
   text: string;
@@ -10,19 +10,14 @@ export interface InfoTooltipProps {
 
 const InfoTooltip: FunctionComponent<InfoTooltipProps> = function InfoTooltip({ text }) {
   return (
-    <Tooltip
-      title={text}
-      enterTouchDelay={0}
-      placement="bottom"
-      arrow
-    >
+    <Tooltip title={text} enterTouchDelay={0} placement="bottom" arrow>
       <IconButton aria-label="info" size="small">
         <InfoIcon
           fontSize="small"
           sx={{
-            color: 'text.disabled',
+            color: "text.disabled",
             fontSize: 16,
-            marginTop: '-2px',
+            marginTop: "-2px",
           }}
         />
       </IconButton>

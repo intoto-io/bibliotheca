@@ -1,62 +1,44 @@
-import {
-  MouseEvent,
-  TouchEvent,
-  useMemo,
-  useState,
-  useRef,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-} from 'react';
-import { UseTranslationResponse } from 'react-i18next';
+import { MouseEvent, TouchEvent, useMemo, useState, useRef, useCallback, useEffect, useLayoutEffect } from "react";
+import { UseTranslationResponse } from "react-i18next";
 /* eslint-disable import/no-duplicates */ // needed to prevent eslint bug
-import {
-  format,
-  compareDesc,
-  startOfDay,
-} from 'date-fns';
-import enUS from 'date-fns/locale/en-US';
+import { format, compareDesc, startOfDay } from "date-fns";
+import enUS from "date-fns/locale/en-US";
 /* eslint-enable */
-import { bisector } from 'd3-array';
-import { timeFormatDefaultLocale } from 'd3-time-format';
+import { bisector } from "d3-array";
+import { timeFormatDefaultLocale } from "d3-time-format";
 
-import Box from '@mui/material/Box';
+import Box from "@mui/material/Box";
 
-import { Line as LineVisx } from '@visx/shape';
-import { AxisRight, AxisTop } from '@visx/axis';
-import { GridColumns, GridRows } from '@visx/grid';
-import { localPoint } from '@visx/event';
+import { Line as LineVisx } from "@visx/shape";
+import { AxisRight, AxisTop } from "@visx/axis";
+import { GridColumns, GridRows } from "@visx/grid";
+import { localPoint } from "@visx/event";
 
-import tickFormat from './helpers/tickFormat';
-import colorByIndex from './helpers/colorByIndex';
-import locales from './helpers/locales';
-import { isMissing, isPredicted } from './helpers/dataPoint';
-import { createXScale, createYScale } from './helpers/createScales';
-import { shiftSeriesDates } from './helpers/dateShift';
-import {
-  DataPoint,
-  GraphLine,
-  GraphSeries,
-  TooltipValues,
-} from './types';
+import tickFormat from "./helpers/tickFormat";
+import colorByIndex from "./helpers/colorByIndex";
+import locales from "./helpers/locales";
+import { isMissing, isPredicted } from "./helpers/dataPoint";
+import { createXScale, createYScale } from "./helpers/createScales";
+import { shiftSeriesDates } from "./helpers/dateShift";
+import { DataPoint, GraphLine, GraphSeries, TooltipValues } from "./types";
 
-import AxisLeft from './components/AxisLeft';
-import Line from './components/Line';
-import Bars from './components/Bars';
-import Legend from './components/Legend';
-import Navigation from './components/Navigation';
-import Tooltip from './components/Tooltip';
-import useSeriesDates from './hooks/useSeriesDates';
-import useDimensions from './hooks/useDimensions';
-import { isHorizontalLine } from './helpers/lineTypes';
+import AxisLeft from "./components/AxisLeft";
+import Line from "./components/Line";
+import Bars from "./components/Bars";
+import Legend from "./components/Legend";
+import Navigation from "./components/Navigation";
+import Tooltip from "./components/Tooltip";
+import useSeriesDates from "./hooks/useSeriesDates";
+import useDimensions from "./hooks/useDimensions";
+import { isHorizontalLine } from "./helpers/lineTypes";
 
 export interface GraphProps {
   series: GraphSeries[];
-  t: UseTranslationResponse<'graph'>['t'];
+  t: UseTranslationResponse<"graph">["t"];
   height?: number;
   stacked?: boolean;
   navigation?: boolean;
-  lang?: 'nb' | 'en';
+  lang?: "nb" | "en";
   locale?: Locale;
   showCurrent?: boolean;
   lines?: GraphLine[];
@@ -86,7 +68,7 @@ function Graph({
   stacked = false,
   navigation = false,
   showCurrent = false,
-  lang = 'en',
+  lang = "en",
   locale = enUS,
   lines = [],
   onTooltipValueChange,
@@ -129,12 +111,12 @@ function Graph({
     return dates;
   }, [dates, navigation, range]);
 
-  const dateFormat = lang === 'nb' ? 'cccccc. d. LLL' : 'ccc, d. LLL';
+  const dateFormat = lang === "nb" ? "cccccc. d. LLL" : "ccc, d. LLL";
 
   const padding = 30;
   const paddingRight = isCondensed ? 20 : 45;
 
-  const heightWithPadding = (inputHeight: number) => inputHeight + (padding * 2);
+  const heightWithPadding = (inputHeight: number) => inputHeight + padding * 2;
 
   const defaultLabelWidth = 44;
   const labelWidth = series[0].labelWidth || defaultLabelWidth;
@@ -147,66 +129,76 @@ function Graph({
   const xScale = createXScale(rangeDates.length >= 2 ? rangeDates : dates, totalWidth);
 
   const yScales = useMemo(
-    () => series.map((plot) => createYScale(
-      plot,
-      stacked && plot.axisHeight ? plot.axisHeight : height,
-      lines
-        .filter((line) => isHorizontalLine(line))
-        .map((line) => (isHorizontalLine(line) ? line.value : 0)),
-      padding,
-    )),
+    () =>
+      series.map((plot) =>
+        createYScale(
+          plot,
+          stacked && plot.axisHeight ? plot.axisHeight : height,
+          lines.filter((line) => isHorizontalLine(line)).map((line) => (isHorizontalLine(line) ? line.value : 0)),
+          padding,
+        ),
+      ),
     [height, lines, series, stacked],
   );
 
   const reversedIndex = (index: number) => seriesReversed.length - index - 1;
 
-  const handleTooltip = useCallback((
-    event: TouchEvent<HTMLDivElement> | MouseEvent<HTMLDivElement>,
-    clientX: number,
-    clientY: number,
-    offsetX = 10,
-    offsetY = 0,
-  ) => {
-    // ignore when not using tooltip
-    if (!tooltip) return;
+  const handleTooltip = useCallback(
+    (
+      event: TouchEvent<HTMLDivElement> | MouseEvent<HTMLDivElement>,
+      clientX: number,
+      clientY: number,
+      offsetX = 10,
+      offsetY = 0,
+    ) => {
+      // ignore when not using tooltip
+      if (!tooltip) return;
 
-    const coords = localPoint(event.target as Element, event);
+      const coords = localPoint(event.target as Element, event);
 
-    if (coords) {
-      const date = xScale.invert(coords.x);
-      const values = series.map((plot) => plot.data[bisectDate(plot.data, date)]);
+      if (coords) {
+        const date = xScale.invert(coords.x);
+        const values = series.map((plot) => plot.data[bisectDate(plot.data, date)]);
 
-      let xOffset = offsetX;
+        let xOffset = offsetX;
 
-      if (graphContainerRef.current && tooltipRef.current && offsetX !== 0) {
-        const graphContainerBounds = graphContainerRef.current.getBoundingClientRect();
-        const tooltipBox = tooltipRef.current.getBoundingClientRect();
+        if (graphContainerRef.current && tooltipRef.current && offsetX !== 0) {
+          const graphContainerBounds = graphContainerRef.current.getBoundingClientRect();
+          const tooltipBox = tooltipRef.current.getBoundingClientRect();
 
-        if (clientX + tooltipBox.width + xOffset > graphContainerBounds.right) {
-          xOffset = (tooltipBox.width + xOffset) * -1;
+          if (clientX + tooltipBox.width + xOffset > graphContainerBounds.right) {
+            xOffset = (tooltipBox.width + xOffset) * -1;
+          }
         }
+
+        if (onTooltipValueChange && values[0]) {
+          onTooltipValueChange(values[0].value);
+        }
+
+        setTooltipValues({
+          ...coords,
+          values,
+          tx: clientX + xOffset,
+          ty: clientY + window.scrollY + offsetY,
+        });
       }
+    },
+    [onTooltipValueChange, series, tooltip, xScale],
+  );
 
-      if (onTooltipValueChange && values[0]) {
-        onTooltipValueChange(values[0].value);
-      }
+  const handleTouchMove = useCallback(
+    (event: TouchEvent<HTMLDivElement>) => {
+      handleTooltip(event, event.touches[0].clientX, event.touches[0].clientY, 0, -30);
+    },
+    [handleTooltip],
+  );
 
-      setTooltipValues({
-        ...coords,
-        values,
-        tx: clientX + xOffset,
-        ty: clientY + window.scrollY + offsetY,
-      });
-    }
-  }, [onTooltipValueChange, series, tooltip, xScale]);
-
-  const handleTouchMove = useCallback((event: TouchEvent<HTMLDivElement>) => {
-    handleTooltip(event, event.touches[0].clientX, event.touches[0].clientY, 0, -30);
-  }, [handleTooltip]);
-
-  const handleMouseOver = useCallback((event: MouseEvent<HTMLDivElement>) => {
-    handleTooltip(event, event.clientX, event.clientY);
-  }, [handleTooltip]);
+  const handleMouseOver = useCallback(
+    (event: MouseEvent<HTMLDivElement>) => {
+      handleTooltip(event, event.clientX, event.clientY);
+    },
+    [handleTooltip],
+  );
 
   const currentValueOffset = ref.current?.getBoundingClientRect() || { top: 0, left: 0 };
   const currentPoint = series[0].data.find((d) => !isPredicted(d) && !isMissing(d));
@@ -218,7 +210,7 @@ function Graph({
       if (window.innerWidth < rect.right) {
         // popup is out of viewport, move it to the left
         const rightMargin = 12;
-        const left = rect.left - (rect.right - window.innerWidth) - rightMargin + (rect.width / 2);
+        const left = rect.left - (rect.right - window.innerWidth) - rightMargin + rect.width / 2;
         currentValueRef.current.style.left = `${left}px`;
       }
     }
@@ -226,27 +218,26 @@ function Graph({
 
   return (
     <div>
-      <Box sx={{ display: 'flex' }} ref={ref}>
+      <Box sx={{ display: "flex" }} ref={ref}>
         {dimensions.width !== 0 && (
           <>
             {!tooltipValues && showCurrent && currentPoint && (
               <Box
                 ref={currentValueRef}
                 sx={{
-                  position: 'absolute',
-                  transform: ' translateY(-125%) translateX(-50%)',
-                  whiteSpace: 'nowrap',
+                  position: "absolute",
+                  transform: " translateY(-125%) translateX(-50%)",
+                  whiteSpace: "nowrap",
                   zIndex: 10,
-                  backgroundColor: '#fff',
+                  backgroundColor: "#fff",
                   p: 1,
-                  borderRadius: '4px',
-                  fontSize: isCondensed ? '0.8rem' : '1.5rem',
+                  borderRadius: "4px",
+                  fontSize: isCondensed ? "0.8rem" : "1.5rem",
                   color: series[0].color || colorByIndex(0),
-                  boxShadow: '3px 3px 6px rgba(0, 0, 0, 0.3)',
+                  boxShadow: "3px 3px 6px rgba(0, 0, 0, 0.3)",
                 }}
                 style={{
-                  left: xScale(new Date(currentPoint.date))
-                    + labelWidth + currentValueOffset.left + window.scrollX,
+                  left: xScale(new Date(currentPoint.date)) + labelWidth + currentValueOffset.left + window.scrollX,
                   top: yScales[0](currentPoint.value) + currentValueOffset.top + window.scrollY,
                 }}
               >
@@ -258,25 +249,23 @@ function Graph({
               tooltipValues={tooltipValues}
               series={series}
               locale={locale}
-              missingText={t('missing')}
+              missingText={t("missing")}
               isCondensed={isCondensed}
             />
             <Box
               sx={{
                 flexShrink: 0,
                 flexGrow: 0,
-                textAlign: 'right',
-                display: 'flex',
-                flexDirection: 'column',
-                position: 'relative',
+                textAlign: "right",
+                display: "flex",
+                flexDirection: "column",
+                position: "relative",
               }}
             >
               {series.map((plot, index) => {
                 if (index > 0 && !stacked) return null;
 
-                const plotHeight = stacked && plot.axisHeight
-                  ? heightWithPadding(plot.axisHeight)
-                  : chartTotalHeight;
+                const plotHeight = stacked && plot.axisHeight ? heightWithPadding(plot.axisHeight) : chartTotalHeight;
 
                 return (
                   <AxisLeft
@@ -293,7 +282,7 @@ function Graph({
               sx={{
                 flexShrink: 1,
                 flexGrow: 1,
-                position: 'relative',
+                position: "relative",
               }}
             >
               {lines.map((line) => {
@@ -303,26 +292,26 @@ function Graph({
 
                 const arrowProps = isHorizontalLine(line)
                   ? {
-                    borderTop: '5px solid transparent',
-                    borderBottom: '5px solid transparent',
-                    borderLeft: `5px solid ${line.color}`,
-                  } : {
-                    borderLeft: '5px solid transparent',
-                    borderRight: '5px solid transparent',
-                    borderTop: `5px solid ${line.color}`,
-                  };
+                      borderTop: "5px solid transparent",
+                      borderBottom: "5px solid transparent",
+                      borderLeft: `5px solid ${line.color}`,
+                    }
+                  : {
+                      borderLeft: "5px solid transparent",
+                      borderRight: "5px solid transparent",
+                      borderTop: `5px solid ${line.color}`,
+                    };
 
                 return (
                   <Box
                     key={`line_${line.name}`}
                     sx={{
                       ...arrowProps,
-                      position: 'absolute',
-                      display: 'block',
+                      position: "absolute",
+                      display: "block",
                       width: 0,
                       height: 0,
-                      transform: isHorizontalLine(line)
-                        ? 'translate(-100%, -50%)' : 'translate(-50%, -100%)',
+                      transform: isHorizontalLine(line) ? "translate(-100%, -50%)" : "translate(-50%, -100%)",
                       left: isHorizontalLine(line) ? 0 : xScale(line.date),
                       top: isHorizontalLine(line) ? yScales[0](line.value) : padding,
                       opacity: line.opacity,
@@ -332,9 +321,9 @@ function Graph({
               })}
               <Box
                 sx={{
-                  maxWidth: '100%',
-                  overflow: navigation ? 'visible' : 'hidden',
-                  touchAction: 'none',
+                  maxWidth: "100%",
+                  overflow: navigation ? "visible" : "hidden",
+                  touchAction: "none",
                 }}
                 className="GraphContainer"
                 ref={graphContainerRef}
@@ -350,29 +339,19 @@ function Graph({
                   return (
                     <Box
                       component="svg"
-                      key={`${plot.key}_${stacked ? 'stacked' : 'combined'}`}
+                      key={`${plot.key}_${stacked ? "stacked" : "combined"}`}
                       width={totalWidth}
                       height={heightWithPadding(columnsHeight)}
                       sx={{
-                        direction: 'ltr',
-                        display: 'block',
-                        position: 'relative',
+                        direction: "ltr",
+                        display: "block",
+                        position: "relative",
                         zIndex: 2,
-                        overflow: 'visible',
+                        overflow: "visible",
                       }}
                     >
-                      <GridRows
-                        scale={yScales[index]}
-                        width={totalWidth}
-                        stroke="#ccc"
-                        strokeOpacity={0.7}
-                      />
-                      <GridColumns
-                        scale={xScale}
-                        height={columnsHeight}
-                        top={padding}
-                        stroke="#ccc"
-                      />
+                      <GridRows scale={yScales[index]} width={totalWidth} stroke="#ccc" strokeOpacity={0.7} />
+                      <GridColumns scale={xScale} height={columnsHeight} top={padding} stroke="#ccc" />
                       {index === 0 && (
                         <AxisTop
                           top={padding}
@@ -385,7 +364,7 @@ function Graph({
                               return format(date, dateFormat, { locale });
                             }
 
-                            return format(date, 'p', { locale });
+                            return format(date, "p", { locale });
                           }}
                         />
                       )}
@@ -396,18 +375,15 @@ function Graph({
 
                         const { type } = innerPlot;
 
-                        const plotHeight = stacked && plot.axisHeight
-                          ? plot.axisHeight + padding
-                          : height + padding;
+                        const plotHeight = stacked && plot.axisHeight ? plot.axisHeight + padding : height + padding;
 
-                        if (type === 'bar') {
+                        if (type === "bar") {
                           return (
                             <Bars
                               key={`${innerPlot.key}_${plot.key}`}
                               plot={innerPlot}
                               barWidth={innerPlot.barWidth}
-                              barPadding={typeof innerPlot.barPadding !== 'undefined'
-                                ? innerPlot.barPadding : 4}
+                              barPadding={typeof innerPlot.barPadding !== "undefined" ? innerPlot.barPadding : 4}
                               xScale={xScale}
                               yScale={yScales[ri]}
                               height={plotHeight}
@@ -472,27 +448,31 @@ function Graph({
                         <LineVisx
                           key={line.name}
                           from={
-                            isHorizontalLine(line) ? {
-                              x: xScale(rangeDates[0]),
-                              y: yScales[0](line.value),
-                            } : {
-                              x: xScale(line.date),
-                              y: padding,
-                            }
+                            isHorizontalLine(line)
+                              ? {
+                                  x: xScale(rangeDates[0]),
+                                  y: yScales[0](line.value),
+                                }
+                              : {
+                                  x: xScale(line.date),
+                                  y: padding,
+                                }
                           }
                           to={
-                            isHorizontalLine(line) ? {
-                              x: xScale(rangeDates[rangeDates.length - 1]),
-                              y: yScales[0](line.value),
-                            } : {
-                              x: xScale(line.date),
-                              y: columnsHeight + padding,
-                            }
+                            isHorizontalLine(line)
+                              ? {
+                                  x: xScale(rangeDates[rangeDates.length - 1]),
+                                  y: yScales[0](line.value),
+                                }
+                              : {
+                                  x: xScale(line.date),
+                                  y: columnsHeight + padding,
+                                }
                           }
                           stroke={line.color}
                           strokeWidth={line.width || 1.5}
                           pointerEvents="none"
-                          strokeDasharray={line.dasharray || '5,3'}
+                          strokeDasharray={line.dasharray || "5,3"}
                         />
                       ))}
                     </Box>
@@ -508,9 +488,9 @@ function Graph({
                 paddingRight={paddingRight}
                 lines={lines}
                 translations={{
-                  updated_at: t('updated_at'),
-                  missing: t('missing'),
-                  predicted: t('predicted'),
+                  updated_at: t("updated_at"),
+                  missing: t("missing"),
+                  predicted: t("predicted"),
                 }}
               />
             </Box>
@@ -519,30 +499,28 @@ function Graph({
                 sx={{
                   flexShrink: 0,
                   flexGrow: 0,
-                  textAlign: 'right',
+                  textAlign: "right",
                 }}
               >
-                {series.map((plot, index) => (stacked || index === 0 ? null : (
-                  <svg
-                    key={plot.key}
-                    width={plot.labelWidth || defaultLabelWidth}
-                    height={chartTotalHeight}
-                  >
-                    <AxisRight
-                      scale={yScales[index]}
-                      tickFormat={(tick) => tickFormat(plot, tick.valueOf())}
-                      stroke={plot.color || colorByIndex(index)}
-                      tickStroke={plot.color || colorByIndex(index)}
-                      tickLabelProps={() => ({
-                        fill: plot.color || colorByIndex(index),
-                        fontSize: 10,
-                        x: 10,
-                        textAnchor: 'start',
-                        verticalAnchor: 'middle',
-                      })}
-                    />
-                  </svg>
-                )))}
+                {series.map((plot, index) =>
+                  stacked || index === 0 ? null : (
+                    <svg key={plot.key} width={plot.labelWidth || defaultLabelWidth} height={chartTotalHeight}>
+                      <AxisRight
+                        scale={yScales[index]}
+                        tickFormat={(tick) => tickFormat(plot, tick.valueOf())}
+                        stroke={plot.color || colorByIndex(index)}
+                        tickStroke={plot.color || colorByIndex(index)}
+                        tickLabelProps={() => ({
+                          fill: plot.color || colorByIndex(index),
+                          fontSize: 10,
+                          x: 10,
+                          textAnchor: "start",
+                          verticalAnchor: "middle",
+                        })}
+                      />
+                    </svg>
+                  ),
+                )}
               </Box>
             )}
           </>

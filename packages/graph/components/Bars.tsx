@@ -1,14 +1,14 @@
-import { FunctionComponent, Fragment } from 'react';
-import { compareAsc } from 'date-fns';
-import { ScaleLinear, ScaleTime } from 'd3-scale';
+import { FunctionComponent, Fragment } from "react";
+import { compareAsc } from "date-fns";
+import { ScaleLinear, ScaleTime } from "d3-scale";
 
-import { Bar, Line as LineVisx } from '@visx/shape';
-import { Group } from '@visx/group';
+import { Bar, Line as LineVisx } from "@visx/shape";
+import { Group } from "@visx/group";
 
-import { isMissing, isPredicted } from '../helpers/dataPoint';
-import colorByIndex from '../helpers/colorByIndex';
-import colorByThreshold from '../helpers/colorByThreshold';
-import { GraphSeries } from '../types';
+import { isMissing, isPredicted } from "../helpers/dataPoint";
+import colorByIndex from "../helpers/colorByIndex";
+import colorByThreshold from "../helpers/colorByThreshold";
+import { GraphSeries } from "../types";
 
 interface BarProps {
   plot: GraphSeries;
@@ -49,9 +49,9 @@ const Bars: FunctionComponent<BarProps> = function Bars({
           plot.color || colorByIndex(index),
         );
 
-        const x = barX + (barPadding ? barPadding / 2 : 0) - (barWidth / 2);
+        const x = barX + (barPadding ? barPadding / 2 : 0) - barWidth / 2;
         const predictionWidth = 3;
-        const predictionX = x + (barWidth / 2) - (predictionWidth / 2);
+        const predictionX = x + barWidth / 2 - predictionWidth / 2;
 
         const barOpacity = (): number => {
           if (isMissing(datum)) {
@@ -62,7 +62,7 @@ const Bars: FunctionComponent<BarProps> = function Bars({
             return 0.6;
           }
 
-          if (typeof plot.barOpacity !== 'undefined') {
+          if (typeof plot.barOpacity !== "undefined") {
             return plot.barOpacity;
           }
 
@@ -70,7 +70,7 @@ const Bars: FunctionComponent<BarProps> = function Bars({
         };
 
         return (
-        // eslint-disable-next-line react/no-array-index-key
+          // eslint-disable-next-line react/no-array-index-key
           <Fragment key={`${plot.key}_${i}`}>
             <Bar
               x={x}
@@ -83,8 +83,8 @@ const Bars: FunctionComponent<BarProps> = function Bars({
             {isPredicted(datum) && (
               <>
                 <LineVisx
-                  from={{ x: predictionX - (barWidth / 2), y: yScale(datum.maxValue) }}
-                  to={{ x: predictionX + (barWidth / 2), y: yScale(datum.maxValue) }}
+                  from={{ x: predictionX - barWidth / 2, y: yScale(datum.maxValue) }}
+                  to={{ x: predictionX + barWidth / 2, y: yScale(datum.maxValue) }}
                   stroke="#000"
                   strokeWidth={predictionWidth}
                   strokeOpacity={1}
@@ -99,8 +99,8 @@ const Bars: FunctionComponent<BarProps> = function Bars({
                   pointerEvents="none"
                 />
                 <LineVisx
-                  from={{ x: predictionX - (barWidth / 2), y: yScale(datum.minValue) }}
-                  to={{ x: predictionX + (barWidth / 2), y: yScale(datum.minValue) }}
+                  from={{ x: predictionX - barWidth / 2, y: yScale(datum.minValue) }}
+                  to={{ x: predictionX + barWidth / 2, y: yScale(datum.minValue) }}
                   stroke="#000"
                   strokeWidth={predictionWidth}
                   strokeOpacity={1}

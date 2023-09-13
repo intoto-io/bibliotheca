@@ -1,10 +1,10 @@
-import { FunctionComponent } from 'react';
-import { ScaleLinear } from 'd3-scale';
+import { FunctionComponent } from "react";
+import { ScaleLinear } from "d3-scale";
 
-import { AxisLeft as AxisLeftVisX } from '@visx/axis';
+import { AxisLeft as AxisLeftVisX } from "@visx/axis";
 
-import tickFormat from '../helpers/tickFormat';
-import { GraphSeries } from '../types';
+import tickFormat from "../helpers/tickFormat";
+import { GraphSeries } from "../types";
 
 interface AxisLeftProps {
   plot: GraphSeries;
@@ -13,12 +13,7 @@ interface AxisLeftProps {
   defaultLabelWidth: number;
 }
 
-const AxisLeft: FunctionComponent<AxisLeftProps> = function AxisLeft({
-  plot,
-  height,
-  yScale,
-  defaultLabelWidth,
-}) {
+const AxisLeft: FunctionComponent<AxisLeftProps> = function AxisLeft({ plot, height, yScale, defaultLabelWidth }) {
   const tickHeight = 30;
 
   return (

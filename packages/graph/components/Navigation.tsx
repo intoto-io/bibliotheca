@@ -1,18 +1,13 @@
-import {
-  FunctionComponent,
-  useEffect,
-  useMemo,
-  useRef,
-} from 'react';
+import { FunctionComponent, useEffect, useMemo, useRef } from "react";
 
-import { curveBasis } from '@visx/curve';
-import { LinePath } from '@visx/shape';
-import { Brush } from '@visx/brush';
-import BaseBrush, { UpdateBrush, BaseBrushState } from '@visx/brush/lib/BaseBrush';
-import { Bounds } from '@visx/brush/lib/types';
+import { curveBasis } from "@visx/curve";
+import { LinePath } from "@visx/shape";
+import { Brush } from "@visx/brush";
+import BaseBrush, { UpdateBrush, BaseBrushState } from "@visx/brush/lib/BaseBrush";
+import { Bounds } from "@visx/brush/lib/types";
 
-import { createXScale, createYScale } from '../helpers/createScales';
-import { GraphSeries } from '../types';
+import { createXScale, createYScale } from "../helpers/createScales";
+import { GraphSeries } from "../types";
 
 interface NavigationProps {
   width: number;
@@ -42,13 +37,7 @@ const Navigation: FunctionComponent<NavigationProps> = function Navigation({
   const xScale = createXScale(dates, navWidth);
   const rangeRef = useRef<[number, number]>([xScale(range[0]), xScale(range[1])]);
 
-  const yScales = useMemo(
-    () => series.map((plot) => createYScale(
-      plot,
-      height - 4,
-    )),
-    [height, series],
-  );
+  const yScales = useMemo(() => series.map((plot) => createYScale(plot, height - 4)), [height, series]);
 
   const initialBrushPosition = useMemo(
     () => ({
@@ -67,10 +56,7 @@ const Navigation: FunctionComponent<NavigationProps> = function Navigation({
       if (brushRef.current) {
         const updater: UpdateBrush = (prevBrush) => {
           if (brushRef.current) {
-            const newExtent = brushRef.current.getExtent(
-              { x: rangeRef.current[0] },
-              { x: rangeRef.current[1] },
-            );
+            const newExtent = brushRef.current.getExtent({ x: rangeRef.current[0] }, { x: rangeRef.current[1] });
 
             const newState: BaseBrushState = {
               ...prevBrush,
@@ -91,9 +77,9 @@ const Navigation: FunctionComponent<NavigationProps> = function Navigation({
       }
     }
 
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
 
-    return () => window.removeEventListener('resize', handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const onBrushChange = (domain: Bounds | null) => {
@@ -104,10 +90,7 @@ const Navigation: FunctionComponent<NavigationProps> = function Navigation({
       return;
     }
 
-    const {
-      x0,
-      x1,
-    } = domain;
+    const { x0, x1 } = domain;
 
     setRange([x0, x1]);
   };
@@ -137,7 +120,7 @@ const Navigation: FunctionComponent<NavigationProps> = function Navigation({
         height={height}
         innerRef={brushRef}
         handleSize={8}
-        resizeTriggerAreas={['left', 'right']}
+        resizeTriggerAreas={["left", "right"]}
         brushDirection="horizontal"
         initialBrushPosition={initialBrushPosition}
         onChange={onBrushChange}

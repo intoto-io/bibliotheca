@@ -59,6 +59,7 @@
     "babel-jest": "^28.0.3",
     "commitlint": "^16.2.4",
     "emotion-theming": "^11.0.0",
+    "eslint-plugin-prettier": "^5.0.0",
     "husky": "^7.0.4",
     "jest": "^28.0.3",
     "jest-environment-jsdom": "^28.0.2",

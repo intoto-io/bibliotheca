@@ -1,10 +1,10 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { Story, Meta } from '@storybook/react/types-6-0';
+import { Story, Meta } from "@storybook/react/types-6-0";
 
-import HistoricPlayer from './HistoricPlayer';
+import HistoricPlayer from "./HistoricPlayer";
 
 export default {
-  title: 'Components/Data-Player/HistoricPlayer',
+  title: "Components/Data-Player/HistoricPlayer",
   component: HistoricPlayer,
 } as Meta;
 
