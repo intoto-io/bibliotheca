@@ -1,6 +1,6 @@
 {
   "name": "@intoto-dev/bibliotheca-graph",
-  "version": "0.23.4",
+  "version": "0.23.5",
   "description": "Explain how to install etc",
   "main": "lib/index.js",
   "module": "lib/index.js",
@@ -26,8 +26,8 @@
     "access": "public"
   },
   "dependencies": {
-    "@intoto-dev/bibliotheca-location-tooltip": "^0.23.4",
-    "@intoto-dev/utils-is-unique-date": "^0.23.4",
+    "@intoto-dev/bibliotheca-location-tooltip": "^0.23.5",
+    "@intoto-dev/utils-is-unique-date": "^0.23.5",
     "@mui/material": "^5.2.5",
     "@types/react": "^18.0.8",
     "@visx/axis": "^2.1.1",
