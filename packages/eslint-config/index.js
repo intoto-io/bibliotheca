@@ -31,7 +31,14 @@ module.exports = {
         jsx: 'never',
       },
     ],
-    'prettier/prettier': ['error'],
+    'prettier/prettier': [
+      'error',
+      {
+        singleQuote: true,
+        printWidth: 120,
+        trailingComma: 'all',
+      },
+    ],
   },
   overrides: [
     {
