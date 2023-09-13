@@ -1,15 +1,15 @@
-import { FunctionComponent, useCallback, useMemo } from "react";
-import { ScaleLinear, ScaleTime } from "d3-scale";
-import { CurveFactory } from "d3-shape";
+import { FunctionComponent, useCallback, useMemo } from 'react';
+import { ScaleLinear, ScaleTime } from 'd3-scale';
+import { CurveFactory } from 'd3-shape';
 
-import { Area, LinePath } from "@visx/shape";
-import { curveNatural } from "@visx/curve";
-import { Threshold } from "@visx/threshold";
-import { ClipPath } from "@visx/clip-path";
-import { LinearGradient } from "@visx/gradient";
+import { Area, LinePath } from '@visx/shape';
+import { curveNatural } from '@visx/curve';
+import { Threshold } from '@visx/threshold';
+import { ClipPath } from '@visx/clip-path';
+import { LinearGradient } from '@visx/gradient';
 
-import { isMissing, isPredicted } from "../helpers/dataPoint";
-import { DataPoint } from "../types";
+import { isMissing, isPredicted } from '../helpers/dataPoint';
+import { DataPoint } from '../types';
 
 interface SplitLineProps {
   keyRef: string;
@@ -92,10 +92,10 @@ const SplitLine: FunctionComponent<SplitLineProps> = function SplitLine({
             data={flatData}
             x={(datum) => xScale(new Date(datum.date))}
             y0={(datum) =>
-              isPredicted(datum) && typeof datum.minValue !== "undefined" ? yScale(datum.minValue) : yScale(datum.value)
+              isPredicted(datum) && typeof datum.minValue !== 'undefined' ? yScale(datum.minValue) : yScale(datum.value)
             }
             y1={(datum) =>
-              isPredicted(datum) && typeof datum.maxValue !== "undefined" ? yScale(datum.maxValue) : yScale(datum.value)
+              isPredicted(datum) && typeof datum.maxValue !== 'undefined' ? yScale(datum.maxValue) : yScale(datum.value)
             }
             curve={curve}
             clipAboveTo={0}

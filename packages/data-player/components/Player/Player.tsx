@@ -1,9 +1,9 @@
-import { FunctionComponent, useMemo, useState } from "react";
-import format from "date-fns/format";
+import { FunctionComponent, useMemo, useState } from 'react';
+import format from 'date-fns/format';
 
-import { Grid, IconButton, Slider } from "@mui/material";
-import PlayArrowIcon from "@mui/icons-material/PlayArrow";
-import PauseIcon from "@mui/icons-material/Pause";
+import { Grid, IconButton, Slider } from '@mui/material';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import PauseIcon from '@mui/icons-material/Pause';
 
 export interface PlayerProps {
   dates: string[];
@@ -25,8 +25,8 @@ const Player: FunctionComponent<PlayerProps> = function Player({
   const play = () => setIsPlaying(true);
   const pause = () => setIsPlaying(false);
 
-  const startLabel = format(new Date(datesSorted[0]), "P");
-  const finishLabel = format(new Date(datesSorted[datesSorted.length - 1]), "P");
+  const startLabel = format(new Date(datesSorted[0]), 'P');
+  const finishLabel = format(new Date(datesSorted[datesSorted.length - 1]), 'P');
 
   return (
     <Grid container alignItems="center" spacing={3}>
@@ -43,7 +43,7 @@ const Player: FunctionComponent<PlayerProps> = function Player({
         )}
       </Grid>
       <Grid item>{startLabel}</Grid>
-      <Grid item style={{ display: "flex", flexGrow: 1, alignItems: "center" }}>
+      <Grid item style={{ display: 'flex', flexGrow: 1, alignItems: 'center' }}>
         <Slider
           min={0}
           max={datesSorted.length - 1}

@@ -5,6 +5,6 @@ export interface ObservationRecord {
   max?: Array<number | null>;
 }
 
-export type ObservationType = "water-level" | "water-temperature" | "water-ph";
+export type ObservationType = 'water-level' | 'water-temperature' | 'water-ph';
 
-export type AppLang = "nb" | "en";
+export type AppLang = 'nb' | 'en';

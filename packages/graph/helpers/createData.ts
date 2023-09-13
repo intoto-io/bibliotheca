@@ -1,8 +1,8 @@
-import { addDays, startOfDay, subDays, subHours, subMinutes, isAfter, addHours } from "date-fns";
+import { addDays, startOfDay, subDays, subHours, subMinutes, isAfter, addHours } from 'date-fns';
 
-import { DataPoint } from "../types";
+import { DataPoint } from '../types';
 
-import { createDataPoint, createMissingDataPoint, createPredictedDataPoint } from "./dataPoint";
+import { createDataPoint, createMissingDataPoint, createPredictedDataPoint } from './dataPoint';
 
 function randNumber(min = 0, max = 20, decimals = 0): number {
   const outcome = Math.random() * (max - min) + min;

@@ -1,6 +1,6 @@
-import { DataPoint } from "../types";
+import { DataPoint } from '../types';
 
-import { isMissing, isPredicted } from "./dataPoint";
+import { isMissing, isPredicted } from './dataPoint';
 
 function separateSeriesData(data: DataPoint[], condition: (datum: DataPoint) => boolean): DataPoint[][] {
   return data.reduce((acc: DataPoint[][], item) => {

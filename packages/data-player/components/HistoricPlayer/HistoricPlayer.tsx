@@ -1,21 +1,21 @@
-import { FunctionComponent, useMemo, useState } from "react";
-import { Graph, GraphSeries } from "@intoto-dev/bibliotheca-graph";
-import Profile from "@intoto-dev/bibliotheca-profile";
+import { FunctionComponent, useMemo, useState } from 'react';
+import { Graph, GraphSeries } from '@intoto-dev/bibliotheca-graph';
+import Profile from '@intoto-dev/bibliotheca-profile';
 
-import Player from "../Player/Player";
+import Player from '../Player/Player';
 
-import mock from "./mocks/singleLine.json";
-import profile from "./mocks/amotbrua_profile.json";
+import mock from './mocks/singleLine.json';
+import profile from './mocks/amotbrua_profile.json';
 
 const HistoricPlayer: FunctionComponent = function HistoricPlayer() {
   const [waterLevel, setWaterLevel] = useState<number | null>(null);
-  const [now, setNow] = useState<string>("2021-04-21T16:00:00.000Z");
+  const [now, setNow] = useState<string>('2021-04-21T16:00:00.000Z');
 
   const series: GraphSeries[] = [
     {
-      key: "singleLine",
-      name: "Water Level",
-      color: "#0000ff",
+      key: 'singleLine',
+      name: 'Water Level',
+      color: '#0000ff',
       data: mock,
     },
   ];

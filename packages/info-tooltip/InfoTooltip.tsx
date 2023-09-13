@@ -1,8 +1,8 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent } from 'react';
 
-import Tooltip from "@mui/material/Tooltip";
-import IconButton from "@mui/material/IconButton";
-import InfoIcon from "@mui/icons-material/Info";
+import Tooltip from '@mui/material/Tooltip';
+import IconButton from '@mui/material/IconButton';
+import InfoIcon from '@mui/icons-material/Info';
 
 export interface InfoTooltipProps {
   text: string;
@@ -15,9 +15,9 @@ const InfoTooltip: FunctionComponent<InfoTooltipProps> = function InfoTooltip({ 
         <InfoIcon
           fontSize="small"
           sx={{
-            color: "text.disabled",
+            color: 'text.disabled',
             fontSize: 16,
-            marginTop: "-2px",
+            marginTop: '-2px',
           }}
         />
       </IconButton>

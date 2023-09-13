@@ -1,11 +1,11 @@
-import { DataPoint } from "../types";
+import { DataPoint } from '../types';
 
-export function valueInThreshold(value: number, threshold: number, thresholdDirection = "up"): boolean {
-  return (value > threshold && thresholdDirection === "up") || (value < threshold && thresholdDirection === "down");
+export function valueInThreshold(value: number, threshold: number, thresholdDirection = 'up'): boolean {
+  return (value > threshold && thresholdDirection === 'up') || (value < threshold && thresholdDirection === 'down');
 }
 
-function hasValueInThreshold(data: DataPoint[], threshold?: number, thresholdDirection = "up"): boolean {
-  if (typeof threshold === "undefined") {
+function hasValueInThreshold(data: DataPoint[], threshold?: number, thresholdDirection = 'up'): boolean {
+  if (typeof threshold === 'undefined') {
     return false;
   }
 

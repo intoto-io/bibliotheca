@@ -1,4 +1,4 @@
-import { ProfilePoint } from "../types";
+import { ProfilePoint } from '../types';
 
 function calcWaterVolume(profile: ProfilePoint[], intersections?: [ProfilePoint, ProfilePoint]): number {
   if (intersections) {

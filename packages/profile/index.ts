@@ -1,6 +1,6 @@
-import Profile from "./Profile";
+import Profile from './Profile';
 
-import { RiverProfile, ProfilePoint } from "./types";
+import { RiverProfile, ProfilePoint } from './types';
 
 export default Profile;
 

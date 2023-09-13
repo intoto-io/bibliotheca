@@ -1,14 +1,14 @@
-import { FunctionComponent } from "react";
-import { ScaleLinear, ScaleTime } from "d3-scale";
+import { FunctionComponent } from 'react';
+import { ScaleLinear, ScaleTime } from 'd3-scale';
 
-import { RectClipPath } from "@visx/clip-path";
+import { RectClipPath } from '@visx/clip-path';
 
-import colorByIndex from "../helpers/colorByIndex";
-import { separateSeriesDataOnMissingAndPredicted } from "../helpers/separateSeriesData";
-import hasValueInThreshold from "../helpers/hasValueInThreshold";
-import { GraphSeries } from "../types";
+import colorByIndex from '../helpers/colorByIndex';
+import { separateSeriesDataOnMissingAndPredicted } from '../helpers/separateSeriesData';
+import hasValueInThreshold from '../helpers/hasValueInThreshold';
+import { GraphSeries } from '../types';
 
-import SplitLine from "./SplitLine";
+import SplitLine from './SplitLine';
 
 interface LineProps {
   keyRef: string;
@@ -44,27 +44,27 @@ const Line: FunctionComponent<LineProps> = function Line({
 
   return (
     <>
-      {typeof plot.threshold !== "undefined" && hasThresholdData && (
+      {typeof plot.threshold !== 'undefined' && hasThresholdData && (
         <g clipPath={`url(#${plot.key}_threshold_clip)`}>
           <RectClipPath
             id={`${plot.key}_threshold_clip`}
             width="100%"
-            height={plot.thresholdDirection === "up" ? cutOff - padding : "100%"}
-            y={plot.thresholdDirection === "up" ? 0 : cutOff - padding}
+            height={plot.thresholdDirection === 'up' ? cutOff - padding : '100%'}
+            y={plot.thresholdDirection === 'up' ? 0 : cutOff - padding}
           />
           <SplitLine
             // eslint-disable-next-line react/jsx-props-no-spreading
             {...splitLineProps}
             key={`${keyRef}_threshold`}
             keyRef={`${keyRef}_threshold`}
-            color={plot.thresholdColor || "#000"}
+            color={plot.thresholdColor || '#000'}
             area={plot.area}
           />
         </g>
       )}
       <g
         clipPath={
-          (typeof plot.threshold !== "undefined" && hasThresholdData) || navigation
+          (typeof plot.threshold !== 'undefined' && hasThresholdData) || navigation
             ? `url(#${plot.key}_main_clip)`
             : undefined
         }
@@ -72,8 +72,8 @@ const Line: FunctionComponent<LineProps> = function Line({
         <RectClipPath
           id={`${plot.key}_main_clip`}
           width="100%"
-          height={plot.thresholdDirection === "up" ? "100%" : cutOff + padding}
-          y={plot.thresholdDirection === "up" ? cutOff + padding : 0}
+          height={plot.thresholdDirection === 'up' ? '100%' : cutOff + padding}
+          y={plot.thresholdDirection === 'up' ? cutOff + padding : 0}
         />
         <SplitLine
           // eslint-disable-next-line react/jsx-props-no-spreading

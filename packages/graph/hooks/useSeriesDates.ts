@@ -1,8 +1,8 @@
-import { compareDesc } from "date-fns";
+import { compareDesc } from 'date-fns';
 
-import { isUniqueDate } from "@intoto-dev/utils-is-unique-date";
+import { isUniqueDate } from '@intoto-dev/utils-is-unique-date';
 
-import { GraphSeries } from "../types";
+import { GraphSeries } from '../types';
 
 function useSeriesDates(series: GraphSeries[]): Date[] {
   return series

@@ -1,3 +1,3 @@
-import isUniqueDate from "./isUniqueDate";
+import isUniqueDate from './isUniqueDate';
 
 export { isUniqueDate };

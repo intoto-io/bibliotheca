@@ -1,15 +1,15 @@
-import { ThresholdDirection } from "../types";
+import { ThresholdDirection } from '../types';
 
-import { valueInThreshold } from "./hasValueInThreshold";
+import { valueInThreshold } from './hasValueInThreshold';
 
 function colorByThreshold(
   value: number,
   threshold?: number,
-  thresholdColor = "#000",
-  thresholdDirection: ThresholdDirection = "up",
-  fallback = "#000",
+  thresholdColor = '#000',
+  thresholdDirection: ThresholdDirection = 'up',
+  fallback = '#000',
 ): string {
-  if (typeof threshold !== "undefined") {
+  if (typeof threshold !== 'undefined') {
     if (valueInThreshold(value, threshold, thresholdDirection)) {
       return thresholdColor;
     }

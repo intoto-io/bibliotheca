@@ -1,14 +1,14 @@
-import { FunctionComponent, Fragment } from "react";
-import { compareAsc } from "date-fns";
-import { ScaleLinear, ScaleTime } from "d3-scale";
+import { FunctionComponent, Fragment } from 'react';
+import { compareAsc } from 'date-fns';
+import { ScaleLinear, ScaleTime } from 'd3-scale';
 
-import { Bar, Line as LineVisx } from "@visx/shape";
-import { Group } from "@visx/group";
+import { Bar, Line as LineVisx } from '@visx/shape';
+import { Group } from '@visx/group';
 
-import { isMissing, isPredicted } from "../helpers/dataPoint";
-import colorByIndex from "../helpers/colorByIndex";
-import colorByThreshold from "../helpers/colorByThreshold";
-import { GraphSeries } from "../types";
+import { isMissing, isPredicted } from '../helpers/dataPoint';
+import colorByIndex from '../helpers/colorByIndex';
+import colorByThreshold from '../helpers/colorByThreshold';
+import { GraphSeries } from '../types';
 
 interface BarProps {
   plot: GraphSeries;
@@ -62,7 +62,7 @@ const Bars: FunctionComponent<BarProps> = function Bars({
             return 0.6;
           }
 
-          if (typeof plot.barOpacity !== "undefined") {
+          if (typeof plot.barOpacity !== 'undefined') {
             return plot.barOpacity;
           }
 

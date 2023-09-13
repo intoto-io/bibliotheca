@@ -4,7 +4,7 @@ export interface ProfilePoint {
 }
 
 export interface PolygonShape {
-  type: "polygon";
+  type: 'polygon';
   fill?: string;
   strokeWidth?: number;
   strokeColor?: string;
@@ -12,17 +12,17 @@ export interface PolygonShape {
 }
 
 export interface PathShape {
-  type: "path";
+  type: 'path';
   fill?: string;
   strokeWidth?: number;
   strokeColor?: string;
   points: ProfilePoint[];
 }
 
-export type IconType = "harbour";
+export type IconType = 'harbour';
 
 export interface IconShape {
-  type: "icon";
+  type: 'icon';
   name: IconType;
   fill?: string;
   points: ProfilePoint[];
@@ -31,7 +31,7 @@ export interface IconShape {
 }
 
 export interface BridgeShape {
-  type: "bridge";
+  type: 'bridge';
   fill?: string;
   bridgeHeight: number;
   bridgeBottom: number;

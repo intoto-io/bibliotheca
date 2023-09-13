@@ -1,4 +1,4 @@
-import { ProfilePoint } from "../types";
+import { ProfilePoint } from '../types';
 
 function calculateIntersection(p1: ProfilePoint, p2: ProfilePoint, p3: ProfilePoint, p4: ProfilePoint): ProfilePoint {
   // down part of intersection point formula
@@ -7,7 +7,7 @@ function calculateIntersection(p1: ProfilePoint, p2: ProfilePoint, p3: ProfilePo
   const d = d1 - d2;
 
   if (d === 0) {
-    throw new Error("Number of intersection points is zero or infinity.");
+    throw new Error('Number of intersection points is zero or infinity.');
   }
 
   // upper part of intersection point formula
@@ -27,7 +27,7 @@ function calculateIntersection(p1: ProfilePoint, p2: ProfilePoint, p3: ProfilePo
 }
 
 function findIntersections(profile: ProfilePoint[], y?: number): [ProfilePoint, ProfilePoint] | undefined {
-  if (typeof y === "undefined") {
+  if (typeof y === 'undefined') {
     return undefined;
   }
 

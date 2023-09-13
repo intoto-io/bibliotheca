@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef } from 'react';
 
 export interface ProfileSVGProps {
   svgString?: string;
@@ -16,16 +16,16 @@ function ProfileSVG(props: ProfileSVGProps) {
   const changeWaterHeight = (height: number) => {
     const factoredHeight = height * waterHeightFactor;
 
-    const rect = divRef.current?.querySelector("#Water rect");
+    const rect = divRef.current?.querySelector('#Water rect');
 
-    const yPos = rect?.getAttribute("y");
-    const curHeight = rect?.getAttribute("height");
+    const yPos = rect?.getAttribute('y');
+    const curHeight = rect?.getAttribute('height');
 
-    const heightDiff = factoredHeight - parseInt(curHeight || "0", 10);
-    const newYPos = parseInt(yPos || "0", 10) - heightDiff;
+    const heightDiff = factoredHeight - parseInt(curHeight || '0', 10);
+    const newYPos = parseInt(yPos || '0', 10) - heightDiff;
 
-    rect?.setAttribute("y", newYPos.toString());
-    rect?.setAttribute("height", factoredHeight.toString());
+    rect?.setAttribute('y', newYPos.toString());
+    rect?.setAttribute('height', factoredHeight.toString());
   };
 
   const setupLayers = (image: SVGElement | undefined) => {
@@ -38,7 +38,7 @@ function ProfileSVG(props: ProfileSVGProps) {
 
   const parseSVG = (str: string): SVGElement | undefined => {
     const parser = new DOMParser();
-    const doc = parser.parseFromString(str, "image/svg+xml")?.documentElement;
+    const doc = parser.parseFromString(str, 'image/svg+xml')?.documentElement;
 
     if (doc instanceof SVGElement) {
       return doc;
@@ -75,14 +75,14 @@ function ProfileSVG(props: ProfileSVGProps) {
   return (
     <div
       style={{
-        position: "relative",
+        position: 'relative',
       }}
     >
       <div
         style={{
-          position: "absolute",
-          height: "100%",
-          width: "100%",
+          position: 'absolute',
+          height: '100%',
+          width: '100%',
         }}
         ref={divRef}
       />

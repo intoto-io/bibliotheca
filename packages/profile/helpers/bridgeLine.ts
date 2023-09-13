@@ -1,4 +1,4 @@
-import { ProfilePoint } from "../types";
+import { ProfilePoint } from '../types';
 
 function bridgeLine(
   xScaleProfile: (x: number) => number,
@@ -8,7 +8,7 @@ function bridgeLine(
   bridgeLevel: number | undefined,
   bridgeHeight: number,
 ): [[number, number][], [number, number][]] {
-  if (typeof bridgeLevel === "undefined") {
+  if (typeof bridgeLevel === 'undefined') {
     return [[], []];
   }
 

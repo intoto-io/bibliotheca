@@ -1,27 +1,27 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { Story, Meta } from "@storybook/react/types-6-0";
+import { Story, Meta } from '@storybook/react/types-6-0';
 
-import Graph, { GraphProps } from "./Graph";
-import { generateDays, randomLineData } from "./helpers/createData";
-import { createMeanLevelLine } from "./helpers";
+import Graph, { GraphProps } from './Graph';
+import { generateDays, randomLineData } from './helpers/createData';
+import { createMeanLevelLine } from './helpers';
 
-import singleLineData from "./mocks/singleLine.json";
-import singleLineCutOffData from "./mocks/singleLineCutOff.json";
-import singleLineTimezonedData from "./mocks/singleLineTimezoned.json";
-import sixtyDayHourly from "./mocks/sixtyDayHourly.json";
-import extremeJumps from "./mocks/extremeJumps.json";
-import highRes from "./mocks/highRes.json";
-import oneDayPredictionHourly from "./mocks/oneDayPredictionHourly.json";
+import singleLineData from './mocks/singleLine.json';
+import singleLineCutOffData from './mocks/singleLineCutOff.json';
+import singleLineTimezonedData from './mocks/singleLineTimezoned.json';
+import sixtyDayHourly from './mocks/sixtyDayHourly.json';
+import extremeJumps from './mocks/extremeJumps.json';
+import highRes from './mocks/highRes.json';
+import oneDayPredictionHourly from './mocks/oneDayPredictionHourly.json';
 
-import { DataPoint, GraphSeries, SeriesType } from "./types";
+import { DataPoint, GraphSeries, SeriesType } from './types';
 
 const dates = generateDays(14);
 const lineWithGapsData = randomLineData(dates, true);
 
-const barType: SeriesType = "bar";
+const barType: SeriesType = 'bar';
 
 export default {
-  title: "Components/Graph",
+  title: 'Components/Graph',
   component: Graph,
 } as Meta;
 
@@ -31,12 +31,12 @@ const Template: Story<GraphProps> = function Template(args) {
       {...args}
       t={(key: string) => {
         switch (key) {
-          case "updated_at":
-            return "Updated {time} ago";
-          case "missing":
-            return "Missing data";
+          case 'updated_at':
+            return 'Updated {time} ago';
+          case 'missing':
+            return 'Missing data';
           default:
-            return "Prediction";
+            return 'Prediction';
         }
       }}
     />
@@ -45,8 +45,8 @@ const Template: Story<GraphProps> = function Template(args) {
 
 const singleLine: GraphSeries[] = [
   {
-    key: "singleLine",
-    name: "Single Line",
+    key: 'singleLine',
+    name: 'Single Line',
     data: singleLineData,
   },
 ];
@@ -66,7 +66,7 @@ SingleLineCustomHeight.args = {
 
 const singleLineWithGaps = [
   {
-    key: "singleLineWithGaps",
+    key: 'singleLineWithGaps',
     data: lineWithGapsData,
   },
 ];
@@ -79,11 +79,11 @@ SingleLineWithGaps.args = {
 
 const twoLines: GraphSeries[] = [
   {
-    key: "lineOne",
+    key: 'lineOne',
     data: lineWithGapsData,
   },
   {
-    key: "lineTwo",
+    key: 'lineTwo',
     data: randomLineData(dates, true),
   },
 ];
@@ -96,13 +96,13 @@ TwoLines.args = {
 
 const twoLinesCustomColors: GraphSeries[] = [
   {
-    key: "lineOne",
-    color: "#000",
+    key: 'lineOne',
+    color: '#000',
     data: randomLineData(dates, true),
   },
   {
-    key: "lineTwo",
-    color: "hotpink",
+    key: 'lineTwo',
+    color: 'hotpink',
     data: randomLineData(dates, true),
   },
 ];
@@ -115,14 +115,14 @@ TwoLinesCustomColors.args = {
 
 const oneLineThresholdColors: GraphSeries[] = [
   {
-    key: "lineOneThreshold",
-    name: "Temperature",
+    key: 'lineOneThreshold',
+    name: 'Temperature',
     data: randomLineData(dates, true, -10, 10),
-    unit: "°C",
+    unit: '°C',
     labelWidth: 46,
     threshold: 0,
-    thresholdColor: "#00f",
-    thresholdDirection: "down",
+    thresholdColor: '#00f',
+    thresholdDirection: 'down',
   },
 ];
 
@@ -135,10 +135,10 @@ OneLineThresholdColors.args = {
 
 const oneLineStartOffset: GraphSeries[] = [
   {
-    key: "lineOneThreshold",
-    name: "Temperature",
+    key: 'lineOneThreshold',
+    name: 'Temperature',
     data: randomLineData(dates, true, -10, 10, 3),
-    unit: "°C",
+    unit: '°C',
     labelWidth: 46,
   },
 ];
@@ -152,23 +152,23 @@ OneLineStartOffset.args = {
 
 const oneLineOneBarThresholdColors: GraphSeries[] = [
   {
-    key: "lineOne",
-    name: "Temperature",
+    key: 'lineOne',
+    name: 'Temperature',
     data: randomLineData(dates, true, -10, 10),
-    unit: "°C",
+    unit: '°C',
     labelWidth: 46,
     threshold: 0,
-    thresholdColor: "#00f",
-    thresholdDirection: "down",
+    thresholdColor: '#00f',
+    thresholdDirection: 'down',
   },
   {
-    key: "wind",
-    name: "Wind",
-    type: "bar",
-    color: "#0a0",
-    unit: " m/s",
+    key: 'wind',
+    name: 'Wind',
+    type: 'bar',
+    color: '#0a0',
+    unit: ' m/s',
     labelWidth: 46,
-    thresholdColor: "#00ab9d",
+    thresholdColor: '#00ab9d',
     threshold: 5,
     data: randomLineData(dates, true, 0, 10),
   },
@@ -183,22 +183,22 @@ OneLineOneBarThresholdColors.args = {
 
 const threeLinesWithLabels: GraphSeries[] = [
   {
-    key: "temperature",
-    name: "Temperature",
-    unit: "°C",
+    key: 'temperature',
+    name: 'Temperature',
+    unit: '°C',
     labelWidth: 46,
     data: randomLineData(dates, false, -10, 15),
   },
   {
-    key: "wind",
-    name: "Wind",
-    unit: " m/s",
+    key: 'wind',
+    name: 'Wind',
+    unit: ' m/s',
     labelWidth: 46,
     data: randomLineData(dates, false, 0, 10),
   },
   {
-    key: "moose",
-    name: "Moose around",
+    key: 'moose',
+    name: 'Moose around',
     data: randomLineData(dates, false, 0, 100),
   },
 ];
@@ -211,16 +211,16 @@ ThreeLinesWithLabels.args = {
 
 const twoLinesWithLabels: GraphSeries[] = [
   {
-    key: "temperature",
-    name: "Temperature",
-    unit: "°C",
+    key: 'temperature',
+    name: 'Temperature',
+    unit: '°C',
     labelWidth: 46,
     data: randomLineData(dates, true, -10, 15),
   },
   {
-    key: "wind",
-    name: "Wind",
-    unit: " m/s",
+    key: 'wind',
+    name: 'Wind',
+    unit: ' m/s',
     labelWidth: 46,
     data: randomLineData(dates, true, 0, 10),
   },
@@ -250,18 +250,18 @@ TwoLinesWithLabelsAndTooltipsStacked.args = {
 
 const oneLineOneBarWithLabels: GraphSeries[] = [
   {
-    key: "temperature",
-    name: "Temperature",
-    unit: "°C",
+    key: 'temperature',
+    name: 'Temperature',
+    unit: '°C',
     labelWidth: 46,
     formatValue: (value: number) => value.toFixed(2),
     data: randomLineData(dates, false, -10, 15),
   },
   {
-    key: "precipitation",
-    name: "Precipitation",
+    key: 'precipitation',
+    name: 'Precipitation',
     type: barType,
-    unit: " mm",
+    unit: ' mm',
     labelWidth: 46,
     axisHeight: 60,
     data: randomLineData(dates, true, 0, 10),
@@ -287,14 +287,14 @@ const twoWeekAndFuture = generateDays(14, 4, 4);
 
 const singleLineFuture: GraphSeries[] = [
   {
-    key: "singleLineFuture",
-    name: "Temperature",
-    unit: "°C",
+    key: 'singleLineFuture',
+    name: 'Temperature',
+    unit: '°C',
     labelWidth: 46,
     data: randomLineData(twoWeekAndFuture, false, -10, 5),
     threshold: 0,
-    thresholdColor: "#00f",
-    thresholdDirection: "down",
+    thresholdColor: '#00f',
+    thresholdDirection: 'down',
   },
 ];
 
@@ -307,15 +307,15 @@ SingleLineWithFutureDataAndThreshold.args = {
 
 const barFuture: GraphSeries[] = [
   {
-    key: "barFuture",
-    name: "Temperature",
-    unit: "°C",
+    key: 'barFuture',
+    name: 'Temperature',
+    unit: '°C',
     labelWidth: 46,
     data: randomLineData(twoWeekAndFuture, false, -10, 5),
     threshold: 0,
-    thresholdColor: "#00f",
-    thresholdDirection: "down",
-    type: "bar",
+    thresholdColor: '#00f',
+    thresholdDirection: 'down',
+    type: 'bar',
   },
 ];
 
@@ -328,12 +328,12 @@ BarChartWithFutureDataAndThreshold.args = {
 
 const sixtyDaysHourlyGraph: GraphSeries[] = [
   {
-    key: "barFuture",
-    name: "Temperature",
-    unit: "°C",
+    key: 'barFuture',
+    name: 'Temperature',
+    unit: '°C',
     labelWidth: 46,
     data: sixtyDayHourly,
-    type: "line",
+    type: 'line',
   },
 ];
 
@@ -347,11 +347,11 @@ NavigationGraph.args = {
 
 const extremeJumpsGraph: GraphSeries[] = [
   {
-    key: "barExtreme",
-    name: "Water level",
-    color: "#00F",
+    key: 'barExtreme',
+    name: 'Water level',
+    color: '#00F',
     data: extremeJumps,
-    type: "line",
+    type: 'line',
   },
 ];
 
@@ -369,20 +369,20 @@ SimpleLineWithNowLabel.args = {
   tooltip: true,
   lines: [
     {
-      name: "now",
-      date: new Date("2021-04-21T12:00:00.000Z"),
-      color: "#000",
+      name: 'now',
+      date: new Date('2021-04-21T12:00:00.000Z'),
+      color: '#000',
       opacity: 0.5,
       width: 1,
-      dasharray: "8,8",
+      dasharray: '8,8',
     },
   ],
 };
 
 const singleLineTimezoned: GraphSeries[] = [
   {
-    key: "singleLineTimezoned",
-    name: "Single Line +08:00",
+    key: 'singleLineTimezoned',
+    name: 'Single Line +08:00',
     data: singleLineTimezonedData,
   },
 ];
@@ -394,12 +394,12 @@ SimpleLineTimezoned.args = {
   tooltip: true,
   lines: [
     {
-      name: "now",
-      date: new Date("2021-04-21T12:00:00.000Z"),
-      color: "#000",
+      name: 'now',
+      date: new Date('2021-04-21T12:00:00.000Z'),
+      color: '#000',
       opacity: 0.5,
       width: 1,
-      dasharray: "8,8",
+      dasharray: '8,8',
     },
   ],
 };
@@ -408,8 +408,8 @@ export const SingleLineCutOff = Template.bind({});
 
 const singleLineCutOff: GraphSeries[] = [
   {
-    key: "singleLineCutOff",
-    name: "Single Line Cut Off",
+    key: 'singleLineCutOff',
+    name: 'Single Line Cut Off',
     data: singleLineCutOffData,
   },
 ];
@@ -423,14 +423,14 @@ export const SimpleLineWithMeanLevel = Template.bind({});
 SimpleLineWithMeanLevel.args = {
   series: singleLine,
   tooltip: true,
-  lines: [createMeanLevelLine("Mean-level", 8.5)],
+  lines: [createMeanLevelLine('Mean-level', 8.5)],
 };
 
 const singleLineWithArea: GraphSeries[] = [
   {
-    key: "singleLineWithArea",
-    name: "Water level (mASL)",
-    color: "#1442b7",
+    key: 'singleLineWithArea',
+    name: 'Water level (mASL)',
+    color: '#1442b7',
     area: true,
     bottom: 0,
     data: lineWithGapsData,
@@ -443,17 +443,17 @@ export const SimpleLineWithAreaMeanCurrent = Template.bind({});
 SimpleLineWithAreaMeanCurrent.args = {
   series: singleLineWithArea,
   tooltip: true,
-  lines: [createMeanLevelLine("Mean-level", 8.5)],
+  lines: [createMeanLevelLine('Mean-level', 8.5)],
   showCurrent: true,
 };
 
 const highResGraph: GraphSeries[] = [
   {
-    key: "barHighRes",
-    name: "Water level",
-    color: "#00F",
+    key: 'barHighRes',
+    name: 'Water level',
+    color: '#00F',
     data: highRes,
-    type: "line",
+    type: 'line',
     formatValue: (value: number) => value.toFixed(2),
   },
 ];
@@ -467,9 +467,9 @@ HighResGraph.args = {
 
 const twentyfourPrediction: GraphSeries[] = [
   {
-    key: "twentyfourPrediction",
-    name: "Water level (mASL)",
-    color: "#1442b7",
+    key: 'twentyfourPrediction',
+    name: 'Water level (mASL)',
+    color: '#1442b7',
     area: true,
     bottom: 0,
     data: oneDayPredictionHourly,
@@ -479,7 +479,7 @@ const twentyfourPrediction: GraphSeries[] = [
         return null;
       }
 
-      return <div style={{ marginTop: 12 }}>{`1h: ${point.change["1h"]} cm, 24h: ${point.change["24h"]} cm`}</div>;
+      return <div style={{ marginTop: 12 }}>{`1h: ${point.change['1h']} cm, 24h: ${point.change['24h']} cm`}</div>;
     },
   },
 ];
@@ -490,14 +490,14 @@ TwentyFourHoursAndPrediction.args = {
   series: twentyfourPrediction,
   tooltip: true,
   lines: [
-    createMeanLevelLine("Mean-level", 8.5),
+    createMeanLevelLine('Mean-level', 8.5),
     {
-      name: "now",
-      date: new Date("2021-05-19T10:00:00.000Z"),
-      color: "#000",
+      name: 'now',
+      date: new Date('2021-05-19T10:00:00.000Z'),
+      color: '#000',
       opacity: 0.5,
       width: 1,
-      dasharray: "8,8",
+      dasharray: '8,8',
     },
   ],
   showCurrent: true,

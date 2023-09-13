@@ -1,45 +1,45 @@
-import { FunctionComponent, useCallback, useEffect, useMemo, useRef } from "react";
-import { line, area, curveBasis, curveLinearClosed } from "d3-shape";
-import { scaleLinear } from "d3-scale";
-import { axisRight } from "d3-axis";
-import { select } from "d3-selection";
-import styled from "@mui/styled-engine";
+import { FunctionComponent, useCallback, useEffect, useMemo, useRef } from 'react';
+import { line, area, curveBasis, curveLinearClosed } from 'd3-shape';
+import { scaleLinear } from 'd3-scale';
+import { axisRight } from 'd3-axis';
+import { select } from 'd3-selection';
+import styled from '@mui/styled-engine';
 
-import findIntersections from "./helpers/findIntersections";
-import calcWaterVolume from "./helpers/calcWaterVolume";
+import findIntersections from './helpers/findIntersections';
+import calcWaterVolume from './helpers/calcWaterVolume';
 
-import Icon from "./shapes/Icon";
-import Bridge from "./shapes/Bridge";
+import Icon from './shapes/Icon';
+import Bridge from './shapes/Bridge';
 
-import { LevelIndicator, ProfilePoint, ProfileShape, RiverProfile } from "./types";
+import { LevelIndicator, ProfilePoint, ProfileShape, RiverProfile } from './types';
 
-const StyledSection = styled("section")({
-  display: "flex",
-  flexDirection: "column",
+const StyledSection = styled('section')({
+  display: 'flex',
+  flexDirection: 'column',
 });
 
-const Legend = styled("ul")({
-  display: "flex",
-  justifyContent: "flex-end",
-  listStyle: "none",
+const Legend = styled('ul')({
+  display: 'flex',
+  justifyContent: 'flex-end',
+  listStyle: 'none',
   margin: 0,
   padding: 0,
 });
 
-const LegendItem = styled("li")({
-  display: "flex",
-  alignItems: "center",
-  marginLeft: "1rem",
+const LegendItem = styled('li')({
+  display: 'flex',
+  alignItems: 'center',
+  marginLeft: '1rem',
   fontSize: 12,
 });
 
-const LegendIconMean = styled("span")({
-  display: "block",
+const LegendIconMean = styled('span')({
+  display: 'block',
   width: 0,
   height: 0,
-  borderTop: "6px solid transparent",
-  borderBottom: "6px solid transparent",
-  borderRight: "6px solid red",
+  borderTop: '6px solid transparent',
+  borderBottom: '6px solid transparent',
+  borderRight: '6px solid red',
   marginRight: 5,
 });
 
@@ -88,27 +88,27 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
   width = 600,
   groundStroke = false,
   groundGradient = true,
-  strokeColor = "black",
+  strokeColor = 'black',
   strokeWidth = 1.5,
-  waterStrokeColor = "#0633ff",
-  waterFill = "#99ccff",
-  groundFill = "#b4967d",
-  mslLabel = "MASL",
+  waterStrokeColor = '#0633ff',
+  waterFill = '#99ccff',
+  groundFill = '#b4967d',
+  mslLabel = 'MASL',
   formatDistance = (d: number) => `${(d / 100).toFixed(1)} m`,
   meanLevel,
-  meanLabel = "Mean-level",
-  meanStrokeColor = "#b7323f",
+  meanLabel = 'Mean-level',
+  meanStrokeColor = '#b7323f',
   levels: inputLevels = [],
 }) {
   const levels =
-    typeof meanLevel !== "undefined"
+    typeof meanLevel !== 'undefined'
       ? [
           {
             name: meanLabel,
             y: meanLevel,
             strokeColor: meanStrokeColor,
             strokeWidth: 1.5,
-            strokeDasharray: "5,3",
+            strokeDasharray: '5,3',
           },
           ...inputLevels,
         ]
@@ -119,7 +119,7 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
       return minWaterLevel || 0;
     }
 
-    if (typeof minWaterLevel === "undefined") {
+    if (typeof minWaterLevel === 'undefined') {
       return Math.min(...shapes.map((s) => Math.min(...s.points.map((p) => p.y))));
     }
 
@@ -139,7 +139,7 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
 
   const maxMSL = Math.max(
     ...profile.map((p) => p.y),
-    ...shapes.map((s) => s.points.map((p) => p.y + (s.type === "bridge" ? s.bridgeHeight : 0))).flat(),
+    ...shapes.map((s) => s.points.map((p) => p.y + (s.type === 'bridge' ? s.bridgeHeight : 0))).flat(),
   );
   const minMSL = Math.min(...profile.map((p) => p.y));
 
@@ -205,16 +205,16 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
   const bankPath = bankLine(profile);
 
   const waterLeft =
-    typeof currentWaterLevel !== "undefined" && currentWaterLevel > maxWaterXL.y
+    typeof currentWaterLevel !== 'undefined' && currentWaterLevel > maxWaterXL.y
       ? xScaleProfile(profile[0].x)
       : xScaleProfile(maxWaterXL.x);
   const waterRight =
-    typeof currentWaterLevel !== "undefined" && currentWaterLevel > maxWaterXR.y
+    typeof currentWaterLevel !== 'undefined' && currentWaterLevel > maxWaterXR.y
       ? xScaleProfile(profile[profile.length - 1].x)
       : xScaleProfile(maxWaterXR.x);
 
   const waterRulerPath = line()(
-    typeof currentWaterLevel !== "undefined"
+    typeof currentWaterLevel !== 'undefined'
       ? [
           [xScaleWater(xScaleWater.domain()[0]), -(rulerTickSize / 2)],
           [xScaleWater(xScaleWater.domain()[0]), rulerTickSize / 2],
@@ -263,7 +263,7 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
 
   const hasLegend = levels.filter((l) => !l.hideLine).length > 0;
 
-  const hasInfiniteWater = typeof riverProfile === "undefined" && typeof minWaterLevel === "undefined";
+  const hasInfiniteWater = typeof riverProfile === 'undefined' && typeof minWaterLevel === 'undefined';
 
   return (
     <StyledSection style={{ width: totalWidth }}>
@@ -291,7 +291,7 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
             <mask id="ground-mask" maskUnits="userSpaceOnUse">
               <rect x="0" y="0" width={totalWidth} height={totalHeight} fill="white" />
               <path
-                d={[bankPath].join(" ")}
+                d={[bankPath].join(' ')}
                 fill="black"
                 stroke="white"
                 strokeWidth={strokeWidth}
@@ -300,15 +300,15 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
             </mask>
             <path
               id="ground"
-              d={[bankPath].join(" ")}
+              d={[bankPath].join(' ')}
               stroke={strokeColor}
               strokeWidth={groundStroke ? strokeWidth : 0}
-              fill={groundGradient ? "url(#ground-gradient)" : groundFill}
+              fill={groundGradient ? 'url(#ground-gradient)' : groundFill}
               vectorEffect="non-scaling-stroke"
             />
           </>
         )}
-        {typeof currentWaterLevel !== "undefined" && (
+        {typeof currentWaterLevel !== 'undefined' && (
           <>
             <defs>
               <linearGradient id="water-gradient" x1="0" x2="0" y1="0" y2="1">
@@ -318,7 +318,7 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
             </defs>
             <path
               id="water"
-              d={[waterAreaPath].join(" ")}
+              d={[waterAreaPath].join(' ')}
               stroke={waterStrokeColor}
               strokeWidth={hasInfiniteWater ? 0 : strokeWidth}
               fill="url(#water-gradient)"
@@ -339,56 +339,56 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
           </>
         )}
         {shapes.map((shape) => {
-          if (shape.type === "polygon") {
+          if (shape.type === 'polygon') {
             return (
               <polygon
-                fill={shape.fill || "#ccc"}
-                stroke={shape.strokeColor || "#000"}
-                strokeWidth={typeof shape.strokeWidth === "undefined" ? 1.5 : shape.strokeWidth}
-                key={`polygon_${shape.points.map((p) => `[${p.x},${p.y}]`).join("")}`}
+                fill={shape.fill || '#ccc'}
+                stroke={shape.strokeColor || '#000'}
+                strokeWidth={typeof shape.strokeWidth === 'undefined' ? 1.5 : shape.strokeWidth}
+                key={`polygon_${shape.points.map((p) => `[${p.x},${p.y}]`).join('')}`}
                 vectorEffect="non-scaling-stroke"
-                points={shape.points.map((p) => `${profilePointX(p)},${profilePointY(p)}`).join(" ")}
+                points={shape.points.map((p) => `${profilePointX(p)},${profilePointY(p)}`).join(' ')}
               />
             );
           }
 
-          if (shape.type === "path") {
+          if (shape.type === 'path') {
             return (
               <path
-                fill={shape.fill || "transparent"}
-                stroke={shape.strokeColor || "#000"}
-                strokeWidth={typeof shape.strokeWidth === "undefined" ? 1.5 : shape.strokeWidth}
-                key={`path_${shape.points.map((p) => `[${p.x},${p.y}]`).join("")}`}
+                fill={shape.fill || 'transparent'}
+                stroke={shape.strokeColor || '#000'}
+                strokeWidth={typeof shape.strokeWidth === 'undefined' ? 1.5 : shape.strokeWidth}
+                key={`path_${shape.points.map((p) => `[${p.x},${p.y}]`).join('')}`}
                 vectorEffect="non-scaling-stroke"
                 d={shape.points
                   .map((p, i) => {
-                    const action = i === 0 ? "M" : "L";
+                    const action = i === 0 ? 'M' : 'L';
                     return `${action}${profilePointX(p)},${profilePointY(p)}`;
                   })
-                  .join(" ")}
+                  .join(' ')}
               />
             );
           }
 
-          if (shape.type === "icon") {
+          if (shape.type === 'icon') {
             return (
               <Icon
                 name={shape.name}
                 width={xScale(shape.width)}
                 height={xScale(shape.height)}
                 transform={`translate(${xScale(shape.points[0].x)}, ${yScaleProfile(shape.points[0].y)})`}
-                key={`path_icon_${shape.name}_${shape.points.map((p) => `[${p.x},${p.y}]`).join("")}`}
+                key={`path_icon_${shape.name}_${shape.points.map((p) => `[${p.x},${p.y}]`).join('')}`}
               />
             );
           }
 
-          if (shape.type === "bridge") {
+          if (shape.type === 'bridge') {
             return (
               <Bridge
                 shape={shape}
                 xScale={xScaleProfile}
                 yScale={yScaleProfile}
-                key={`path_bridge_${shape.points.map((p) => `[${p.x},${p.y}]`).join("")}`}
+                key={`path_bridge_${shape.points.map((p) => `[${p.x},${p.y}]`).join('')}`}
               />
             );
           }
@@ -396,31 +396,31 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
           return null;
         })}
         {levels.map((l) => {
-          const fillColor = l.strokeColor || "#000";
+          const fillColor = l.strokeColor || '#000';
 
           const indicatorPoints = [
             [xScaleProfile(riverWidth) + axisOffset, yScaleProfile(l.y)],
             [xScaleProfile(riverWidth) + axisOffset + indicatorSize, yScaleProfile(l.y) + indicatorSize],
             [xScaleProfile(riverWidth) + axisOffset + indicatorSize, yScaleProfile(l.y) - indicatorSize],
           ]
-            .map((p) => p.join(","))
-            .join(" ");
+            .map((p) => p.join(','))
+            .join(' ');
 
           const heightTopPoints = [
             [xScaleProfile(riverWidth / 2) - indicatorSize, yScaleProfile(l.y) + indicatorSize],
             [xScaleProfile(riverWidth / 2), yScaleProfile(l.y)],
             [xScaleProfile(riverWidth / 2) + indicatorSize, yScaleProfile(l.y) + indicatorSize],
           ]
-            .map((p) => p.join(","))
-            .join(" ");
+            .map((p) => p.join(','))
+            .join(' ');
 
           const heightBottomPoints = [
             [xScaleProfile(riverWidth / 2) - indicatorSize, yScaleProfile(currentWaterLevel || 0) - indicatorSize],
             [xScaleProfile(riverWidth / 2), yScaleProfile(currentWaterLevel || 0)],
             [xScaleProfile(riverWidth / 2) + indicatorSize, yScaleProfile(currentWaterLevel || 0) - indicatorSize],
           ]
-            .map((p) => p.join(","))
-            .join(" ");
+            .map((p) => p.join(','))
+            .join(' ');
 
           return (
             <g key={l.name}>
@@ -433,14 +433,14 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
                     y1={yScaleProfile(l.y)}
                     y2={yScaleProfile(l.y)}
                     stroke={fillColor}
-                    strokeWidth={typeof l.strokeWidth !== "undefined" ? l.strokeWidth : 1.5}
-                    strokeDasharray={l.strokeDasharray || "5,3"}
+                    strokeWidth={typeof l.strokeWidth !== 'undefined' ? l.strokeWidth : 1.5}
+                    strokeDasharray={l.strokeDasharray || '5,3'}
                     vectorEffect="non-scaling-stroke"
                   />
                   <polygon id={`level_indicator_${l.name}`} fill={fillColor} points={indicatorPoints} />
                 </>
               )}
-              {l.showRelationToWaterLevel && typeof currentWaterLevel !== "undefined" && (
+              {l.showRelationToWaterLevel && typeof currentWaterLevel !== 'undefined' && (
                 <>
                   <polygon fill={fillColor} points={heightTopPoints} />
                   <line
@@ -480,16 +480,16 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
             <g ref={axisRightRef} transform={`translate(${renderWidth + padding + axisOffset}, ${padding})`} />
             <text
               style={{
-                textAnchor: "middle",
-                transform: "rotate(-90deg)",
-                fontSize: "12px",
+                textAnchor: 'middle',
+                transform: 'rotate(-90deg)',
+                fontSize: '12px',
               }}
               y={36 + axisOffset + padding + renderWidth}
               x={(yScale(minMSL) / 2) * -1}
             >
               {mslLabel}
             </text>
-            {typeof currentWaterLevel !== "undefined" && intersections && (
+            {typeof currentWaterLevel !== 'undefined' && intersections && (
               <g
                 transform={`translate(
                   ${xScaleProfile(intersections[0].x)}, 
@@ -498,7 +498,7 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
               >
                 <path
                   id="water-ruler"
-                  d={[waterRulerPath].join(" ")}
+                  d={[waterRulerPath].join(' ')}
                   stroke={strokeColor}
                   strokeWidth={strokeWidth}
                   fillOpacity={0}
@@ -510,7 +510,7 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
                   fontSize={12}
                 >
                   {formatDistance((intersections[1].x - intersections[0].x) * 100)}
-                  {" / "}
+                  {' / '}
                   {formatDistance(waterVolume * 100)}
                   <tspan dy="-4" fontSize={9}>
                     2
@@ -529,7 +529,7 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
               <LegendItem key={l.name}>
                 <LegendIconMean
                   style={{
-                    borderRightColor: l.strokeColor || "#000",
+                    borderRightColor: l.strokeColor || '#000',
                     borderRightWidth: indicatorSize,
                     borderTopWidth: indicatorSize,
                     borderBottomWidth: indicatorSize,
