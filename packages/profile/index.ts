@@ -1,7 +1,8 @@
 import Profile from './Profile';
+import ProfileSVG from './ProfileSVG';
 
 import { RiverProfile, ProfilePoint } from './types';
 
-export default Profile;
-
 export type { RiverProfile, ProfilePoint };
+
+export { Profile, ProfileSVG };

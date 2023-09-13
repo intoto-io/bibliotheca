@@ -1,6 +1,6 @@
 import { FunctionComponent, useMemo, useState } from 'react';
 import { Graph, GraphSeries } from '@intoto-dev/bibliotheca-graph';
-import Profile from '@intoto-dev/bibliotheca-profile';
+import { Profile } from '@intoto-dev/bibliotheca-profile';
 
 import Player from '../Player/Player';
 

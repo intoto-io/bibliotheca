@@ -19,7 +19,7 @@ npm i @intoto-dev/bibliotheca-profile
 The only required property to pass is `profile` which contains a list of points to draw the cross-section. Each item is an object consisting of `x` and `msl`, `x` being the x-coordinate in meters and `msl` being meters above sea level.
 
 ```tsx
-import Profile from '@intoto-dev/bibliotheca-profile';
+import { Profile } from '@intoto-dev/bibliotheca-profile';
 
 const profile = [
   { x: 0, y: 10 },
@@ -42,7 +42,7 @@ const profile = [
 ### React Component: `<Profile />`
 
 ```ts
-import Profile from '@intoto-dev/bibliotheca-profile';
+import { Profile } from '@intoto-dev/bibliotheca-profile';
 ```
 
 | Property          | Description                                                                                    | Type                              | Default        |
