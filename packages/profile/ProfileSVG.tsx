@@ -1,4 +1,4 @@
-import { FunctionComponent, useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from 'react';
 
 export interface ProfileSVGProps {
   svgString?: string;
@@ -8,86 +8,88 @@ export interface ProfileSVGProps {
   waterHeightFactor: number;
 }
 
-export const ProfileSVG: FunctionComponent<ProfileSVGProps> = function (
-  props: ProfileSVGProps
-) {
+function ProfileSVG(props: ProfileSVGProps) {
   const divRef = useRef<HTMLDivElement>(null);
 
-  const setupLayers = (svg: SVGElement | undefined) => {
-    if (!svg) return;
-
-    divRef.current?.appendChild(svg);
-
-    changeWaterHeight(props.waterHeight);
-  };
+  const {
+    svgString, svgPath, svg, waterHeight, waterHeightFactor,
+  } = props;
 
   const changeWaterHeight = (height: number) => {
-    const factoredHeight = height * props.waterHeightFactor;
+    const factoredHeight = height * waterHeightFactor;
 
-    const rect = divRef.current?.querySelector("#Water rect");
+    const rect = divRef.current?.querySelector('#Water rect');
 
-    const yPos = rect?.getAttribute("y");
-    const curHeight = rect?.getAttribute("height");
+    const yPos = rect?.getAttribute('y');
+    const curHeight = rect?.getAttribute('height');
 
-    const heightDiff = factoredHeight - parseInt(curHeight || "0");
-    const newYPos = parseInt(yPos || "0") - heightDiff;
+    const heightDiff = factoredHeight - parseInt(curHeight || '0', 10);
+    const newYPos = parseInt(yPos || '0', 10) - heightDiff;
 
-    rect?.setAttribute("y", newYPos.toString());
-    rect?.setAttribute("height", factoredHeight.toString());
+    rect?.setAttribute('y', newYPos.toString());
+    rect?.setAttribute('height', factoredHeight.toString());
+  };
+
+  const setupLayers = (image: SVGElement | undefined) => {
+    if (!image) return;
+
+    divRef.current?.appendChild(image);
+
+    changeWaterHeight(waterHeight);
   };
 
   const parseSVG = (str: string): SVGElement | undefined => {
     const parser = new DOMParser();
-    const doc = parser.parseFromString(str, "image/svg+xml")?.documentElement;
+    const doc = parser.parseFromString(str, 'image/svg+xml')?.documentElement;
 
     if (doc instanceof SVGElement) {
       return doc;
     }
+
+    return undefined;
   };
 
-  const handleSVGPath = (svgPath: string) => {
-    fetch(svgPath)
+  const handleSVGPath = (_svgPath: string) => {
+    fetch(_svgPath)
       .then((response) => response.text())
       .then((data) => parseSVG(data))
-      .then((svg) => setupLayers(svg));
+      .then((_svg) => setupLayers(_svg));
   };
 
   useEffect(() => {
-    try {
-      if (props.svg) {
-        setupLayers(props.svg);
-        return;
-      }
+    if (svg) {
+      setupLayers(svg);
 
-      if (props.svgString) {
-        const svg = parseSVG(props.svgString);
-        setupLayers(svg);
-        return;
-      }
+      return;
+    }
 
-      if (props.svgPath) {
-        handleSVGPath(props.svgPath);
-        return;
-      }
-    } catch {}
+    if (svgString) {
+      setupLayers(parseSVG(svgString));
+
+      return;
+    }
+
+    if (svgPath) {
+      handleSVGPath(svgPath);
+    }
   }, []);
 
   return (
     <div
       style={{
-        position: "relative",
+        position: 'relative',
       }}
     >
       <div
         style={{
-          position: "absolute",
-          height: "100%",
-          width: "100%",
+          position: 'absolute',
+          height: '100%',
+          width: '100%',
         }}
         ref={divRef}
       />
     </div>
   );
-};
+}
 
 export default ProfileSVG;
