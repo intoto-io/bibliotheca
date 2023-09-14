@@ -55,6 +55,10 @@ function ProfileSVG(props: ProfileSVGProps) {
   };
 
   useEffect(() => {
+    changeWaterHeight(waterHeight);
+  }, [waterHeight]);
+
+  useEffect(() => {
     if (svg) {
       setupLayers(svg);
 
