@@ -21,8 +21,8 @@ function ProfileSVG(props: ProfileSVGProps) {
     const yPos = rect?.getAttribute('y');
     const curHeight = rect?.getAttribute('height');
 
-    const heightDiff = factoredHeight - parseInt(curHeight || '0', 10);
-    const newYPos = parseInt(yPos || '0', 10) - heightDiff;
+    const heightDiff = factoredHeight - parseFloat(curHeight || '0');
+    const newYPos = parseFloat(yPos || '0') - heightDiff;
 
     rect?.setAttribute('y', newYPos.toString());
     rect?.setAttribute('height', factoredHeight.toString());
