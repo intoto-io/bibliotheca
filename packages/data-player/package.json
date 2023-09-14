@@ -1,6 +1,6 @@
 {
   "name": "@intoto-dev/data-player",
-  "version": "0.23.8",
+  "version": "0.23.9",
   "description": "Allows to play data using a timeline",
   "main": "lib/index.js",
   "module": "lib/index.js",
@@ -26,8 +26,8 @@
     "access": "public"
   },
   "dependencies": {
-    "@intoto-dev/bibliotheca-graph": "^0.23.8",
-    "@intoto-dev/bibliotheca-profile": "^0.23.8",
+    "@intoto-dev/bibliotheca-graph": "^0.23.9",
+    "@intoto-dev/bibliotheca-profile": "^0.23.9",
     "@mui/icons-material": "^5.2.5",
     "@mui/material": "^5.2.5",
     "@types/react": "^18.0.8",

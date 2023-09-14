@@ -75,17 +75,10 @@ function ProfileSVG(props: ProfileSVGProps) {
   return (
     <div
       style={{
-        position: 'relative',
+        width: '100%',
       }}
     >
-      <div
-        style={{
-          position: 'absolute',
-          height: '100%',
-          width: '100%',
-        }}
-        ref={divRef}
-      />
+      <div ref={divRef} />
     </div>
   );
 }
