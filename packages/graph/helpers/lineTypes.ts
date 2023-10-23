@@ -8,9 +8,9 @@ export function isVerticalLine(line: GraphLine): line is VerticalLine {
   return 'date' in line;
 }
 
-export function createMeanLevelLine(name: string, value: number): HorizontalLine {
+export function createMeanLevelLine(name: string, value: number, color = '#b7323f'): HorizontalLine {
   return {
-    color: '#b7323f',
+    color,
     indicator: true,
     opacity: 1,
     width: 1.5,

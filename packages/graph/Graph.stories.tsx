@@ -447,6 +447,19 @@ SimpleLineWithAreaMeanCurrent.args = {
   showCurrent: true,
 };
 
+export const SimpleLineWithAreaAndMultipleLines = Template.bind({});
+
+SimpleLineWithAreaAndMultipleLines.args = {
+  series: singleLineWithArea,
+  tooltip: true,
+  lines: [
+    createMeanLevelLine('Yellow-level', 8.5, '#ff3162'),
+    createMeanLevelLine('Red-level', 6.5, '#ff6464'),
+    createMeanLevelLine('Green-level', 4.5, '#91c483'),
+  ],
+  showCurrent: true,
+};
+
 const highResGraph: GraphSeries[] = [
   {
     key: 'barHighRes',
