@@ -63,13 +63,17 @@ WithWaterLevelAndAxis.args = {
   axis: true,
 };
 
-export const WithWaterLevelAndBridgeAndAxisAndMean = Template.bind({});
+export const WithWaterLevelAndBridgeAndAxisAndCustomLines = Template.bind({});
 
-WithWaterLevelAndBridgeAndAxisAndMean.args = {
+WithWaterLevelAndBridgeAndAxisAndCustomLines.args = {
   profile: amotbrua,
   currentWaterLevel: 4.2,
   axis: true,
-  meanLevel: 3.415,
+  customLines: [
+    { label: 'Red-level', value: 8.5, color: '#ff6464' },
+    { label: 'Yellow-level', value: 6.5, color: '#ffe162' },
+    { label: 'Green-level', value: 4.5, color: '#91c483' },
+  ],
   shapes: [
     {
       type: 'bridge',
@@ -91,7 +95,7 @@ WithoutProfile.args = {
   currentWaterLevel: 4.2,
   minWaterLevel: 1.4,
   axis: true,
-  meanLevel: 3.415,
+  customLines: [{ label: 'Mean-level', value: 3.415 }],
 };
 
 export const WithoutProfileWithWalls = Template.bind({});
@@ -100,7 +104,7 @@ WithoutProfileWithWalls.args = {
   currentWaterLevel: 4.2,
   minWaterLevel: 1.4,
   axis: true,
-  meanLevel: 3.415,
+  customLines: [{ label: 'Mean-level', value: 3.415 }],
   riverWidth: 20,
   shapes: [
     {
@@ -131,7 +135,7 @@ export const WithoutProfileWithSlopes = Template.bind({});
 WithoutProfileWithSlopes.args = {
   currentWaterLevel: 4.2,
   axis: true,
-  meanLevel: 3.415,
+  customLines: [{ label: 'Mean-level', value: 3.415 }],
   riverWidth: 20,
   shapes: [
     {
@@ -162,7 +166,7 @@ export const NoBottomWithWall = Template.bind({});
 NoBottomWithWall.args = {
   currentWaterLevel: 4.2,
   axis: true,
-  meanLevel: 3.415,
+  customLines: [{ label: 'Mean-level', value: 3.415 }],
   riverWidth: 20,
   shapes: [
     {
@@ -192,7 +196,7 @@ export const Harbour = Template.bind({});
 Harbour.args = {
   currentWaterLevel: 4.2,
   axis: true,
-  meanLevel: 3.415,
+  customLines: [{ label: 'Mean-level', value: 3.415 }],
   levels: [
     {
       name: 'Harbour docks',

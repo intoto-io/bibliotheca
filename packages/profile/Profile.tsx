@@ -11,7 +11,7 @@ import calcWaterVolume from './helpers/calcWaterVolume';
 import Icon from './shapes/Icon';
 import Bridge from './shapes/Bridge';
 
-import { LevelIndicator, ProfilePoint, ProfileShape, RiverProfile } from './types';
+import { LevelIndicator, CustomLine, ProfilePoint, ProfileShape, RiverProfile } from './types';
 
 const StyledSection = styled('section')({
   display: 'flex',
@@ -61,9 +61,7 @@ export interface ProfileProps {
   mslLabel?: string;
   formatDistance?: (d: number) => string;
   levels?: LevelIndicator[];
-  meanLevel?: number;
-  meanStrokeColor?: string;
-  meanLabel?: string;
+  customLines?: CustomLine[];
 }
 
 const findHighestPoint = (items: RiverProfile): ProfilePoint =>
@@ -95,24 +93,14 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
   groundFill = '#b4967d',
   mslLabel = 'MASL',
   formatDistance = (d: number) => `${(d / 100).toFixed(1)} m`,
-  meanLevel,
-  meanLabel = 'Mean-level',
-  meanStrokeColor = '#b7323f',
+  customLines = [],
   levels: inputLevels = [],
 }) {
-  const levels =
-    typeof meanLevel !== 'undefined'
-      ? [
-          {
-            name: meanLabel,
-            y: meanLevel,
-            strokeColor: meanStrokeColor,
-            strokeWidth: 1.5,
-            strokeDasharray: '5,3',
-          },
-          ...inputLevels,
-        ]
-      : inputLevels;
+  const levels = [...inputLevels];
+
+  if (customLines.length > 0) {
+    levels.push(...customLines.map((l) => ({ name: l.label, y: l.value, strokeColor: l.color })));
+  }
 
   const minWater = useMemo(() => {
     if (riverProfile) {

@@ -43,6 +43,12 @@ export interface BridgeShape {
 
 export type ProfileShape = PolygonShape | PathShape | IconShape | BridgeShape;
 
+export interface CustomLine {
+  label: string;
+  value: number;
+  color?: string;
+}
+
 export interface LevelIndicator {
   name: string;
   y: number;
