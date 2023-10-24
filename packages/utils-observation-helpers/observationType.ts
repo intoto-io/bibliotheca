@@ -15,6 +15,12 @@ export function observationTypeToSeriesProperties(type: ObservationType, locale:
         color: '#2196f3',
         formatValue: (value) => formatObservationValue(value, locale),
       };
+    case 'water-flow':
+      return {
+        ...defaultProperties,
+        color: '#2196f3',
+        formatValue: (value) => formatObservationValue(value, locale, 1),
+      };
     case 'water-temperature':
       return {
         ...defaultProperties,
