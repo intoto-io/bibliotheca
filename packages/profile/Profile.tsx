@@ -48,8 +48,11 @@ export interface ProfileProps {
   riverWidth?: number;
   shapes?: ProfileShape[];
   minWaterLevel?: number;
+  maxWaterLevel?: number;
   currentWaterLevel?: number;
   axis?: boolean;
+  legend?: boolean;
+  bottomless?: boolean;
   width?: number;
   groundStroke?: boolean;
   groundGradient?: boolean;
@@ -80,9 +83,12 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
   profile: riverProfile,
   riverWidth: rw = 10,
   minWaterLevel,
+  maxWaterLevel,
   shapes = [],
   currentWaterLevel,
   axis = false,
+  legend = true,
+  bottomless = false,
   width = 600,
   groundStroke = false,
   groundGradient = true,
@@ -126,9 +132,11 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
   const axisRightRef = useRef<SVGGElement>(null);
 
   const maxMSL = Math.max(
+    maxWaterLevel || 0,
     ...profile.map((p) => p.y),
     ...shapes.map((s) => s.points.map((p) => p.y + (s.type === 'bridge' ? s.bridgeHeight : 0))).flat(),
   );
+
   const minMSL = Math.min(...profile.map((p) => p.y));
 
   const maxWaterXL = useMemo(() => findHighestPoint(profile.slice(0, Math.round(profile.length / 2))), [profile]);
@@ -249,9 +257,13 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
   const indicatorSize = 5;
   const axisOffset = 5;
 
-  const hasLegend = levels.filter((l) => !l.hideLine).length > 0;
+  const hasLegend = legend ? levels.filter((l) => !l.hideLine).length > 0 : false;
 
-  const hasInfiniteWater = typeof riverProfile === 'undefined' && typeof minWaterLevel === 'undefined';
+  const hasInfiniteWater = (typeof riverProfile === 'undefined' && typeof minWaterLevel === 'undefined') || bottomless;
+
+  const referenceLevels = levels.filter((l) => l.showRelationToWaterLevel);
+  const numReferenceLevels = referenceLevels.length;
+  const referenceLevelSpacing = riverWidth / (numReferenceLevels + 1);
 
   return (
     <StyledSection style={{ width: totalWidth }}>
@@ -386,6 +398,12 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
         {levels.map((l) => {
           const fillColor = l.strokeColor || '#000';
 
+          const levelPositionX = l.showRelationToWaterLevel
+            ? referenceLevelSpacing * (referenceLevels.indexOf(l) + 1)
+            : riverWidth / 2;
+
+          const isAbove = typeof currentWaterLevel !== 'undefined' && currentWaterLevel >= l.y;
+
           const indicatorPoints = [
             [xScaleProfile(riverWidth) + axisOffset, yScaleProfile(l.y)],
             [xScaleProfile(riverWidth) + axisOffset + indicatorSize, yScaleProfile(l.y) + indicatorSize],
@@ -393,22 +411,55 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
           ]
             .map((p) => p.join(','))
             .join(' ');
+          const heightTopPoints = isAbove
+            ? [
+                [xScaleProfile(levelPositionX) - indicatorSize, yScaleProfile(currentWaterLevel) + indicatorSize],
+                [xScaleProfile(levelPositionX), yScaleProfile(currentWaterLevel)],
+                [xScaleProfile(levelPositionX) + indicatorSize, yScaleProfile(currentWaterLevel) + indicatorSize],
+              ]
+                .map((p) => p.join(','))
+                .join(' ')
+            : [
+                [xScaleProfile(levelPositionX) - indicatorSize, yScaleProfile(l.y) + indicatorSize],
+                [xScaleProfile(levelPositionX), yScaleProfile(l.y)],
+                [xScaleProfile(levelPositionX) + indicatorSize, yScaleProfile(l.y) + indicatorSize],
+              ]
+                .map((p) => p.join(','))
+                .join(' ');
 
-          const heightTopPoints = [
-            [xScaleProfile(riverWidth / 2) - indicatorSize, yScaleProfile(l.y) + indicatorSize],
-            [xScaleProfile(riverWidth / 2), yScaleProfile(l.y)],
-            [xScaleProfile(riverWidth / 2) + indicatorSize, yScaleProfile(l.y) + indicatorSize],
-          ]
-            .map((p) => p.join(','))
-            .join(' ');
+          const heightBottomPoints = isAbove
+            ? [
+                [xScaleProfile(levelPositionX) - indicatorSize, yScaleProfile(l.y) - indicatorSize],
+                [xScaleProfile(levelPositionX), yScaleProfile(l.y)],
+                [xScaleProfile(levelPositionX) + indicatorSize, yScaleProfile(l.y) - indicatorSize],
+              ]
+                .map((p) => p.join(','))
+                .join(' ')
+            : [
+                [xScaleProfile(levelPositionX) - indicatorSize, yScaleProfile(currentWaterLevel || 0) - indicatorSize],
+                [xScaleProfile(levelPositionX), yScaleProfile(currentWaterLevel || 0)],
+                [xScaleProfile(levelPositionX) + indicatorSize, yScaleProfile(currentWaterLevel || 0) - indicatorSize],
+              ]
+                .map((p) => p.join(','))
+                .join(' ');
 
-          const heightBottomPoints = [
-            [xScaleProfile(riverWidth / 2) - indicatorSize, yScaleProfile(currentWaterLevel || 0) - indicatorSize],
-            [xScaleProfile(riverWidth / 2), yScaleProfile(currentWaterLevel || 0)],
-            [xScaleProfile(riverWidth / 2) + indicatorSize, yScaleProfile(currentWaterLevel || 0) - indicatorSize],
-          ]
-            .map((p) => p.join(','))
-            .join(' ');
+          const isCloseToReference =
+            typeof currentWaterLevel !== 'undefined' && Math.abs(currentWaterLevel - l.y) <= 0.5;
+
+          const textYPosition = (() => {
+            if (isAbove) {
+              return isCloseToReference ? yScaleProfile(l.y) - 15 : yScaleProfile(l.y + (currentWaterLevel - l.y) / 2);
+            }
+
+            return isCloseToReference
+              ? yScaleProfile(l.y) + 18
+              : yScaleProfile(l.y - Math.abs(l.y - (currentWaterLevel || 0)) / 2) + 5;
+          })();
+
+          const topLineY1 = isAbove ? yScaleProfile(currentWaterLevel) : yScaleProfile(l.y) + 2;
+          const topLineY2 = textYPosition - 15;
+          const bottomLineY1 = isAbove ? yScaleProfile(l.y) - 2 : yScaleProfile(currentWaterLevel || 0);
+          const bottomLineY2 = textYPosition + 5;
 
           return (
             <g key={l.name}>
@@ -431,31 +482,30 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
               {l.showRelationToWaterLevel && typeof currentWaterLevel !== 'undefined' && (
                 <>
                   <polygon fill={fillColor} points={heightTopPoints} />
-                  <line
-                    stroke={fillColor}
-                    x1={xScaleProfile(riverWidth / 2)}
-                    x2={xScaleProfile(riverWidth / 2)}
-                    y1={yScaleProfile(l.y) + 2}
-                    y2={yScaleProfile(l.y - Math.abs(l.y - currentWaterLevel) / 2) - 8}
-                    strokeWidth={1.5}
-                    vectorEffect="non-scaling-stroke"
-                  />
+                  {!isCloseToReference && (
+                    <line
+                      stroke={fillColor}
+                      x1={xScaleProfile(levelPositionX)}
+                      x2={xScaleProfile(levelPositionX)}
+                      y1={topLineY1}
+                      y2={topLineY2}
+                      strokeWidth={1.5}
+                      vectorEffect="non-scaling-stroke"
+                    />
+                  )}
                   <polygon fill={fillColor} points={heightBottomPoints} />
-                  <line
-                    stroke={fillColor}
-                    x1={xScaleProfile(riverWidth / 2)}
-                    x2={xScaleProfile(riverWidth / 2)}
-                    y1={yScaleProfile(currentWaterLevel) - 2}
-                    y2={yScaleProfile(l.y - Math.abs(l.y - currentWaterLevel) / 2) + 8}
-                    strokeWidth={1.5}
-                    vectorEffect="non-scaling-stroke"
-                  />
-                  <text
-                    className="text"
-                    textAnchor="middle"
-                    x={xScaleProfile(riverWidth / 2)}
-                    y={yScaleProfile(l.y - Math.abs(l.y - currentWaterLevel) / 2) + 5}
-                  >
+                  {!isCloseToReference && (
+                    <line
+                      stroke={fillColor}
+                      x1={xScaleProfile(levelPositionX)}
+                      x2={xScaleProfile(levelPositionX)}
+                      y1={bottomLineY1}
+                      y2={bottomLineY2}
+                      strokeWidth={1.5}
+                      vectorEffect="non-scaling-stroke"
+                    />
+                  )}
+                  <text className="text" textAnchor="middle" x={xScaleProfile(levelPositionX)} y={textYPosition}>
                     {formatDistance(Math.abs(l.y - currentWaterLevel) * 100)}
                   </text>
                 </>
