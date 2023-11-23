@@ -239,3 +239,88 @@ Harbour.args = {
     },
   ],
 };
+
+export const ReferencePoint = Template.bind({});
+
+ReferencePoint.args = {
+  minWaterLevel: 1,
+  maxWaterLevel: 4,
+  currentWaterLevel: 2,
+  legend: false,
+  bottomless: true,
+  levels: [
+    {
+      name: 'Reference line #1',
+      y: 3.5,
+      strokeColor: '#000',
+      showRelationToWaterLevel: true,
+    },
+  ],
+};
+
+export const MultipleReferencePoints = Template.bind({});
+
+MultipleReferencePoints.args = {
+  minWaterLevel: 1,
+  maxWaterLevel: 8,
+  currentWaterLevel: 2,
+  axis: true,
+  legend: false,
+  bottomless: true,
+  levels: [
+    {
+      name: 'Reference line #1',
+      y: 3.5,
+      strokeColor: 'green',
+      showRelationToWaterLevel: true,
+    },
+    {
+      name: 'Reference line #2',
+      y: 5.5,
+      strokeColor: 'orange',
+      showRelationToWaterLevel: true,
+    },
+    {
+      name: 'Reference line #3',
+      y: 7.5,
+      strokeColor: 'red',
+      showRelationToWaterLevel: true,
+    },
+  ],
+};
+
+export const MixedReferencePoints = Template.bind({});
+
+MixedReferencePoints.args = {
+  minWaterLevel: 1,
+  maxWaterLevel: 8,
+  currentWaterLevel: 5,
+  legend: false,
+  bottomless: true,
+  levels: [
+    {
+      name: 'Reference line #1',
+      y: 3.5,
+      strokeColor: 'green',
+      showRelationToWaterLevel: true,
+    },
+    {
+      name: 'Reference line #2',
+      y: 5,
+      strokeColor: 'black',
+      showRelationToWaterLevel: true,
+    },
+    {
+      name: 'Reference line #3',
+      y: 5.5,
+      strokeColor: 'orange',
+      showRelationToWaterLevel: true,
+    },
+    {
+      name: 'Reference line #4',
+      y: 7.5,
+      strokeColor: 'red',
+      showRelationToWaterLevel: true,
+    },
+  ],
+};
