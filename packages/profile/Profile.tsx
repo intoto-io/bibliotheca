@@ -1,4 +1,4 @@
-import { FunctionComponent, useCallback, useEffect, useMemo, useRef } from 'react';
+import { FunctionComponent, useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import { line, area, curveBasis, curveLinearClosed } from 'd3-shape';
 import { scaleLinear } from 'd3-scale';
 import { axisRight } from 'd3-axis';
@@ -89,7 +89,7 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
   axis = false,
   legend = true,
   bottomless = false,
-  width = 600,
+  width,
   groundStroke = false,
   groundGradient = true,
   strokeColor = 'black',
@@ -102,6 +102,27 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
   customLines = [],
   levels: inputLevels = [],
 }) {
+  const containerRef = useRef(null);
+  const [containerWidth, setContainerWidth] = useState(width);
+
+  useEffect(() => {
+    const handleResize = (entries: ResizeObserverEntry[]) => {
+      const { width: observedWidth } = entries[0].contentRect;
+      const newWidth = width !== undefined ? Math.min(observedWidth, width) : observedWidth;
+      setContainerWidth(newWidth);
+    };
+
+    const resizeObserver = new ResizeObserver(handleResize);
+    if (containerRef.current) {
+      resizeObserver.observe(containerRef.current);
+    }
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [width]);
+
+  const totalWidth = containerWidth ?? 0;
   const levels = [...inputLevels];
 
   if (customLines.length > 0) {
@@ -155,7 +176,6 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
   const rulerOffset = 8;
   const rulerTickSize = 8;
 
-  const totalWidth = width;
   const renderWidth = totalWidth - padding * 2 - offsetRight;
   const renderHeight = (riverAndBridgeHeight / riverWidth) * renderWidth;
   const totalHeight = renderHeight + bankPadding + padding * 2 + offsetBottom;
@@ -266,7 +286,7 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
   const referenceLevelSpacing = riverWidth / (numReferenceLevels + 1);
 
   return (
-    <StyledSection style={{ width: totalWidth }}>
+    <StyledSection ref={containerRef} style={{ width: '100%' }}>
       <svg width={totalWidth} height={totalHeight} viewBox={`0 0 ${totalWidth} ${totalHeight}`}>
         <style>
           {`
@@ -402,7 +422,8 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
             ? referenceLevelSpacing * (referenceLevels.indexOf(l) + 1)
             : riverWidth / 2;
 
-          const isAbove = typeof currentWaterLevel !== 'undefined' && currentWaterLevel >= l.y;
+          const isAbove = typeof currentWaterLevel !== 'undefined' && l.y <= currentWaterLevel;
+          const isBelow = typeof currentWaterLevel !== 'undefined' && l.y > currentWaterLevel;
 
           const indicatorPoints = [
             [xScaleProfile(riverWidth) + axisOffset, yScaleProfile(l.y)],
@@ -444,11 +465,15 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
                 .join(' ');
 
           const isCloseToReference =
-            typeof currentWaterLevel !== 'undefined' && Math.abs(currentWaterLevel - l.y) <= 0.5;
+            typeof currentWaterLevel !== 'undefined' && Math.abs(currentWaterLevel - l.y) <= 0.2;
 
           const textYPosition = (() => {
             if (isAbove) {
-              return isCloseToReference ? yScaleProfile(l.y) - 15 : yScaleProfile(l.y + (currentWaterLevel - l.y) / 2);
+              return isCloseToReference ? yScaleProfile(l.y) - 40 : yScaleProfile(l.y + (currentWaterLevel - l.y) / 2);
+            }
+
+            if (isBelow) {
+              return isCloseToReference ? yScaleProfile(l.y) + 40 : yScaleProfile(l.y - (l.y - currentWaterLevel) / 2);
             }
 
             return isCloseToReference
@@ -457,9 +482,9 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
           })();
 
           const topLineY1 = isAbove ? yScaleProfile(currentWaterLevel) : yScaleProfile(l.y) + 2;
-          const topLineY2 = textYPosition - 15;
+          const topLineY2 = textYPosition - 10;
           const bottomLineY1 = isAbove ? yScaleProfile(l.y) - 2 : yScaleProfile(currentWaterLevel || 0);
-          const bottomLineY2 = textYPosition + 5;
+          const bottomLineY2 = textYPosition + 10;
 
           return (
             <g key={l.name}>
@@ -505,7 +530,7 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
                       vectorEffect="non-scaling-stroke"
                     />
                   )}
-                  <text className="text" textAnchor="middle" x={xScaleProfile(levelPositionX)} y={textYPosition}>
+                  <text className="text" textAnchor="middle" x={xScaleProfile(levelPositionX)} y={textYPosition + 5}>
                     {formatDistance(Math.abs(l.y - currentWaterLevel) * 100)}
                   </text>
                 </>

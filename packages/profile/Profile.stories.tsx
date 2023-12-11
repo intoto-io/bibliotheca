@@ -21,6 +21,14 @@ Default.args = {
   profile: amotbrua,
 };
 
+export const FixedWidth = Template.bind({});
+
+FixedWidth.args = {
+  profile: amotbrua,
+  currentWaterLevel: 7,
+  width: 600,
+};
+
 export const WithWaterLevel = Template.bind({});
 
 WithWaterLevel.args = {
@@ -320,6 +328,48 @@ MixedReferencePoints.args = {
       name: 'Reference line #4',
       y: 7.5,
       strokeColor: 'red',
+      showRelationToWaterLevel: true,
+    },
+  ],
+};
+
+export const ReferecnePointsClose = Template.bind({});
+
+ReferecnePointsClose.args = {
+  minWaterLevel: 1,
+  maxWaterLevel: 4,
+  currentWaterLevel: 2,
+  legend: false,
+  bottomless: true,
+  levels: [
+    {
+      name: 'Reference line #1',
+      y: 1.7,
+      strokeColor: 'green',
+      showRelationToWaterLevel: true,
+    },
+    {
+      name: 'Reference line #1',
+      y: 1.9,
+      strokeColor: 'green',
+      showRelationToWaterLevel: true,
+    },
+    {
+      name: 'Reference line #2',
+      y: 2,
+      strokeColor: 'black',
+      showRelationToWaterLevel: true,
+    },
+    {
+      name: 'Reference line #3',
+      y: 2.1,
+      strokeColor: 'orange',
+      showRelationToWaterLevel: true,
+    },
+    {
+      name: 'Reference line #4',
+      y: 2.3,
+      strokeColor: 'purple',
       showRelationToWaterLevel: true,
     },
   ],
