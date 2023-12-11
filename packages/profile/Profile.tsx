@@ -54,6 +54,7 @@ export interface ProfileProps {
   legend?: boolean;
   bottomless?: boolean;
   width?: number;
+  height?: number;
   groundStroke?: boolean;
   groundGradient?: boolean;
   groundFill?: string;
@@ -90,6 +91,7 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
   legend = true,
   bottomless = false,
   width,
+  height,
   groundStroke = false,
   groundGradient = true,
   strokeColor = 'black',
@@ -122,7 +124,6 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
     };
   }, [width]);
 
-  const totalWidth = containerWidth ?? 0;
   const levels = [...inputLevels];
 
   if (customLines.length > 0) {
@@ -176,8 +177,9 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
   const rulerOffset = 8;
   const rulerTickSize = 8;
 
+  const totalWidth = containerWidth ?? 0;
   const renderWidth = totalWidth - padding * 2 - offsetRight;
-  const renderHeight = (riverAndBridgeHeight / riverWidth) * renderWidth;
+  const renderHeight = height !== undefined ? height : (riverAndBridgeHeight / riverWidth) * renderWidth;
   const totalHeight = renderHeight + bankPadding + padding * 2 + offsetBottom;
 
   const xScale = useMemo(
@@ -286,7 +288,7 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
   const referenceLevelSpacing = riverWidth / (numReferenceLevels + 1);
 
   return (
-    <StyledSection ref={containerRef} style={{ width: '100%' }}>
+    <StyledSection ref={containerRef} style={{ width: height ? '100%' : containerWidth }}>
       <svg width={totalWidth} height={totalHeight} viewBox={`0 0 ${totalWidth} ${totalHeight}`}>
         <style>
           {`

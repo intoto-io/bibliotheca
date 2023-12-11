@@ -29,6 +29,23 @@ FixedWidth.args = {
   width: 600,
 };
 
+export const FixedHeight = Template.bind({});
+
+FixedHeight.args = {
+  profile: amotbrua,
+  currentWaterLevel: 7,
+  height: 600,
+};
+
+export const FixedWidthHeight = Template.bind({});
+
+FixedWidthHeight.args = {
+  profile: amotbrua,
+  currentWaterLevel: 7,
+  height: 600,
+  width: 600,
+};
+
 export const WithWaterLevel = Template.bind({});
 
 WithWaterLevel.args = {
@@ -333,21 +350,15 @@ MixedReferencePoints.args = {
   ],
 };
 
-export const ReferecnePointsClose = Template.bind({});
+export const CloseReferencePoints = Template.bind({});
 
-ReferecnePointsClose.args = {
+CloseReferencePoints.args = {
   minWaterLevel: 1,
   maxWaterLevel: 4,
   currentWaterLevel: 2,
-  legend: false,
+  legend: true,
   bottomless: true,
   levels: [
-    {
-      name: 'Reference line #1',
-      y: 1.7,
-      strokeColor: 'green',
-      showRelationToWaterLevel: true,
-    },
     {
       name: 'Reference line #1',
       y: 1.9,
@@ -364,12 +375,6 @@ ReferecnePointsClose.args = {
       name: 'Reference line #3',
       y: 2.1,
       strokeColor: 'orange',
-      showRelationToWaterLevel: true,
-    },
-    {
-      name: 'Reference line #4',
-      y: 2.3,
-      strokeColor: 'purple',
       showRelationToWaterLevel: true,
     },
   ],

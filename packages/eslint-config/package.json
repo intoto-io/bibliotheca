@@ -1,6 +1,6 @@
 {
   "name": "@intoto-dev/eslint-config-intoto",
-  "version": "0.24.6",
+  "version": "0.24.7",
   "description": "Sharable eslint-config based on what is used at Intoto",
   "dependencies": {
     "@typescript-eslint/parser": "^5.1.0",
