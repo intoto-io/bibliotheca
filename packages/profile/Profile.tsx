@@ -549,7 +549,7 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
                 transform: 'rotate(-90deg)',
                 fontSize: '12px',
               }}
-              y={36 + axisOffset + padding + renderWidth}
+              y={42 + axisOffset + padding + renderWidth}
               x={(yScale(minMSL) / 2) * -1}
             >
               {mslLabel}
