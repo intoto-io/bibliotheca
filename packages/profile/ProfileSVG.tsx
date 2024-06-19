@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 export interface ProfileSVGProps {
   svgString?: string;
@@ -13,34 +13,28 @@ function ProfileSVG(props: ProfileSVGProps) {
 
   const { svgString, svgPath, svg, waterHeight, waterHeightFactor } = props;
 
-  const changeWaterHeight = useCallback(
-    (height: number) => {
-      const factoredHeight = height * waterHeightFactor;
+  const changeWaterHeight = (height: number) => {
+    const factoredHeight = height * waterHeightFactor;
 
-      const rect = divRef.current?.querySelector('#Water rect');
+    const rect = divRef.current?.querySelector('#Water rect');
 
-      const yPos = rect?.getAttribute('y');
-      const curHeight = rect?.getAttribute('height');
+    const yPos = rect?.getAttribute('y');
+    const curHeight = rect?.getAttribute('height');
 
-      const heightDiff = factoredHeight - parseFloat(curHeight || '0');
-      const newYPos = parseFloat(yPos || '0') - heightDiff;
+    const heightDiff = factoredHeight - parseFloat(curHeight || '0');
+    const newYPos = parseFloat(yPos || '0') - heightDiff;
 
-      rect?.setAttribute('y', newYPos.toString());
-      rect?.setAttribute('height', factoredHeight.toString());
-    },
-    [waterHeightFactor],
-  );
+    rect?.setAttribute('y', newYPos.toString());
+    rect?.setAttribute('height', factoredHeight.toString());
+  };
 
-  const setupLayers = useCallback(
-    (image: SVGElement | undefined) => {
-      if (!image) return;
+  const setupLayers = (image: SVGElement | undefined) => {
+    if (!image) return;
 
-      divRef.current?.appendChild(image);
+    divRef.current?.appendChild(image);
 
-      changeWaterHeight(waterHeight);
-    },
-    [changeWaterHeight, waterHeight],
-  );
+    changeWaterHeight(waterHeight);
+  };
 
   const parseSVG = (str: string): SVGElement | undefined => {
     const parser = new DOMParser();
@@ -53,19 +47,17 @@ function ProfileSVG(props: ProfileSVGProps) {
     return undefined;
   };
 
-  const handleSVGPath = useCallback(
-    (_svgPath: string) => {
-      fetch(_svgPath)
-        .then((response) => response.text())
-        .then((data) => parseSVG(data))
-        .then((_svg) => setupLayers(_svg));
-    },
-    [setupLayers],
-  );
+  const handleSVGPath = (_svgPath: string) => {
+    fetch(_svgPath)
+      .then((response) => response.text())
+      .then((data) => parseSVG(data))
+      .then((_svg) => setupLayers(_svg));
+  };
 
   useEffect(() => {
     changeWaterHeight(waterHeight);
-  }, [changeWaterHeight, waterHeight]);
+    // eslint-disable-next-line
+  }, [waterHeight]);
 
   useEffect(() => {
     if (svg) {
@@ -83,7 +75,8 @@ function ProfileSVG(props: ProfileSVGProps) {
     if (svgPath) {
       handleSVGPath(svgPath);
     }
-  }, [handleSVGPath, setupLayers, svg, svgPath, svgString]);
+    // eslint-disable-next-line
+  }, []);
 
   return (
     <div
