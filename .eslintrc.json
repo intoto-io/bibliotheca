@@ -1,5 +1,9 @@
 {
-  "extends": ["@intoto-dev/eslint-config-intoto"],
+  "extends": [
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
+    "@intoto-dev/eslint-config-intoto"
+  ],
   "ignorePatterns": ["**/lib/*"],
   "root": true
 }
