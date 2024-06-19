@@ -1,4 +1,4 @@
-import { createElement, RefObject } from 'react';
+import { createElement, RefCallback, RefObject } from 'react';
 import { format } from 'date-fns';
 
 import TooltipLib from '@intoto-dev/bibliotheca-location-tooltip';
@@ -10,7 +10,7 @@ import { isMissing } from '../helpers';
 import tickFormat from '../helpers/tickFormat';
 
 interface TooltipProps {
-  tooltipRef: RefObject<HTMLDivElement>;
+  tooltipRef: RefObject<HTMLDivElement> | RefCallback<HTMLDivElement>;
   tooltipValues: TooltipValues | undefined;
   locale: Locale;
   series: GraphSeries[];
