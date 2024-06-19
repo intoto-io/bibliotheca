@@ -161,18 +161,24 @@ function Graph({
 
     const values = series.map((plot) => plot.data[bisectDate(plot.data, currentTooltipDate)]);
 
+    if (!graphContainerRef || !tooltipRef) {
+      return {
+        values,
+        tx: 0,
+        ty: 0,
+      };
+    }
+
+    const graphContainerBounds = graphContainerRef.getBoundingClientRect();
+    const tooltipBox = tooltipRef.getBoundingClientRect();
+
     let xOffset = currentTooltipValues?.offsetX || 30;
     const yOffset = currentTooltipValues?.offsetY || 0;
-    const clientX = currentTooltipValues?.clientX || xScale(currentTooltipDate) + paddingRight;
-    const clientY = currentTooltipValues?.clientY || yScales[0](values[0].value) + padding / 2;
+    const clientX = currentTooltipValues?.clientX || xScale(currentTooltipDate) + graphContainerBounds.left;
+    const clientY = currentTooltipValues?.clientY || yScales[0](values[0].value) + graphContainerBounds.top;
 
-    if (graphContainerRef && tooltipRef) {
-      const graphContainerBounds = graphContainerRef.getBoundingClientRect();
-      const tooltipBox = tooltipRef.getBoundingClientRect();
-
-      if (clientX + tooltipBox.width + xOffset > graphContainerBounds.right) {
-        xOffset = (tooltipBox.width + xOffset) * -1;
-      }
+    if (clientX + tooltipBox.width + xOffset > graphContainerBounds.right) {
+      xOffset = (tooltipBox.width + xOffset * 1.5) * -1;
     }
 
     if (onTooltipValueChange && values[0]) {
@@ -192,7 +198,6 @@ function Graph({
     currentTooltipValues?.offsetY,
     graphContainerRef,
     onTooltipValueChange,
-    paddingRight,
     series,
     tooltipRef,
     xScale,
