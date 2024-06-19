@@ -44,7 +44,7 @@ export interface GraphProps {
   lines?: GraphLine[];
   tooltip?: boolean;
   tooltipTime?: Date;
-  onTooltipValueChange?: (value: number | null) => void;
+  onTooltipValueChange?: (value: number | null, date: Date | null) => void;
 }
 
 const bisectDate = bisector((d: DataPoint, x: Date) => {
@@ -176,7 +176,7 @@ function Graph({
     }
 
     if (onTooltipValueChange && values[0]) {
-      onTooltipValueChange(values[0].value);
+      onTooltipValueChange(values[0].value, currentTooltipDate);
     }
 
     return {
@@ -201,7 +201,7 @@ function Graph({
 
   const clearTooltip = useCallback(() => {
     if (onTooltipValueChange) {
-      onTooltipValueChange(null);
+      onTooltipValueChange(null, null);
     }
 
     setCurrentTooltipValues(undefined);
