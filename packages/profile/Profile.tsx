@@ -140,14 +140,18 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
     }
 
     return minWaterLevel;
-  }, [riverProfile, minWaterLevel]);
+  }, [riverProfile, minWaterLevel, shapes]);
 
-  const profile: RiverProfile = riverProfile || [
-    { x: 0, y: currentWaterLevel || minWater },
-    { x: 0, y: minWater },
-    { x: rw, y: minWater },
-    { x: rw, y: currentWaterLevel || minWater },
-  ];
+  const profile: RiverProfile = useMemo(
+    () =>
+      riverProfile || [
+        { x: 0, y: currentWaterLevel || minWater },
+        { x: 0, y: minWater },
+        { x: rw, y: minWater },
+        { x: rw, y: currentWaterLevel || minWater },
+      ],
+    [currentWaterLevel, minWater, riverProfile, rw],
+  );
   const hasBank = !!riverProfile;
   const riverCurve = hasBank ? curveBasis : curveLinearClosed;
 

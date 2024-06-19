@@ -30,8 +30,6 @@ export type ThresholdDirection = 'up' | 'down';
 
 export interface TooltipValues {
   values: DataPoint[];
-  x: number;
-  y: number;
   tx: number;
   ty: number;
 }

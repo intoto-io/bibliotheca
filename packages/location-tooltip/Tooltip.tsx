@@ -1,4 +1,4 @@
-import { cloneElement, ReactElement, RefObject, useMemo } from 'react';
+import { cloneElement, ReactElement, RefCallback, RefObject, useMemo } from 'react';
 
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -25,7 +25,7 @@ export interface TooltipProps {
     isSmall?: boolean;
     extraContent?: ReactElement | null;
   }[];
-  tooltipRef?: RefObject<HTMLDivElement>;
+  tooltipRef?: RefObject<HTMLDivElement> | RefCallback<HTMLDivElement>;
   anchor?: 'top' | 'bottom' | 'left' | 'right';
   withPointer?: boolean;
   bottomText?: string;

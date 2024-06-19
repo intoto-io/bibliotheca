@@ -515,3 +515,12 @@ TwentyFourHoursAndPrediction.args = {
   ],
   showCurrent: true,
 };
+
+export const SimpleLineWithAreaFixedTooltip = Template.bind({});
+
+SimpleLineWithAreaFixedTooltip.args = {
+  series: singleLineWithArea,
+  tooltip: true,
+  tooltipTime: new Date(+new Date() - 1000 * 60 * 60 * 24),
+  showCurrent: true,
+};

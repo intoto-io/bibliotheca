@@ -43,7 +43,8 @@ export interface GraphProps {
   showCurrent?: boolean;
   lines?: GraphLine[];
   tooltip?: boolean;
-  onTooltipValueChange?: (value: number | null) => void;
+  tooltipTime?: Date;
+  onTooltipValueChange?: (value: number | null, date: Date | null) => void;
 }
 
 const bisectDate = bisector((d: DataPoint, x: Date) => {
@@ -72,6 +73,7 @@ function Graph({
   locale = enUS,
   lines = [],
   onTooltipValueChange,
+  tooltipTime,
 }: GraphProps) {
   const [ref, dimensions] = useDimensions();
   const isCondensed = dimensions.width < 500;
@@ -82,18 +84,17 @@ function Graph({
     timeFormatDefaultLocale(locales[lang]);
   }, [lang]);
 
-  const graphContainerRef = useRef<HTMLDivElement>(null);
-  const tooltipRef = useRef<HTMLDivElement>(null);
+  const [graphContainerRef, setGraphDomNode] = useState<HTMLDivElement>();
+  const onGraphRefChange = useCallback((node: HTMLDivElement) => {
+    setGraphDomNode(node);
+  }, []);
+
+  const [tooltipRef, setTooltipDomNode] = useState<HTMLDivElement>();
+  const onTooltipRefChange = useCallback((node: HTMLDivElement) => {
+    setTooltipDomNode(node);
+  }, []);
+
   const currentValueRef = useRef<HTMLDivElement>(null);
-  const [tooltipValues, setTooltipValues] = useState<TooltipValues | undefined>();
-
-  const clearTooltip = useCallback(() => {
-    if (onTooltipValueChange) {
-      onTooltipValueChange(null);
-    }
-
-    setTooltipValues(undefined);
-  }, [onTooltipValueChange]);
 
   const seriesReversed = useMemo(() => [...series].reverse(), [series]);
 
@@ -143,12 +144,75 @@ function Graph({
 
   const reversedIndex = (index: number) => seriesReversed.length - index - 1;
 
+  const [currentTooltipValues, setCurrentTooltipValues] = useState<{
+    date: Date;
+    clientX: number;
+    clientY: number;
+    offsetX: number;
+    offsetY: number;
+  }>();
+
+  const currentTooltipDate = currentTooltipValues?.date || tooltipTime;
+
+  const tooltipValues: TooltipValues | undefined = useMemo(() => {
+    if (!currentTooltipDate) {
+      return undefined;
+    }
+
+    const values = series.map((plot) => plot.data[bisectDate(plot.data, currentTooltipDate)]);
+
+    let xOffset = currentTooltipValues?.offsetX || 30;
+    const yOffset = currentTooltipValues?.offsetY || 0;
+    const clientX = currentTooltipValues?.clientX || xScale(currentTooltipDate) + paddingRight;
+    const clientY = currentTooltipValues?.clientY || yScales[0](values[0].value) + padding / 2;
+
+    if (graphContainerRef && tooltipRef) {
+      const graphContainerBounds = graphContainerRef.getBoundingClientRect();
+      const tooltipBox = tooltipRef.getBoundingClientRect();
+
+      if (clientX + tooltipBox.width + xOffset > graphContainerBounds.right) {
+        xOffset = (tooltipBox.width + xOffset) * -1;
+      }
+    }
+
+    if (onTooltipValueChange && values[0]) {
+      onTooltipValueChange(values[0].value, currentTooltipDate);
+    }
+
+    return {
+      values,
+      tx: clientX + xOffset,
+      ty: clientY + window.scrollY + yOffset,
+    };
+  }, [
+    currentTooltipDate,
+    currentTooltipValues?.clientX,
+    currentTooltipValues?.clientY,
+    currentTooltipValues?.offsetX,
+    currentTooltipValues?.offsetY,
+    graphContainerRef,
+    onTooltipValueChange,
+    paddingRight,
+    series,
+    tooltipRef,
+    xScale,
+    yScales,
+  ]);
+
+  const clearTooltip = useCallback(() => {
+    if (onTooltipValueChange) {
+      onTooltipValueChange(null, null);
+    }
+
+    setCurrentTooltipValues(undefined);
+  }, [onTooltipValueChange]);
+
   const handleTooltip = useCallback(
     (
       event: TouchEvent<HTMLDivElement> | MouseEvent<HTMLDivElement>,
       clientX: number,
       clientY: number,
-      offsetX = 10,
+      offsetX = 30,
       offsetY = 0,
     ) => {
       // ignore when not using tooltip
@@ -158,32 +222,10 @@ function Graph({
 
       if (coords) {
         const date = xScale.invert(coords.x);
-        const values = series.map((plot) => plot.data[bisectDate(plot.data, date)]);
-
-        let xOffset = offsetX;
-
-        if (graphContainerRef.current && tooltipRef.current && offsetX !== 0) {
-          const graphContainerBounds = graphContainerRef.current.getBoundingClientRect();
-          const tooltipBox = tooltipRef.current.getBoundingClientRect();
-
-          if (clientX + tooltipBox.width + xOffset > graphContainerBounds.right) {
-            xOffset = (tooltipBox.width + xOffset) * -1;
-          }
-        }
-
-        if (onTooltipValueChange && values[0]) {
-          onTooltipValueChange(values[0].value);
-        }
-
-        setTooltipValues({
-          ...coords,
-          values,
-          tx: clientX + xOffset,
-          ty: clientY + window.scrollY + offsetY,
-        });
+        setCurrentTooltipValues({ date, clientX, clientY, offsetX, offsetY });
       }
     },
-    [onTooltipValueChange, series, tooltip, xScale],
+    [tooltip, xScale],
   );
 
   const handleTouchMove = useCallback(
@@ -245,7 +287,7 @@ function Graph({
               </Box>
             )}
             <Tooltip
-              tooltipRef={tooltipRef}
+              tooltipRef={onTooltipRefChange}
               tooltipValues={tooltipValues}
               series={series}
               locale={locale}
@@ -326,7 +368,7 @@ function Graph({
                   touchAction: 'none',
                 }}
                 className="GraphContainer"
-                ref={graphContainerRef}
+                ref={onGraphRefChange}
                 onTouchMove={handleTouchMove}
                 onMouseMove={handleMouseOver}
                 onMouseLeave={clearTooltip}
