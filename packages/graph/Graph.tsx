@@ -38,7 +38,7 @@ export interface GraphProps {
   height?: number;
   stacked?: boolean;
   navigation?: boolean;
-  lang?: 'nb' | 'en';
+  lang?: 'nb' | 'en' | 'sv' | 'da' | 'fi';
   locale?: Locale;
   showCurrent?: boolean;
   lines?: GraphLine[];
@@ -112,7 +112,7 @@ function Graph({
     return dates;
   }, [dates, navigation, range]);
 
-  const dateFormat = lang === 'nb' ? 'cccccc. d. LLL' : 'ccc, d. LLL';
+  const dateFormat = lang !== 'en' ? 'ccc, d. LLL' : 'cccccc. d. LLL';
 
   const padding = 30;
   const paddingRight = isCondensed ? 20 : 45;
