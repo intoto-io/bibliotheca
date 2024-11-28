@@ -7,4 +7,4 @@ export interface ObservationRecord {
 
 export type ObservationType = 'water-level' | 'water-flow' | 'water-temperature' | 'water-ph';
 
-export type AppLang = 'nb' | 'en';
+export type AppLang = 'nb' | 'en' | 'sv' | 'da' | 'fi';
