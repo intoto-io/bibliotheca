@@ -31,7 +31,10 @@ function ProfileSVG(props: ProfileSVGProps) {
   const setupLayers = (image: SVGElement | undefined) => {
     if (!image) return;
 
-    divRef.current?.appendChild(image);
+    if (divRef.current) {
+      divRef.current.innerHTML = '';
+      divRef.current.appendChild(image);
+    }
 
     changeWaterHeight(waterHeight);
   };
@@ -60,21 +63,21 @@ function ProfileSVG(props: ProfileSVGProps) {
   }, [waterHeight]);
 
   useEffect(() => {
+    const div = divRef.current;
+
     if (svg) {
       setupLayers(svg);
-
-      return;
-    }
-
-    if (svgString) {
+    } else if (svgString) {
       setupLayers(parseSVG(svgString));
-
-      return;
-    }
-
-    if (svgPath) {
+    } else if (svgPath) {
       handleSVGPath(svgPath);
     }
+
+    return () => {
+      if (div) {
+        div.innerHTML = '';
+      }
+    };
     // eslint-disable-next-line
   }, []);
 
