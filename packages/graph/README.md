@@ -1,6 +1,6 @@
 # `<Graph />` component
 
-### [Live Demo](https://intoto-bibliotheca.netlify.app/?path=/story/components-graph--default)
+### [Live Demo](https://intoto-bibliotheca.vercel.app/?path=/story/components-graph--default)
 
 Graph allows the user to visualize data in a graph format. It has multiple variations of how to visualise the data which is provided. It supports displaying tooltip information, line charts, bar charts, missing data, predictions, threshold ranges, and mean level.
 
@@ -24,10 +24,7 @@ import { Graph } from '@intoto-dev/bibliotheca-graph';
 const series = []; // Array of series data
 const t = translationLibrary; // Load in your preferred translation library
 
-<Graph
-  series={series}
-  t={t}
-/>
+<Graph series={series} t={t} />;
 ```
 
 ## What are series?
@@ -65,16 +62,16 @@ The most basic implementation (also found in Storybook examples) is:
 
 ```ts
 const t = (key: string) => {
-    switch (key) {
-      case 'updated_at':
-        return 'Updated {time} ago';
-      case 'missing':
-        return 'Missing data';
-      case 'mean_level':
-        return 'Mean-level';
-      default:
-        return 'Prediction';
-    }
+  switch (key) {
+    case 'updated_at':
+      return 'Updated {time} ago';
+    case 'missing':
+      return 'Missing data';
+    case 'mean_level':
+      return 'Mean-level';
+    default:
+      return 'Prediction';
+  }
 };
 ```
 
@@ -89,9 +86,9 @@ import { Graph } from '@intoto-dev/bibliotheca-graph';
 ```
 
 | Property             | Description                                                                                                            | Type                      | Default |
-|----------------------|------------------------------------------------------------------------------------------------------------------------|---------------------------|---------|
-| series *             | List of series to be displayed in the graph.                                                                           | `GraphSeries[]`           |         |
-| t *                  | Translation function.                                                                                                  | `(key: string) => string` |         |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------------- | ------------------------- | ------- |
+| series \*            | List of series to be displayed in the graph.                                                                           | `GraphSeries[]`           |         |
+| t \*                 | Translation function.                                                                                                  | `(key: string) => string` |         |
 | height               | Height of the graph in pixels.                                                                                         | `number`                  | `200`   |
 | tooltip              | Whether to show a tooltip when hovering over a point.                                                                  | `boolean`                 | `true`  |
 | stacked              | Whether to display the series in a stacked manner. Default is merged into a single Y-axis (multiple lines in a graph). | `boolean`                 | `false` |
@@ -105,9 +102,9 @@ import { Graph } from '@intoto-dev/bibliotheca-graph';
 ### Type: `GraphSeries`
 
 | Property           | Description                                                                                                                       | Type                                                                                | Default                    |
-|--------------------|-----------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------|----------------------------|
-| key *              | Unique identifier for the series.                                                                                                 | `string`                                                                            |                            |
-| data *             | List of data points to be displayed in the series.                                                                                | `DataPoint[]`                                                                       |                            |
+| ------------------ | --------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- | -------------------------- |
+| key \*             | Unique identifier for the series.                                                                                                 | `string`                                                                            |                            |
+| data \*            | List of data points to be displayed in the series.                                                                                | `DataPoint[]`                                                                       |                            |
 | type               | Type of series to be displayed.                                                                                                   | `'line'` or `'bar'`                                                                 | `'line'`                   |
 | name               | How the series is called and displayed in the legend.                                                                             | `string`                                                                            |                            |
 | color              | Hexadecimal color code line / bar in the series.                                                                                  | `string`                                                                            |                            |
@@ -130,9 +127,9 @@ import { Graph } from '@intoto-dev/bibliotheca-graph';
 ### Type: `DataPoint`
 
 | Property   | Description                                                               | Type      | Default |
-|------------|---------------------------------------------------------------------------|-----------|---------|
-| value *    | Value of the data point                                                   | `number`  |         |
-| date *     | Date of the data point (ISO 8601)                                         | `string`  |         |
+| ---------- | ------------------------------------------------------------------------- | --------- | ------- |
+| value \*   | Value of the data point                                                   | `number`  |         |
+| date \*    | Date of the data point (ISO 8601)                                         | `string`  |         |
 | missing    | Whether the data point needs to be marked as missing                      | `boolean` | `false` |
 | prediction | Whether the data point is a prediction                                    | `boolean` | `false` |
 | minValue   | When the data point is a prediction, this is the smallest predicted value | `number`  |         |
@@ -145,10 +142,10 @@ A `GraphLine` is either a `HorizontalLine` or a `VerticalLine`.
 ### Type: `HorizontalLine`
 
 | Property  | Description                                                                                             | Type      | Default |
-|-----------|---------------------------------------------------------------------------------------------------------|-----------|---------|
-| name *    | Name of the line. Also the name which will be displayed in the legend                                   | `string`  |         |
-| color *   | The color of the line                                                                                   | `string`  |         |
-| value *   | The value on the Y-axis where the line needs to be drawn                                                | `number`  |         |
+| --------- | ------------------------------------------------------------------------------------------------------- | --------- | ------- |
+| name \*   | Name of the line. Also the name which will be displayed in the legend                                   | `string`  |         |
+| color \*  | The color of the line                                                                                   | `string`  |         |
+| value \*  | The value on the Y-axis where the line needs to be drawn                                                | `number`  |         |
 | width     | Stroke width of the line                                                                                | `number`  | `1`     |
 | dasharray | Stroke dash array of the line                                                                           | `string`  | `'5,3'` |
 | opacity   | Stroke opacity                                                                                          | `number`  | `1`     |
@@ -158,9 +155,9 @@ A `GraphLine` is either a `HorizontalLine` or a `VerticalLine`.
 
 Same properties as `HorizontalLine` but with `value` and `date` swapped.
 
-| Property  | Description                                             | Type   | Default |
-|-----------|---------------------------------------------------------|--------|---------|
-| date *    | The date on the X-axis where the line needs to be drawn | `Date` |         |
+| Property | Description                                             | Type   | Default |
+| -------- | ------------------------------------------------------- | ------ | ------- |
+| date \*  | The date on the X-axis where the line needs to be drawn | `Date` |         |
 
 ### Helper: `isMissing`
 
@@ -174,9 +171,9 @@ Given a `DataPoint` object, returns whether the data point is considered missing
 function isMissing(dataPoint: DataPoint): boolean;
 ```
 
-| Property    | Description         | Type        | Default |
-|-------------|---------------------|-------------|---------|
-| dataPoint * | Data point to check | `DataPoint` |         |
+| Property     | Description         | Type        | Default |
+| ------------ | ------------------- | ----------- | ------- |
+| dataPoint \* | Data point to check | `DataPoint` |         |
 
 ### Helper: `isPredicted`
 
@@ -190,9 +187,9 @@ Given a `DataPoint` object, returns whether the data point is a prediction or no
 function isPredicted(dataPoint: DataPoint): boolean;
 ```
 
-| Property    | Description         | Type        | Default |
-|-------------|---------------------|-------------|---------|
-| dataPoint * | Data point to check | `DataPoint` |         |
+| Property     | Description         | Type        | Default |
+| ------------ | ------------------- | ----------- | ------- |
+| dataPoint \* | Data point to check | `DataPoint` |         |
 
 ### Helper: `createYScale`
 
@@ -206,11 +203,11 @@ Creates a `d3` and `visx` compatible scale for the Y-Axis based and the series d
 function createYScale(series: GraphSeries, height: number, padding: number): ScaleLinear<number, number>;
 ```
 
-| Property | Description                                                 | Type            | Default |
-|----------|-------------------------------------------------------------|-----------------|---------|
-| series * | Series to create the Y-scale from                           | `GraphSeries[]` |         |
-| height * | Height in pixels of the graph's Y-axis                      | `number`        |         |
-| padding  | Padding in pixels added to the bottom and top of the Y-axis | `number`        | `0`     |
+| Property  | Description                                                 | Type            | Default |
+| --------- | ----------------------------------------------------------- | --------------- | ------- |
+| series \* | Series to create the Y-scale from                           | `GraphSeries[]` |         |
+| height \* | Height in pixels of the graph's Y-axis                      | `number`        |         |
+| padding   | Padding in pixels added to the bottom and top of the Y-axis | `number`        | `0`     |
 
 ### Helper: `createXScale`
 
@@ -225,9 +222,9 @@ function createXScale(dates: GraphSeries, width: number): ScaleTime<number, numb
 ```
 
 | Property | Description                                                   | Type     | Default |
-|----------|---------------------------------------------------------------|----------|---------|
-| dates *  | Dates which make up the X-axis. Needs a minimum of two dates. | `Date[]` |         |
-| width *  | Width in pixels of the graph's X-axis                         | `number` |         |
+| -------- | ------------------------------------------------------------- | -------- | ------- |
+| dates \* | Dates which make up the X-axis. Needs a minimum of two dates. | `Date[]` |         |
+| width \* | Width in pixels of the graph's X-axis                         | `number` |         |
 
 ## Helper: `shiftDate`
 
@@ -242,8 +239,8 @@ function shiftDate(date: string, direction?: 1 | -1): string;
 ```
 
 | Property  | Description                                                                                             | Type        | Default |
-|-----------|---------------------------------------------------------------------------------------------------------|-------------|---------|
-| date *    | Date string in ISO 8601 format                                                                          | `string`    |         |
+| --------- | ------------------------------------------------------------------------------------------------------- | ----------- | ------- |
+| date \*   | Date string in ISO 8601 format                                                                          | `string`    |         |
 | direction | The direction the time is shifted to. Pass `-1` to shift the opposite direction of the timezone offset. | `1` or `-1` | `1`     |
 
 ## Helper: `getTimezoneOffset`
@@ -259,8 +256,8 @@ function getTimezoneOffset(date: string): number;
 ```
 
 | Property | Description                    | Type     | Default |
-|----------|--------------------------------|----------|---------|
-| date *   | Date string in ISO 8601 format | `string` |         |
+| -------- | ------------------------------ | -------- | ------- |
+| date \*  | Date string in ISO 8601 format | `string` |         |
 
 ## Helper: `createMeanLevelLine`
 
@@ -275,9 +272,9 @@ function createMeanLevelLine(name: string, value: number): HorizontalLine;
 ```
 
 | Property | Description                                             | Type     | Default |
-|----------|---------------------------------------------------------|----------|---------|
-| name *   | Name of the line which will also be used in the legend. | `string` |         |
-| value *  | The mean level in mASL.                                 | `number` |         |
+| -------- | ------------------------------------------------------- | -------- | ------- |
+| name \*  | Name of the line which will also be used in the legend. | `string` |         |
+| value \* | The mean level in mASL.                                 | `number` |         |
 
 ## Helper: `createMeanLevelLine`
 
@@ -291,9 +288,9 @@ Creates a `VerticalLine` which is a line which is drawn at the given date. Creat
 function createNowLine(date: Date): VerticalLine;
 ```
 
-| Property | Description                                  | Type     | Default |
-|----------|----------------------------------------------|----------|---------|
-| date *   | The date where the 'now' line will be drawn. | `Date`   |         |
+| Property | Description                                  | Type   | Default |
+| -------- | -------------------------------------------- | ------ | ------- |
+| date \*  | The date where the 'now' line will be drawn. | `Date` |         |
 
 ## React Hook: `useDimensions`
 
@@ -306,12 +303,12 @@ A React hook which returns a `ref` binding function and a `Dimensions` object co
 ```tsx
 function SomeComponent() {
   const [ref, dimensions] = useDimensions();
-  
+
   return (
     <html>
       <body>
         <main ref={ref}>
-          My size is {dimensions.width} x {dimensions.height} 
+          My size is {dimensions.width} x {dimensions.height}
         </main>
       </body>
     </html>
@@ -331,6 +328,6 @@ A React hook which gets and sorts dates which are present in a list of series.
 function useSeriesDates(series: GraphSeries[]): Date[];
 ```
 
-| Property | Description                      | Type            | Default |
-|----------|----------------------------------|-----------------|---------|
-| series * | Series to get all the dates from | `GraphSeries[]` |         |
+| Property  | Description                      | Type            | Default |
+| --------- | -------------------------------- | --------------- | ------- |
+| series \* | Series to get all the dates from | `GraphSeries[]` |         |

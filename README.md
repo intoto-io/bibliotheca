@@ -6,7 +6,7 @@ Fully written in TypeScript for typing convenience, usable in non-TypeScript pro
 
 ## Storybook
 
-Check out the components in action at [https://intoto-bibliotheca.netlify.app/](https://intoto-bibliotheca.netlify.app/)
+Check out the components in action at [https://intoto-bibliotheca.vercel.app/](https://intoto-bibliotheca.vercel.app/)
 
 ## List of available components
 

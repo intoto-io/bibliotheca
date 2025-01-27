@@ -1,6 +1,6 @@
 # `<Profile />` component
 
-### [Live Demo](https://intoto-bibliotheca.netlify.app/?path=/story/components-profile--default)
+### [Live Demo](https://intoto-bibliotheca.vercel.app/?path=/story/components-profile--default)
 
 Profile stands for river profile. It allows rendering of a cross-section of a river. The current water-level, mean level, and a generated bridge can be added.
 

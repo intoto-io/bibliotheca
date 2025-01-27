@@ -1,6 +1,6 @@
 # `<InfoTooltip />` component
 
-### [Live Demo](https://intoto-bibliotheca.netlify.app/?path=/story/components-info--default)
+### [Live Demo](https://intoto-bibliotheca.vercel.app/?path=/story/components-info--default)
 
 A simple component to display information in a tooltip with an icon and provided text.
 
@@ -21,5 +21,5 @@ Import the InfoTooltip component and add the text to display on hover.
 ```tsx
 import { InfoTooltip } from '@intoto-dev/bibliotheca-info-tooltip';
 
-<InfoTooltip text="Text you want to display on hover" />
+<InfoTooltip text="Text you want to display on hover" />;
 ```
