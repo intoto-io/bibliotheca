@@ -34,8 +34,20 @@ const HistoricPlayer: FunctionComponent = function HistoricPlayer() {
   return (
     <div style={{ width: 750 }}>
       <Profile profile={profile} currentWaterLevel={currentWaterLevel} width={750} />
-      <Graph series={series} t={(t: string) => t} tooltip onTooltipValueChange={setWaterLevel} />
-      <Player dates={dates} currentDate={now} onUpdateDate={setNow} />
+      <Graph
+        series={series}
+        t={(t: string) => t}
+        tooltip
+        showCurrent
+        tooltipTime={new Date(now)}
+        onTooltipValueChange={setWaterLevel}
+      />
+      <Player
+        dates={dates}
+        currentDate={now}
+        onUpdateDate={setNow}
+        playbackSpeed={100} // Faster playback - 10 frames per second
+      />
     </div>
   );
 };
