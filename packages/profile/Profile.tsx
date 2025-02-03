@@ -104,8 +104,9 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
   customLines = [],
   levels: inputLevels = [],
 }) {
-  const containerRef = useRef(null);
+  const containerRef = useRef<HTMLElement>(null);
   const [containerWidth, setContainerWidth] = useState(width);
+  const uniqueId = useMemo(() => Math.random().toString(36).substr(2, 9), []);
 
   useEffect(() => {
     const handleResize = (entries: ResizeObserverEntry[]) => {
@@ -115,11 +116,16 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
     };
 
     const resizeObserver = new ResizeObserver(handleResize);
-    if (containerRef.current) {
-      resizeObserver.observe(containerRef.current);
+    const currentContainer = containerRef.current;
+
+    if (currentContainer) {
+      resizeObserver.observe(currentContainer);
     }
 
     return () => {
+      if (currentContainer) {
+        resizeObserver.unobserve(currentContainer);
+      }
       resizeObserver.disconnect();
     };
   }, [width]);
@@ -305,7 +311,7 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
         </style>
         {groundGradient && (
           <defs>
-            <linearGradient id="ground-gradient" x1="0" x2="0" y1="0" y2="1">
+            <linearGradient id={`ground-gradient-${uniqueId}`} x1="0" x2="0" y1="0" y2="1">
               <stop stopColor={groundFill} stopOpacity={1} offset="0%" />
               <stop stopColor={groundFill} stopOpacity={0.9} offset="5%" />
               <stop stopColor={groundFill} stopOpacity={0.2} offset="100%" />
@@ -314,7 +320,7 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
         )}
         {hasBank && (
           <>
-            <mask id="ground-mask" maskUnits="userSpaceOnUse">
+            <mask id={`ground-mask-${uniqueId}`} maskUnits="userSpaceOnUse">
               <rect x="0" y="0" width={totalWidth} height={totalHeight} fill="white" />
               <path
                 d={[bankPath].join(' ')}
@@ -325,11 +331,11 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
               />
             </mask>
             <path
-              id="ground"
+              id={`ground-${uniqueId}`}
               d={[bankPath].join(' ')}
               stroke={strokeColor}
               strokeWidth={groundStroke ? strokeWidth : 0}
-              fill={groundGradient ? 'url(#ground-gradient)' : groundFill}
+              fill={groundGradient ? `url(#ground-gradient-${uniqueId})` : groundFill}
               vectorEffect="non-scaling-stroke"
             />
           </>
@@ -337,18 +343,18 @@ const Profile: FunctionComponent<ProfileProps> = function Profile({
         {typeof currentWaterLevel !== 'undefined' && (
           <>
             <defs>
-              <linearGradient id="water-gradient" x1="0" x2="0" y1="0" y2="1">
+              <linearGradient id={`water-gradient-${uniqueId}`} x1="0" x2="0" y1="0" y2="1">
                 <stop stopColor={waterFill} stopOpacity={1} offset="0%" />
                 <stop stopColor={waterFill} stopOpacity={hasInfiniteWater ? 0.2 : 0.5} offset="100%" />
               </linearGradient>
             </defs>
             <path
-              id="water"
+              id={`water-${uniqueId}`}
               d={[waterAreaPath].join(' ')}
               stroke={waterStrokeColor}
               strokeWidth={hasInfiniteWater ? 0 : strokeWidth}
-              fill="url(#water-gradient)"
-              mask="url(#ground-mask)"
+              fill={`url(#water-gradient-${uniqueId})`}
+              mask={`url(#ground-mask-${uniqueId})`}
               vectorEffect="non-scaling-stroke"
             />
             {hasInfiniteWater && (
